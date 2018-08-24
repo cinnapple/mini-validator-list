@@ -21,3 +21,5 @@ export const SET_LANGUAGE = "SET_LANGUAGE";
 
 export const OPEN_DIALOG = "OPEN_DIALOG";
 export const CLOSE_DIALOG = "CLOSE_DIALOG";
+
+export const FETCH_SUMMARY = "FETCH_SUMMARY";

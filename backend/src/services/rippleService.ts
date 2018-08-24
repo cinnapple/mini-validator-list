@@ -1,3 +1,4 @@
+import * as moment from "moment";
 import { injectable, inject } from "inversify";
 import "reflect-metadata";
 import {
@@ -16,17 +17,18 @@ import { TYPES } from "../inversify.types";
 import { _first, _union, DATED_CACHE } from "../util";
 import { geoDataMock } from "../geoDataCache";
 import { wellKnownValidators } from "../wellKnownValidators";
+import StatsUtil from "../statsUtil";
 
-type AllowedCacheTypes =
+type AllowedRippleCacheTypes =
   | Lib.RippleData.DefaultUnlRawResponse
   | Lib.RippleData.ValidatorRawResponse
   | Lib.RippleData.DailyReportRawResponse
   | Lib.IPStackResponse
-  | Cache.MergedDataCache;
+  | Cache.MergedData;
 
 @injectable()
 export default class RippleService implements IRippleService {
-  private _cacheManager: ICacheManager<AllowedCacheTypes>;
+  private _rippleCacheManager: ICacheManager<AllowedRippleCacheTypes>;
   private _rippleDomain = "ripple.com";
 
   constructor(
@@ -38,7 +40,9 @@ export default class RippleService implements IRippleService {
     private _cacheManagerFactory: ICacheManagerFactory,
     @inject(TYPES.IntervalManager) private _intervalManger: IIntervalManager
   ) {
-    this._cacheManager = this._cacheManagerFactory.create(_logger);
+    this._rippleCacheManager = this._cacheManagerFactory.create(
+      Cache.MANAGERS.RIPPLE_SERVICE
+    );
     this._startIntervalFetchAll();
     this._startInitialFetchAll();
   }
@@ -56,6 +60,7 @@ export default class RippleService implements IRippleService {
           this._fetchValidators()
         ]);
         this._mergeAll();
+        this._populateSummary();
       },
       validatorFetchInterval
     );
@@ -76,22 +81,23 @@ export default class RippleService implements IRippleService {
       this._fetchGeoInfo()
     ]);
     this._mergeAll();
+    this._populateSummary();
   }
 
   private async _fetchDefaultUnl() {
-    return this._cacheManager.set(Cache.TYPES.RIPPLE_DEFAULT_UNL, () =>
+    return this._rippleCacheManager.set(Cache.TYPES.RIPPLE_DEFAULT_UNL, () =>
       this._querier.getDefaultUnl()
     );
   }
 
   private async _fetchDailyReport() {
-    return this._cacheManager.set(Cache.TYPES.RIPPLE_DAILY_REPORT, () =>
+    return this._rippleCacheManager.set(Cache.TYPES.RIPPLE_DAILY_REPORT, () =>
       this._querier.getValidatorDailyReports()
     );
   }
 
   private async _fetchValidators() {
-    return this._cacheManager.set(Cache.TYPES.RIPPLE_VALIDATORS, () =>
+    return this._rippleCacheManager.set(Cache.TYPES.RIPPLE_VALIDATORS, () =>
       this._querier.getValidators()
     );
   }
@@ -102,12 +108,12 @@ export default class RippleService implements IRippleService {
   }
 
   private async _fetchGeoInfo() {
-    await this._cacheManager.waitFor(Cache.TYPES.RIPPLE_VALIDATORS);
-    const validatorCache = this._cacheManager.get<
+    await this._rippleCacheManager.waitFor(Cache.TYPES.RIPPLE_VALIDATORS);
+    const validatorCache = this._rippleCacheManager.get<
       Lib.RippleData.ValidatorRawResponse
     >(Cache.TYPES.RIPPLE_VALIDATORS);
     if (process.env["NODE_ENV"] === "production") {
-      return this._cacheManager.set(Cache.TYPES.IPSTACK_GEO, async () => {
+      return this._rippleCacheManager.set(Cache.TYPES.IPSTACK_GEO, async () => {
         // lookup ip address from the domain
         const capturedDomains = {};
         const promises: Promise<
@@ -143,6 +149,7 @@ export default class RippleService implements IRippleService {
               domain: domainAndAddressPair.domain,
               ip: domainAndAddressPair.ip,
               country_name: geoData.country_name,
+              country_code: geoData.country_code,
               region_name: geoData.region_name,
               city: geoData.city,
               latitude: this._roundCoordinate(geoData.latitude),
@@ -150,41 +157,49 @@ export default class RippleService implements IRippleService {
             });
           }
         });
+        console.log(list);
         return Promise.resolve(list);
       });
     }
-    return this._cacheManager.set(Cache.TYPES.IPSTACK_GEO, () =>
+    return this._rippleCacheManager.set(Cache.TYPES.IPSTACK_GEO, () =>
       Promise.resolve(geoDataMock.list)
     );
   }
 
   private async _mergeAll(date?: string) {
-    return this._cacheManager.set(
+    const startOfDay = moment().add(-6, "h");
+    return this._rippleCacheManager.set(
       DATED_CACHE(Cache.TYPES.MERGED_DATA, date),
       async () => {
         await Promise.all([
-          this._cacheManager.waitFor(
+          this._rippleCacheManager.waitFor(
             DATED_CACHE(Cache.TYPES.RIPPLE_DEFAULT_UNL, date)
           ),
-          this._cacheManager.waitFor(Cache.TYPES.RIPPLE_DAILY_REPORT),
-          this._cacheManager.waitFor(Cache.TYPES.RIPPLE_VALIDATORS),
-          this._cacheManager.waitFor(Cache.TYPES.IPSTACK_GEO)
+          this._rippleCacheManager.waitFor(Cache.TYPES.RIPPLE_DAILY_REPORT),
+          this._rippleCacheManager.waitFor(Cache.TYPES.RIPPLE_VALIDATORS),
+          this._rippleCacheManager.waitFor(Cache.TYPES.IPSTACK_GEO)
         ]);
 
         this._logger.info(`all prerequisites have been populated...`);
 
-        const defaultUnlCache = this._cacheManager.get<
+        const defaultUnlCache = this._rippleCacheManager.get<
           Lib.RippleData.DefaultUnlRawResponse
         >(DATED_CACHE(Cache.TYPES.RIPPLE_DEFAULT_UNL, date));
-        const dailyReports = this._cacheManager.get<
+        const dailyReports = this._rippleCacheManager.get<
           Lib.RippleData.DailyReportRawResponse
         >(Cache.TYPES.RIPPLE_DAILY_REPORT);
-        const validators = this._cacheManager.get<
+        const allValidators = this._rippleCacheManager.get<
           Lib.RippleData.ValidatorRawResponse
         >(Cache.TYPES.RIPPLE_VALIDATORS);
-        const geoInfo = this._cacheManager.get<Lib.IPStackResponse>(
+        const geoInfo = this._rippleCacheManager.get<Lib.IPStackResponse>(
           Cache.TYPES.IPSTACK_GEO
         );
+
+        // remove non active validators in the last 24 hours.
+        const validators = allValidators.list.filter(
+          a => moment(a.last_datetime).diff(startOfDay) > 0
+        );
+        // const validators = allValidators.list;
 
         const defaultUnl = this._crypto.parseDefaultUNLResponse(
           defaultUnlCache.list[0]
@@ -193,21 +208,19 @@ export default class RippleService implements IRippleService {
 
         const allValidationPublicKeys = _union(
           defaultUnl,
-          validators.list.map(a => a.validation_public_key)
+          validators.map(a => a.validation_public_key)
         );
 
         const mergedList = allValidationPublicKeys
           .filter(pubkey => pubkey && pubkey !== "undefined") // remove stale validators
           .map(pubkey => {
-            let v = _first(
-              validators.list,
-              v => v.validation_public_key === pubkey
-            );
+            let v = _first(validators, v => v.validation_public_key === pubkey);
             if (!v) {
               v = {
                 validation_public_key: pubkey,
                 domain: undefined,
-                domain_state: "unverified"
+                domain_state: "unverified",
+                last_datetime: v.last_datetime
               };
             }
 
@@ -228,6 +241,7 @@ export default class RippleService implements IRippleService {
               total_ledgers: 0,
               city: undefined,
               country_name: undefined,
+              country_code: undefined,
               region_name: undefined,
               latitude: 0,
               longitude: 0
@@ -279,6 +293,7 @@ export default class RippleService implements IRippleService {
               <any>{
                 city: undefined,
                 country_name: undefined,
+                country_code: undefined,
                 region_name: undefined,
                 latitude: undefined,
                 longitude: undefined
@@ -287,6 +302,7 @@ export default class RippleService implements IRippleService {
             if (geoItem) {
               data.city = geoItem.city;
               data.country_name = geoItem.country_name;
+              data.country_code = geoItem.country_code;
               data.region_name = geoItem.region_name;
               data.latitude = geoItem.latitude;
               data.longitude = geoItem.longitude;
@@ -297,6 +313,19 @@ export default class RippleService implements IRippleService {
         return Promise.resolve(mergedList);
       }
     );
+  }
+
+  private async _populateSummary() {
+    return this._rippleCacheManager.set(Cache.TYPES.SUMMARY_DATA, async () => {
+      await this._rippleCacheManager.waitFor(Cache.TYPES.MERGED_DATA);
+      const mergedData = this._rippleCacheManager.get<Cache.MergedData>(
+        Cache.TYPES.MERGED_DATA
+      );
+      const mainNetValidators = mergedData.list.filter(a => !a.is_alt_net);
+      const summary = StatsUtil.getSummaryStats(mainNetValidators);
+
+      return await summary;
+    });
   }
 
   private _isRippleValidator(validator: Lib.RippleData.ValidatorRawResponse) {
@@ -319,12 +348,12 @@ export default class RippleService implements IRippleService {
     let date = "";
     if (params) {
       date = params.date;
-      const existingCache = this._cacheManager.get<Cache.MergedDataCache>(
+      const existingCache = this._rippleCacheManager.get<Cache.MergedData>(
         DATED_CACHE(Cache.TYPES.MERGED_DATA, date)
       );
       if (!existingCache) {
         // set default unl
-        this._cacheManager.set(
+        this._rippleCacheManager.set(
           DATED_CACHE(Cache.TYPES.RIPPLE_DEFAULT_UNL, date),
           () => Promise.resolve(params.defaultUnl)
         );
@@ -332,16 +361,32 @@ export default class RippleService implements IRippleService {
       }
     }
 
-    await this._cacheManager.waitFor(
+    await this._rippleCacheManager.waitFor(
       DATED_CACHE(Cache.TYPES.MERGED_DATA, date)
     );
-    return this._cacheManager.get<Cache.MergedDataCache>(
+    return this._rippleCacheManager.get<Cache.MergedData>(
       DATED_CACHE(Cache.TYPES.MERGED_DATA, date)
     );
   }
 
   async getGeoInfo() {
-    await this._cacheManager.waitFor(Cache.TYPES.IPSTACK_GEO);
-    return this._cacheManager.get<Lib.IPStackResponse>(Cache.TYPES.IPSTACK_GEO);
+    await this._rippleCacheManager.waitFor(Cache.TYPES.IPSTACK_GEO);
+    return this._rippleCacheManager.get<Lib.IPStackResponse>(
+      Cache.TYPES.IPSTACK_GEO
+    );
+  }
+
+  async getValidatorSummary() {
+    const existingCache = this._rippleCacheManager.get<Cache.MergedData>(
+      Cache.TYPES.SUMMARY_DATA
+    );
+    if (!existingCache) {
+      this._populateSummary();
+    }
+
+    await this._rippleCacheManager.waitFor(Cache.TYPES.SUMMARY_DATA);
+    return this._rippleCacheManager.get<Cache.MergedData>(
+      Cache.TYPES.SUMMARY_DATA
+    );
   }
 }

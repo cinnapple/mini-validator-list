@@ -1,6 +1,7 @@
 const TYPES = {
   Server: Symbol.for("Server"),
   RippleService: Symbol.for("RippleService"),
+  StatsService: Symbol.for("StatsService"),
   GoogleService: Symbol.for("GoogleService"),
   GitHubService: Symbol.for("GitHubService"),
   Querier: Symbol.for("Querier"),

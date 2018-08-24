@@ -38,7 +38,7 @@ const sortByDate = (a, b) => {
 
 @injectable()
 export default class GitHubService implements IGitHubService {
-  private _cacheManager: ICacheManager<AvailableTypes>;
+  private _githubCacheManager: ICacheManager<AvailableTypes>;
 
   constructor(
     @inject(TYPES.Lib.Logger) protected _logger: Lib.ILogger,
@@ -48,7 +48,9 @@ export default class GitHubService implements IGitHubService {
     @inject(TYPES.Lib.GitHubApi) private _githubClient: Lib.GitHub.IApi,
     @inject(TYPES.IntervalManager) private _intervalManger: IIntervalManager
   ) {
-    this._cacheManager = this._cacheManagerFactory.create(_logger);
+    this._githubCacheManager = this._cacheManagerFactory.create(
+      Cache.MANAGERS.GITHUB_SERVICE
+    );
     this._startIntervalFetchAll();
     this._startInitialFetchAll();
   }
@@ -67,7 +69,7 @@ export default class GitHubService implements IGitHubService {
   }
 
   private async _fetchDefaultUNLArchives() {
-    this._cacheManager.set(
+    this._githubCacheManager.set(
       Cache.TYPES.GITHUB_DEFAULT_UNL_ARCHIVES,
       async () => {
         const res = await this._githubClient.repos.getContent({
@@ -89,10 +91,10 @@ export default class GitHubService implements IGitHubService {
   }
 
   private async _fetchDefaultUNL(date: string) {
-    this._cacheManager.set(
+    this._githubCacheManager.set(
       DATED_CACHE(Cache.TYPES.GITHUB_DEFAULT_UNL, date),
       async () => {
-        const filter = this._cacheManager
+        const filter = this._githubCacheManager
           .get<Lib.GitHub.IRepositoryContentResponse>(
             Cache.TYPES.GITHUB_DEFAULT_UNL_ARCHIVES
           )
@@ -114,18 +116,28 @@ export default class GitHubService implements IGitHubService {
     date: string
   ): Promise<Cache.IDataCache<Lib.RippleData.DefaultUnlRawResponse>> {
     this.startFetchDefaultUnl(date);
-    await this._cacheManager.waitFor(
+    await this._githubCacheManager.waitFor(
       DATED_CACHE(Cache.TYPES.GITHUB_DEFAULT_UNL, date)
     );
-    return this._cacheManager.get<Lib.RippleData.DefaultUnlRawResponse>(
+    return this._githubCacheManager.get<Lib.RippleData.DefaultUnlRawResponse>(
       DATED_CACHE(Cache.TYPES.GITHUB_DEFAULT_UNL, date)
     );
   }
 
-  startFetchDefaultUnl(date: string): void {
-    const cache = this._cacheManager.get<Lib.RippleData.DefaultUnlRawResponse>(
-      DATED_CACHE(Cache.TYPES.GITHUB_DEFAULT_UNL, date)
+  async getLastDefaultUnlDate(): Promise<string> {
+    await this._githubCacheManager.waitFor(
+      Cache.TYPES.GITHUB_DEFAULT_UNL_ARCHIVES
     );
+    const last = this._githubCacheManager.get<
+      Lib.GitHub.IRepositoryContentResponse
+    >(Cache.TYPES.GITHUB_DEFAULT_UNL_ARCHIVES).list[0];
+    return last.date;
+  }
+
+  startFetchDefaultUnl(date: string): void {
+    const cache = this._githubCacheManager.get<
+      Lib.RippleData.DefaultUnlRawResponse
+    >(DATED_CACHE(Cache.TYPES.GITHUB_DEFAULT_UNL, date));
     if (!cache) {
       this._fetchDefaultUNL(date);
     }
@@ -134,8 +146,10 @@ export default class GitHubService implements IGitHubService {
   async getDefaultUnlArchives(): Promise<
     Cache.IDataCache<Lib.GitHub.IRepositoryContentResponse>
   > {
-    await this._cacheManager.waitFor(Cache.TYPES.GITHUB_DEFAULT_UNL_ARCHIVES);
-    return this._cacheManager.get<Lib.GitHub.IRepositoryContentResponse>(
+    await this._githubCacheManager.waitFor(
+      Cache.TYPES.GITHUB_DEFAULT_UNL_ARCHIVES
+    );
+    return this._githubCacheManager.get<Lib.GitHub.IRepositoryContentResponse>(
       Cache.TYPES.GITHUB_DEFAULT_UNL_ARCHIVES
     );
   }

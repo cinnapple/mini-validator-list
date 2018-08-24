@@ -13,7 +13,8 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { t, res } from "./services/i18nService";
 import Layout from "./hoc/Layout/Layout";
 
-import MainContainer from "./containers/Main/MainContainer";
+import OverviewContainer from "./containers/Overview/OverviewContainer";
+import ValidatorsContainer from "./containers/Validators/ValidatorsContainer";
 import SettingsContainer from "./containers/Settings/SettingsContainer";
 import SelectDialogContainer from "./containers/Common/SelectDialogContainer";
 import NetworkProgressContainer from "./containers/Common/NetworkProgressContainer";
@@ -42,7 +43,8 @@ class App extends React.Component {
 
     const routes = (
       <Switch>
-        <Route exact path="/" component={() => <MainContainer />} />
+        <Route exact path="/" component={() => <OverviewContainer />} />
+        <Route exact path="/validators" component={() => <ValidatorsContainer />} />
         <Route exact path="/settings" component={() => <SettingsContainer />} />
         <Redirect from="*" to="/" />
       </Switch>

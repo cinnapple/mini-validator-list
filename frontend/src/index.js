@@ -9,6 +9,7 @@ import appReducer from "./store/reducers/appReducer";
 import notificationReducer from "./store/reducers/notificationReducer";
 import validatorReducer from "./store/reducers/validatorReducer";
 import analyticsReducer from "./store/reducers/analyticsReducer";
+import summaryReducer from "./store/reducers/summaryReducer";
 import selectDialogReducer from "./store/reducers/selectDialogReducer";
 
 import App from "./App";
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
   notification: notificationReducer,
   selectDialog: selectDialogReducer,
   validators: validatorReducer,
-  analytics: analyticsReducer
+  analytics: analyticsReducer,
+  summary: summaryReducer
 });
 
 let composeEnhancers = compose;

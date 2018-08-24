@@ -6,6 +6,10 @@ export default class XRPTipBotButton extends React.Component {
     ready: false
   };
 
+  shouldComponentUpdate() {
+    return false;
+  }
+
   componentDidMount() {
     const script = document.createElement("script");
     script.src = "https://www.xrptipbot.com/static/donate/tipper.js";

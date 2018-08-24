@@ -16,7 +16,7 @@ type AvailableTypes = Lib.Google.IApiResponse;
 
 @injectable()
 export default class GoogleAnalyticsService implements IGoogleService {
-  private _cacheManager: ICacheManager<AvailableTypes>;
+  private _gaCacheManager: ICacheManager<AvailableTypes>;
 
   constructor(
     @inject(TYPES.Lib.Logger) protected _logger: Lib.ILogger,
@@ -27,7 +27,9 @@ export default class GoogleAnalyticsService implements IGoogleService {
     private _googleQueierPromise: Promise<Lib.Google.IApi>,
     @inject(TYPES.IntervalManager) private _intervalManger: IIntervalManager
   ) {
-    this._cacheManager = this._cacheManagerFactory.create(_logger);
+    this._gaCacheManager = this._cacheManagerFactory.create(
+      Cache.MANAGERS.GA_SERVICE
+    );
     this._startIntervalFetchAll();
     this._startInitialFetchAll();
   }
@@ -46,7 +48,7 @@ export default class GoogleAnalyticsService implements IGoogleService {
   }
 
   private async _fetchReport() {
-    this._cacheManager.set(Cache.TYPES.GOOGLE_REFERRALS, async () => {
+    this._gaCacheManager.set(Cache.TYPES.GOOGLE_REFERRALS, async () => {
       const res = await (await this._googleQueierPromise).reports.batchGet({
         requestBody: {
           reportRequests: [
@@ -54,7 +56,9 @@ export default class GoogleAnalyticsService implements IGoogleService {
               viewId: this._configuration.getGAViewId(),
               dateRanges: [
                 {
-                  startDate: "2018-01-01",
+                  startDate: moment(new Date())
+                    .add(-7, "days")
+                    .format("YYYY-MM-DD"),
                   endDate: moment(new Date()).format("YYYY-MM-DD")
                 }
               ],
@@ -114,8 +118,8 @@ export default class GoogleAnalyticsService implements IGoogleService {
   }
 
   async getReferrals(): Promise<Cache.IDataCache<Lib.Google.IApiResponse>> {
-    await this._cacheManager.waitFor(Cache.TYPES.GOOGLE_REFERRALS);
-    return this._cacheManager.get<Lib.Google.IApiResponse>(
+    await this._gaCacheManager.waitFor(Cache.TYPES.GOOGLE_REFERRALS);
+    return this._gaCacheManager.get<Lib.Google.IApiResponse>(
       Cache.TYPES.GOOGLE_REFERRALS
     );
   }

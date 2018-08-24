@@ -4,7 +4,7 @@ import * as actions from "../../store/actions/index";
 
 import axios from "../../util/axios-api";
 import withNetworkHandler from "../../hoc/withNetworkHandler/withNetworkHandler";
-import GridLayout from "../../hoc/Layout/GridLayout";
+import CardLayout from "../../hoc/Layout/CardLayout";
 
 import FilterCard from "../../components/Cards/FilterCard/FilterCard";
 import StatsCard from "../../components/Cards/StatsCard/StatsCard";
@@ -45,7 +45,7 @@ class MainContainer extends React.Component {
     } = this.props;
 
     return (
-      <GridLayout>
+      <CardLayout>
         <FilterCard
           vals={vals}
           app={app}
@@ -64,7 +64,7 @@ class MainContainer extends React.Component {
           onDialogOpen={onDialogOpen}
         />
         <ValidatorListCard vals={vals} isLoading={isLoading} />
-      </GridLayout>
+      </CardLayout>
     );
   }
 }

@@ -69,17 +69,46 @@
     "ja": "ホーム",
     "ru": "Главная"
   },
+  "LINK_COMMBLOG": {
+    "en": "XRP Community Blog"
+  },
+  "LINK_DONATE": {
+    "en": "Donate"
+  },
+  "LINK_GITHUB": {
+    "en": "Source"
+  },
+  "LINK_RIPPLE": {
+    "en": "Ripple"
+  },
+  "LINK_TWITTER": {
+    "en": "Twitter"
+  },
+  "LINK_XRPCHART": {
+    "en": "XRP Charts"
+  },
+  "LINK_XRPLEDGERINFO": {
+    "en": "XRP Ledger Info"
+  },
   "LOAD_ANOTHER_DEFAULT_UNL": {
     "en": "Load Another Default UNL",
     "ja": "他のデフォルトUNLを読み込む",
     "ru": "Прошлые списки узлов",
     "de": "Andere Default UNL laden"
   },
+  "MENU_EXTERNAL": {
+    "en": "External Links",
+    "ja": "外部リンク"
+  },
   "MENU_GET_IN_TOUCH": {
     "en": "Get in touch",
     "ja": "作者にコンタクト",
     "ru": "Контакты",
     "de": "Kontakt aufnehmen"
+  },
+  "MENU_VALIDATORS": {
+    "en": "Validators",
+    "ja": "バリデーター情報"
   },
   "SETTINGS": {
     "en": "Settings",

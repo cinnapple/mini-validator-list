@@ -11,15 +11,19 @@ const styles = theme => ({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 1,
-    paddingBottom: theme.spacing.unit * 3,
+    [theme.breakpoints.down("sm")]: {
+      padding: theme.spacing.unit * 1
+    },
+    [theme.breakpoints.up("sm")]: {
+      padding: theme.spacing.unit * 3
+    },
     [theme.breakpoints.up("md")]: {
       marginLeft: theme.drawerWidth
     }
   },
   toolbar: theme.mixins.toolbar,
   innerContent: {
-    maxWidth: "724px",
+    maxWidth: "768px",
     margin: "0 auto"
   }
 });

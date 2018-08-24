@@ -12,15 +12,15 @@ const SCHEMA = {
 };
 
 class LocalStorageRepository {
-  constructor(private key: string) {}
+  constructor(private _key: string) {}
 
   get = () => {
     let data: AppData;
     try {
-      data = JSON.parse(localStorage.getItem(KEYS.APP));
+      data = JSON.parse(localStorage.getItem(this._key));
     } catch {}
     if (!data) {
-      data = { ...SCHEMA[this.key] };
+      data = { ...SCHEMA[this._key] };
     }
     return data;
   };
@@ -31,7 +31,7 @@ class LocalStorageRepository {
       ..._data,
       ...props
     };
-    localStorage.setItem(this.key, JSON.stringify(newData));
+    localStorage.setItem(this._key, JSON.stringify(newData));
   };
 }
 

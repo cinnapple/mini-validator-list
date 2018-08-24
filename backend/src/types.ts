@@ -15,7 +15,10 @@ export interface IThirdPartyLibFactory {
 }
 
 export interface ICacheManagerFactory {
-  create<TCacheType>(_logger: Lib.ILogger): ICacheManager<TCacheType>;
+  createReadonly<TCacheType>(
+    key: Cache.MANAGERS
+  ): IReadOnlyCacheManager<TCacheType>;
+  create<TCacheType>(key: Cache.MANAGERS): ICacheManager<TCacheType>;
 }
 
 export interface IIntervalManager {
@@ -23,12 +26,16 @@ export interface IIntervalManager {
   createInterval(name: string, action: () => void, interval: number): void;
 }
 
-export interface ICacheManager<TCacheType> {
+export interface IReadOnlyCacheManager<TCacheType> {
   get<TExtractCacheType extends TCacheType>(
     name: string
   ): Cache.IDataCache<TExtractCacheType>;
-  set(name: string, action: () => Promise<TCacheType | TCacheType[]>): void;
   waitFor(name: string, who?: string): void;
+}
+
+export interface ICacheManager<TCacheType>
+  extends IReadOnlyCacheManager<TCacheType> {
+  set(name: string, action: () => Promise<TCacheType | TCacheType[]>): void;
 }
 
 export interface IServer {
@@ -36,6 +43,11 @@ export interface IServer {
 }
 
 export namespace Cache {
+  export enum MANAGERS {
+    RIPPLE_SERVICE,
+    GITHUB_SERVICE,
+    GA_SERVICE
+  }
   export const TYPES = {
     RIPPLE_DEFAULT_UNL: "ripple.defaultUNL",
     RIPPLE_DAILY_REPORT: "ripple.reports",
@@ -44,13 +56,14 @@ export namespace Cache {
     GITHUB_DEFAULT_UNL_ARCHIVES: "github.defaultUNLArchives",
     GITHUB_DEFAULT_UNL: "github.defaultUNL",
     IPSTACK_GEO: "ipstack.geo",
-    MERGED_DATA: "data.merged"
+    MERGED_DATA: "data.merged",
+    SUMMARY_DATA: "data.summary"
   };
   export interface IDataCache<TCacheType> {
     lastUpdated: Date;
     list: TCacheType[];
   }
-  export type MergedDataCache = {
+  export type MergedData = {
     pubkey: string;
     domain: string;
     is_ripple: boolean;
@@ -62,10 +75,24 @@ export namespace Cache {
     total_ledgers: number;
     city: string;
     country_name: string;
+    country_code: string;
     region_name: string;
     latitude: number;
     longitude: number;
   };
+
+  export type SummaryStats = {};
+}
+
+export namespace Stats {
+  export type Item = {
+    heading: string;
+    value: number;
+  };
+  export namespace Data {
+    export type List = { list: any[] };
+    export type XY = { x: number[]; y: string[] };
+  }
 }
 
 export type ResolveDnsResponse = {
@@ -103,7 +130,8 @@ export interface IRippleService {
   getValidatorInfo(params?: {
     date: string;
     defaultUnl: Lib.RippleData.DefaultUnlRawResponse;
-  }): Promise<Cache.IDataCache<Cache.MergedDataCache>>;
+  }): Promise<Cache.IDataCache<Cache.MergedData>>;
+  getValidatorSummary();
   getGeoInfo(): Promise<Cache.IDataCache<Lib.IPStackResponse>>;
 }
 
@@ -112,11 +140,14 @@ export interface IGoogleService {
 }
 
 export interface IGitHubService {
-  getDefaultUnlArchives(): Promise<Cache.IDataCache<Lib.GitHub.IRepositoryContentResponse>>;
+  getDefaultUnlArchives(): Promise<
+    Cache.IDataCache<Lib.GitHub.IRepositoryContentResponse>
+  >;
   startFetchDefaultUnl(date: string): void;
   getDefaultUnl(
     date: string
   ): Promise<Cache.IDataCache<Lib.RippleData.DefaultUnlRawResponse>>;
+  getLastDefaultUnlDate(): Promise<string>;
 }
 
 export interface ICrypto {
@@ -129,6 +160,7 @@ export namespace Lib {
   export type IPStackResponse = {
     domain?: string;
     ip: string;
+    country_code: string;
     country_name: string;
     region_name: string;
     city: string;
@@ -143,6 +175,7 @@ export namespace Lib {
       domain: string;
       domain_state: string;
       validation_public_key: string;
+      last_datetime: string;
     };
     export type DailyReportRawResponse = {
       validation_public_key: string;

@@ -30,6 +30,10 @@ export namespace State {
     referres: any[];
     ready: boolean;
   };
+  export type Summary = {
+    summary: any[];
+    ready: boolean;
+  };
   export type ArchivesState = {
     archives: any[];
     lastUpdated: Date;
@@ -56,6 +60,8 @@ export interface ValidatorList {
 }
 
 export interface ReferralsList {}
+
+export interface SummaryList {}
 
 export interface Archive {
   date: string;
@@ -94,8 +100,17 @@ export type LanguageKeys = {
   FILTER_BY_VERIFIED_DOMAINS_ONLY: AvailableLanguages;
   FILTER_CLEAR: AvailableLanguages;
   HOME: AvailableLanguages;
+  LINK_COMMBLOG: AvailableLanguages;
+  LINK_RIPPLE: AvailableLanguages;
+  LINK_XRPCHART: AvailableLanguages;
+  LINK_XRPLEDGERINFO: AvailableLanguages;
+  LINK_DONATE: AvailableLanguages;
+  LINK_GITHUB: AvailableLanguages;
+  LINK_TWITTER: AvailableLanguages;
   LOAD_ANOTHER_DEFAULT_UNL: AvailableLanguages;
   MENU_GET_IN_TOUCH: AvailableLanguages;
+  MENU_EXTERNAL: AvailableLanguages;
+  MENU_VALIDATORS: AvailableLanguages;
   SETTINGS: AvailableLanguages;
   SETTINGS_APPEARANCE: AvailableLanguages;
   SETTINGS_LANGUAGE: AvailableLanguages;

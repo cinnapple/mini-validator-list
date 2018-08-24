@@ -51,6 +51,11 @@ class Server {
       ctx.body = result;
     });
 
+    this._router.get("/api/summary", async ctx => {
+      const result = await this._rippleService.getValidatorSummary();
+      ctx.body = result;
+    });
+
     this._router.post("/api/archives/:date", async ctx => {
       const date = ctx.params.date;
       this._githubService.startFetchDefaultUnl(date);

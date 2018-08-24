@@ -16,15 +16,19 @@ import XRPTipBotButton from "../Common/XRPTipBotButton";
 
 const styles = theme => ({
   toolbar: theme.mixins.toolbar,
-  title: {
+  titleListItem: {},
+  titleListItemText: {
     fontFamily: "Pacifico, sans-serif",
-    fontSize: "130%"
+    [theme.breakpoints.down("xs")]: {
+      fontSize: "100%"
+    },
+    [theme.breakpoints.up("sm")]: {
+      fontSize: "135%"
+    }
   },
-  link: {
-    fontWeight: "bold"
-  },
+  link: {},
   nested: {
-    paddingLeft: theme.spacing.unit * 4
+    paddingLeft: theme.spacing.unit * 5
   },
   bottom: {
     position: "absolute",
@@ -34,100 +38,130 @@ const styles = theme => ({
   }
 });
 
-class NavigationItems extends React.Component {
-  state = { externalLinkOpen: false };
-  handleClick = () => {
-    this.setState(state => ({ externalLinkOpen: !state.externalLinkOpen }));
-  };
-  render() {
-    const { classes, handleDrawerToggle } = this.props;
+const createListItems = (
+  links,
+  state,
+  handleDrawerToggle,
+  handleClick,
+  classes,
+  i
+) => {
+  const listItems = [];
 
-    return (
-      <React.Fragment>
-        <div>
-          <ListItem className={classes.toolbar}>
+  links.forEach((link, index) => {
+    const navKey = `nav-${i}-${index}`;
+    const isExternal = link.path.startsWith("http");
+    if (link.sub) {
+      const subNavKey = `sub${navKey}`;
+      const subItems = [
+        <ListItem key={navKey} button onClick={() => handleClick(subNavKey)}>
+          <ListItemText
+            disableTypography
+            primary={
+              <Typography
+                className={
+                  state.externalLinkOpen[subNavKey] ? classes.link : ""
+                }
+              >
+                {t(link.res)}
+              </Typography>
+            }
+          />
+        </ListItem>,
+        <Collapse
+          key={subNavKey}
+          in={state.externalLinkOpen[subNavKey]}
+          timeout="auto"
+          unmountOnExit
+        >
+          <List key={subNavKey} component="div" disablePadding>
+            {createListItems(
+              link.sub,
+              state,
+              handleDrawerToggle,
+              handleClick,
+              classes,
+              index
+            )}
+          </List>
+        </Collapse>
+      ];
+
+      listItems.push(subItems);
+    } else {
+      listItems.push(
+        <ListItem
+          key={navKey}
+          button
+          component={isExternal ? "a" : Link}
+          to={link.path}
+          href={isExternal ? link.path : undefined}
+          target={isExternal ? "_blank" : undefined}
+          onClick={isExternal ? undefined : handleDrawerToggle}
+          className={i ? classes.nested : ""}
+        >
+          {location.pathname === link.path ? (
             <ListItemText
               disableTypography
               primary={
-                <Typography className={classes.title}>
-                  Mini Validator List
+                <Typography className={classes.link} color={"secondary"}>
+                  {t(link.res)}
+                </Typography>
+              }
+            />
+          ) : (
+            <ListItemText
+              disableTypography
+              primary={<Typography>{t(link.res)}</Typography>}
+            />
+          )}
+        </ListItem>
+      );
+    }
+  });
+
+  return listItems;
+};
+
+class NavigationItems extends React.Component {
+  state = { externalLinkOpen: {} };
+  handleClick = name => {
+    const newProp = {
+      ...this.state.externalLinkOpen[name],
+      [name]: !this.state.externalLinkOpen[name]
+    };
+    this.setState(state => ({
+      externalLinkOpen: newProp
+    }));
+  };
+  render() {
+    const { classes, handleDrawerToggle } = this.props;
+    const isProduction = process.env["NODE_ENV"] === "production";
+
+    return (
+      <div>
+        <List component="div" className={classes.toolbar}>
+          <ListItem className={classes.titleListItem}>
+            <ListItemText
+              disableTypography
+              primary={
+                <Typography className={classes.titleListItemText}>
+                  {t(res.APP_TITLE)}
                 </Typography>
               }
             />
           </ListItem>
           <Divider />
-          {links.map((link, index) => (
-            <React.Fragment key={`nav-${index}`}>
-              <ListItem
-                button
-                component={link.path.startsWith("http") ? "a" : Link}
-                to={link.path}
-                href={link.path.startsWith("http") ? link.path : undefined}
-                target={link.path.startsWith("http") ? "_blank" : undefined}
-                onClick={handleDrawerToggle}
-              >
-                {location.pathname === link.path ? (
-                  <ListItemText
-                    disableTypography
-                    primary={
-                      <Typography className={classes.link} color={"secondary"}>
-                        {t(link.res)}
-                      </Typography>
-                    }
-                  />
-                ) : (
-                  <ListItemText
-                    disableTypography
-                    primary={<Typography>{t(link.res)}</Typography>}
-                  />
-                )}
-              </ListItem>
-            </React.Fragment>
-          ))}
-          <ListItem button onClick={this.handleClick}>
-            <ListItemText
-              disableTypography
-              primary={
-                <Typography
-                  className={this.state.externalLinkOpen ? classes.link : ""}
-                >
-                  {t(res.MENU_GET_IN_TOUCH)}
-                </Typography>
-              }
-            />
-          </ListItem>
-          <Collapse
-            in={this.state.externalLinkOpen}
-            timeout="auto"
-            unmountOnExit
-          >
-            <List component="div" disablePadding>
-              <ListItem
-                className={classes.nested}
-                button
-                component="a"
-                href="https://twitter.com/CinnappleFun"
-                target="_blank"
-              >
-                <ListItemText
-                  disableTypography
-                  primary={<Typography>@CinnappleFun</Typography>}
-                />
-              </ListItem>
-              <ListItem
-                className={classes.nested}
-                button
-                component="a"
-                href="https://github.com/cinnapple/mini-validator-list"
-                target="_blank"
-              >
-                <ListItemText
-                  disableTypography
-                  primary={<Typography>Source</Typography>}
-                />
-              </ListItem>
-            </List>
-          </Collapse>
+          {createListItems(
+            links,
+            this.state,
+            handleDrawerToggle,
+            this.handleClick,
+            classes,
+            ""
+          )}
+        </List>
+        {isProduction && (
           <List component="div" disablePadding className={classes.bottom}>
             <ListItem>
               <ListItemText
@@ -142,8 +176,8 @@ class NavigationItems extends React.Component {
               />
             </ListItem>
           </List>
-        </div>
-      </React.Fragment>
+        )}
+      </div>
     );
   }
 }
