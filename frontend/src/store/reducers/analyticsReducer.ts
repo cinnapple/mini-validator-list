@@ -10,7 +10,7 @@ const initialState: State.Analytics = {
 const setReferralsReducer = (state, action) => {
   const data = <Response<ReferralsList>>action.data;
   return updateObject(state, {
-    referres: data.list,
+    referres: data.data,
     lastUpdated: data.lastUpdated,
     ready: true
   });

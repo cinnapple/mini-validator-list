@@ -23,8 +23,8 @@ export const initValidators = (date, filter) => {
         axiosInstance.get<any>("/archives")
       ];
       const data = await Promise.all(promises);
-      const validators = data[0].data.list;
-      const archives = data[1].data.list.map(archive => ({
+      const validators = data[0].data.data;
+      const archives = data[1].data.data.map(archive => ({
         ...archive,
         id: archive.date
       }));
@@ -54,7 +54,7 @@ export const fetchArchivesFailed = () => {
 export const selectDefaultUnl = date => {
   return async dispatch => {
     try {
-      axiosInstance.post(`/archives/${date}`);
+      axiosInstance.get(`/archives/${date}`);
       dispatch({
         type: actionTypes.DEFAULT_UNL_SELECTED,
         data: date

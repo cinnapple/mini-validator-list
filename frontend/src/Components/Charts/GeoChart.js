@@ -82,7 +82,7 @@ class MapChart extends React.Component {
                 d.item = data[result];
                 return gradients[result];
               }
-              return _palette.dark(color);
+              return _palette.black;
             }}
             onMouseLeave={data => event => {
               hideTooltip();

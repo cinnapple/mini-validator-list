@@ -8,13 +8,16 @@
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.22",
+    "@types/jest": "^23.3.1",
     "@types/koa": "^2.0.46",
     "@types/koa-router": "^7.0.30",
     "@types/koa-static": "^4.0.0",
     "@types/node": "~8.10.18",
     "@types/winston": "^2.3.9",
+    "jest": "^23.5.0",
     "rimraf": "~2.6.2",
     "testdouble": "^3.8.1",
+    "ts-jest": "^23.1.4",
     "tslint": "~5.10.0",
     "tslint-microsoft-contrib": "~5.0.3",
     "tsutils": "~2.27.1",
@@ -53,5 +56,19 @@
     "reflect-metadata": "^0.1.12",
     "tslib": "~1.9.2",
     "winston": "^3.0.0"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.ts?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js?|ts?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }

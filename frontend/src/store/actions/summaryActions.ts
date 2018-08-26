@@ -6,7 +6,7 @@ export const setSummary = (data: Response<SummaryList>) => {
   return {
     type: actionTypes.FETCH_SUMMARY,
     data: {
-      summary: data.list[0],
+      summary: data.data,
       lastUpdated: data.lastUpdated
     }
   };
@@ -21,11 +21,8 @@ export const fetchSummaryFailed = () => {
 export const initSummary = () => {
   return async dispatch => {
     try {
-      const result = await Promise.all([
-        axiosInstance.get<Response<SummaryList>>("summary")
-      ]);
-      const data = result[0].data;
-      dispatch(setSummary(data));
+      const result = await axiosInstance.get<Response<SummaryList>>("summary");
+      dispatch(setSummary(result.data));
     } catch (e) {
       dispatch(fetchSummaryFailed());
     }

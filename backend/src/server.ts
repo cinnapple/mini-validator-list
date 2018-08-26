@@ -6,7 +6,7 @@ import {
   IRippleService,
   Lib,
   IGoogleService,
-  IGitHubService
+  GitHub
 } from "./types";
 
 import * as cors from "@koa/cors";
@@ -20,7 +20,7 @@ class Server {
     @inject(TYPES.Configuration) protected _configuration: IConfiguration,
     @inject(TYPES.RippleService) protected _rippleService: IRippleService,
     @inject(TYPES.GoogleService) protected _googleService: IGoogleService,
-    @inject(TYPES.GitHubService) protected _githubService: IGitHubService
+    @inject(TYPES.GitHubService) protected _githubService: GitHub.IGitHubService
   ) {
     this._setRoutes();
     this._app.use(this._router.routes());
@@ -33,11 +33,7 @@ class Server {
     });
     this._router.get("/api/validators/:date", async ctx => {
       const date = ctx.params.date;
-      const defaultUnl = await this._githubService.getDefaultUnl(date);
-      const result = await this._rippleService.getValidatorInfo({
-        date: date,
-        defaultUnl: defaultUnl.list[0]
-      });
+      const result = await this._rippleService.getValidatorInfo(date);
       ctx.body = result;
     });
 
@@ -56,10 +52,10 @@ class Server {
       ctx.body = result;
     });
 
-    this._router.post("/api/archives/:date", async ctx => {
+    this._router.get("/api/archives/:date", async ctx => {
       const date = ctx.params.date;
-      this._githubService.startFetchDefaultUnl(date);
-      ctx.body = { success: true };
+      const data = await this._githubService.getDefaultUnlByDate(date);
+      ctx.body = data;
     });
   }
 
@@ -77,7 +73,7 @@ class DevServer extends Server {
     @inject(TYPES.Configuration) protected _configuration: IConfiguration,
     @inject(TYPES.RippleService) protected _rippleService: IRippleService,
     @inject(TYPES.GoogleService) protected _googleService: IGoogleService,
-    @inject(TYPES.GitHubService) protected _githubService: IGitHubService
+    @inject(TYPES.GitHubService) protected _githubService: GitHub.IGitHubService
   ) {
     super(
       _logger,

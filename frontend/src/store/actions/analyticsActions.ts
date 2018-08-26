@@ -22,12 +22,7 @@ export const initReferrals = () => {
         axiosInstance.get<Response<ReferralsList>>("referrals")
       ]);
       const referrals = data[0].data;
-      dispatch(
-        setReferrals({
-          lastUpdated: referrals.lastUpdated,
-          list: referrals.list
-        })
-      );
+      dispatch(setReferrals(referrals));
     } catch (e) {
       dispatch(fetchReferralsFailed());
     }

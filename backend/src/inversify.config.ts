@@ -2,7 +2,6 @@ import { Container } from "inversify";
 import {
   IRippleService,
   IConfiguration,
-  ICacheManagerFactory,
   IProcessEnv,
   ICrypto,
   IQuerier,
@@ -10,20 +9,19 @@ import {
   Lib,
   IGoogleService,
   IThirdPartyLibFactory,
-  IIntervalManager,
-  IGitHubService
+  GitHub
 } from "./types";
 import { TYPES } from "./inversify.types";
 import { Server, DevServer } from "./server";
-import RippleService from "./services/rippleService";
-import GoogleService from "./services/googleAnalyticsService";
+import RippleService from "./service.ripple/rippleService";
+import GitHubService from "./service.github/githubService";
+import GoogleService from "./service.ga/googleAnalyticsService";
 import Configuration from "./configuration";
-import CacheManagerFactory from "./cache/cacheManagerFactory";
 import Crypto from "./crypto";
 import Querier from "./querier";
 import ThirdPartyLibFactory from "./thirdPartyLibFactory";
-import IntervalManager from "./services/intervalManager";
-import GitHubService from "./services/githubService";
+import { Memoize } from "./cache/cache.types";
+import Memoizer from "./cache/memoizer";
 
 require("dotenv").config();
 
@@ -33,6 +31,10 @@ myContainer.bind<IProcessEnv>(TYPES.ProcessEnv).toConstantValue(process.env);
 myContainer
   .bind<ICrypto>(TYPES.Crypto)
   .to(Crypto)
+  .inSingletonScope();
+myContainer
+  .bind<Memoize.IMemoizer>(TYPES.Memoizer)
+  .to(Memoizer)
   .inSingletonScope();
 myContainer
   .bind<IQuerier>(TYPES.Querier)
@@ -47,20 +49,12 @@ myContainer
   .to(GoogleService)
   .inSingletonScope();
 myContainer
-  .bind<IGitHubService>(TYPES.GitHubService)
+  .bind<GitHub.IGitHubService>(TYPES.GitHubService)
   .to(GitHubService)
   .inSingletonScope();
 myContainer
   .bind<IConfiguration>(TYPES.Configuration)
   .to(Configuration)
-  .inSingletonScope();
-myContainer
-  .bind<IIntervalManager>(TYPES.IntervalManager)
-  .to(IntervalManager)
-  .inSingletonScope();
-myContainer
-  .bind<ICacheManagerFactory>(TYPES.CacheManagerFactory)
-  .to(CacheManagerFactory)
   .inSingletonScope();
 myContainer
   .bind<IServer>(TYPES.Server)
@@ -89,7 +83,7 @@ myContainer
   .bind<Promise<Lib.Google.IApi>>(TYPES.Lib.GoogleApi)
   .toConstantValue(thirdPartyLibFactory.createGAReportingApi());
 myContainer
-  .bind<Lib.GitHub.IApi>(TYPES.Lib.GitHubApi)
+  .bind<GitHub.IApi>(TYPES.Lib.GitHubApi)
   .toConstantValue(thirdPartyLibFactory.createGitHubApi());
 
 export { myContainer };

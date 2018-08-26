@@ -11,31 +11,29 @@ export interface IThirdPartyLibFactory {
   createRouter(): Lib.Koa.IRouter;
   createLogger(): Lib.ILogger;
   createGAReportingApi(): Promise<Lib.Google.IApi>;
-  createGitHubApi(): Lib.GitHub.IApi;
+  createGitHubApi(): GitHub.IApi;
 }
 
-export interface ICacheManagerFactory {
-  createReadonly<TCacheType>(
-    key: Cache.MANAGERS
-  ): IReadOnlyCacheManager<TCacheType>;
-  create<TCacheType>(key: Cache.MANAGERS): ICacheManager<TCacheType>;
+export namespace GitHub {
+  export interface IGitHubService {
+    getDefaultUnlArchives(): Promise<
+      IServiceResponse<IRepositoryContentResponse>
+    >;
+    getDefaultUnlByDate(
+      date: string
+    ): Promise<IServiceResponse<Lib.RippleData.DefaultUnlRawResponse>>;
+  }
+  export interface IApi extends Octokit {}
+  export interface IRepositoryContentResponse {
+    name: string;
+    url: string;
+    date: string;
+  }
 }
 
-export interface IIntervalManager {
-  clearInterval(name: string): void;
-  createInterval(name: string, action: () => void, interval: number): void;
-}
-
-export interface IReadOnlyCacheManager<TCacheType> {
-  get<TExtractCacheType extends TCacheType>(
-    name: string
-  ): Cache.IDataCache<TExtractCacheType>;
-  waitFor(name: string, who?: string): void;
-}
-
-export interface ICacheManager<TCacheType>
-  extends IReadOnlyCacheManager<TCacheType> {
-  set(name: string, action: () => Promise<TCacheType | TCacheType[]>): void;
+export interface IServiceResponse<TItem> {
+  lastUpdated: Date;
+  data: TItem;
 }
 
 export interface IServer {
@@ -59,10 +57,6 @@ export namespace Cache {
     MERGED_DATA: "data.merged",
     SUMMARY_DATA: "data.summary"
   };
-  export interface IDataCache<TCacheType> {
-    lastUpdated: Date;
-    list: TCacheType[];
-  }
   export type MergedData = {
     pubkey: string;
     domain: string;
@@ -127,27 +121,12 @@ export interface IQuerier {
 }
 
 export interface IRippleService {
-  getValidatorInfo(params?: {
-    date: string;
-    defaultUnl: Lib.RippleData.DefaultUnlRawResponse;
-  }): Promise<Cache.IDataCache<Cache.MergedData>>;
-  getValidatorSummary();
-  getGeoInfo(): Promise<Cache.IDataCache<Lib.IPStackResponse>>;
+  getValidatorInfo(date?: string): Promise<IServiceResponse<Cache.MergedData>>;
+  getValidatorSummary(): Promise<IServiceResponse<Cache.SummaryStats>>;
 }
 
 export interface IGoogleService {
-  getReferrals(): Promise<Cache.IDataCache<Lib.Google.IApiResponse>>;
-}
-
-export interface IGitHubService {
-  getDefaultUnlArchives(): Promise<
-    Cache.IDataCache<Lib.GitHub.IRepositoryContentResponse>
-  >;
-  startFetchDefaultUnl(date: string): void;
-  getDefaultUnl(
-    date: string
-  ): Promise<Cache.IDataCache<Lib.RippleData.DefaultUnlRawResponse>>;
-  getLastDefaultUnlDate(): Promise<string>;
+  getReferrals(): Promise<IServiceResponse<Lib.Google.IApiResponse>>;
 }
 
 export interface ICrypto {
@@ -196,14 +175,6 @@ export namespace Lib {
   export namespace Koa {
     export interface IServer extends Koa {}
     export interface IRouter extends Router {}
-  }
-  export namespace GitHub {
-    export interface IApi extends Octokit {}
-    export interface IRepositoryContentResponse {
-      name: string;
-      url: string;
-      date: string;
-    }
   }
   export namespace Google {
     export type JwtJson = {

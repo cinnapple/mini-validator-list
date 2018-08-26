@@ -26,7 +26,8 @@ const basePalette = {
   red: "#F61F3D",
   orange: "#FF7821",
   yellow: "#FFAD21",
-  grey: "#909590"
+  grey: "#909590",
+  black: "#303030"
 };
 
 const lum = {
@@ -78,6 +79,7 @@ const createGradientColor = (baseColor, range) => {
   for (var i = lum.lightest; i >= max; i += step) {
     grad.push(colorLuminance(basePalette[baseColor], i));
   }
+  grad[1] = basePalette.black;
   return grad;
 };
 
@@ -87,6 +89,7 @@ const _palette = {
   red: basePalette.red,
   orange: basePalette.orange,
   grey: basePalette.grey,
+  black: basePalette.black,
   dark: createDarkColor,
   darker: createDarkerColor,
   gradient2: color => createGradientColor(color, 2)

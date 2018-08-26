@@ -1,17 +1,22 @@
-module.exports = () => {
+module.exports = function() {
   return {
-    files: ["tsconfig.json", "src/**/*.ts", "__mocks__/*.*", "!__tests__/*.ts"],
+    files: [
+      "src/**/*.ts",
+      { pattern: "tsconfig.*", instrument: false },
+      { pattern: "package.json", instrument: false }
+    ],
+
     tests: ["__tests__/**/*.spec.ts"],
+
     env: {
       type: "node",
       runner: "node"
     },
+
     testFramework: "jest",
 
     setup: wallaby => {
-      const jestConfig = require("./package.json").jest;
-      // for example:
-      // jestConfig.globals = { "__DEV__": true };
+      var jestConfig = require("./package.json").jest;
       wallaby.testFramework.configure(jestConfig);
     }
   };

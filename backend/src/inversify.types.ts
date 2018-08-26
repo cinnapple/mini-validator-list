@@ -11,6 +11,7 @@ const TYPES = {
   CacheManagerFactory: Symbol.for("CacheManagerFactory"),
   IntervalManager: Symbol.for("IntervalManager"),
   ThirdPartyLibFactory: Symbol.for("ThirdPartyLibFactory"),
+  Memoizer: Symbol.for("Memoizer"),
   Lib: {
     Koa: {
       App: Symbol.for("Lib.Koa.App"),

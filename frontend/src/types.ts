@@ -51,7 +51,7 @@ export namespace State {
 export type SelectableListItemOption = {};
 
 export interface Response<T> {
-  list: T[];
+  data: T;
   lastUpdated: Date;
 }
 

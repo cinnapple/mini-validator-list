@@ -1,5 +1,5 @@
 import "jest";
-import Crypto from "../src/api/crypto";
+import Crypto from "../src/crypto";
 
 describe("Crypto", () => {
   const crypto = new Crypto();

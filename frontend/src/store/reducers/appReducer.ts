@@ -6,7 +6,7 @@ import { State, AppMode } from "../../types";
 
 const initialState: State.App = {
   themeType: localStorageService.getAppData().themeType || "light",
-  lang: localStorageService.getAppData().lang || "en",
+  lang: localStorageService.getAppData().lang || "en"
 };
 
 const setThemeTypeReducer = (state, action) => {
