@@ -8,7 +8,6 @@ import BrowserRouter from "react-router-dom/es/BrowserRouter";
 import appReducer from "./store/reducers/appReducer";
 import notificationReducer from "./store/reducers/notificationReducer";
 import validatorReducer from "./store/reducers/validatorReducer";
-import analyticsReducer from "./store/reducers/analyticsReducer";
 import summaryReducer from "./store/reducers/summaryReducer";
 import selectDialogReducer from "./store/reducers/selectDialogReducer";
 
@@ -19,7 +18,6 @@ const rootReducer = combineReducers({
   notification: notificationReducer,
   selectDialog: selectDialogReducer,
   validators: validatorReducer,
-  analytics: analyticsReducer,
   summary: summaryReducer
 });
 

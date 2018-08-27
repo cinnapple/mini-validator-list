@@ -19,7 +19,10 @@ describe("Memoizer", () => {
     const memoizer = new Memoizer(_logger);
     const mockCallback = createMockCallback("a");
     memoizer.register("cache1", mockCallback);
-    await expect(memoizer.get("cache1")).resolves.toEqual("a");
+    await expect(memoizer.get("cache1")).resolves.toEqual({
+      data: "a",
+      lastUpdated: expect.any(Date)
+    });
     expect(mockCallback.apply).toHaveBeenCalledTimes(1);
   });
 
@@ -29,9 +32,15 @@ describe("Memoizer", () => {
     const mockCallback2 = createMockCallback("2");
     memoizer.register("cache1", mockCallback1);
     memoizer.register("cache2", mockCallback2);
-    await expect(memoizer.get("cache1")).resolves.toEqual("1");
+    await expect(memoizer.get("cache1")).resolves.toEqual({
+      data: "1",
+      lastUpdated: expect.any(Date)
+    });
     expect(mockCallback1.apply).toHaveBeenCalledTimes(1);
-    await expect(memoizer.get("cache2")).resolves.toEqual("2");
+    await expect(memoizer.get("cache2")).resolves.toEqual({
+      data: "2",
+      lastUpdated: expect.any(Date)
+    });
     expect(mockCallback2.apply).toHaveBeenCalledTimes(1);
   });
 
@@ -40,7 +49,10 @@ describe("Memoizer", () => {
 
     const mockCallback = createMockCallback("1");
     memoizer.register("cache1", mockCallback, <any>{});
-    await expect(memoizer.get("cache1")).resolves.toEqual("1");
+    await expect(memoizer.get("cache1")).resolves.toEqual({
+      data: "1",
+      lastUpdated: expect.any(Date)
+    });
     expect(mockCallback.apply).toHaveBeenNthCalledWith(1, null, []);
   });
 
@@ -50,7 +62,10 @@ describe("Memoizer", () => {
     memoizer.register("cache1", <any>mockCallback, {
       params: { arg1: "1", arg2: "2" }
     });
-    await expect(memoizer.get("cache1")).resolves.toEqual("a");
+    await expect(memoizer.get("cache1")).resolves.toEqual({
+      data: "a",
+      lastUpdated: expect.any(Date)
+    });
     expect(mockCallback.apply).toHaveBeenNthCalledWith(1, null, []);
     expect(setInterval).not.toBeCalled();
   });
@@ -59,7 +74,10 @@ describe("Memoizer", () => {
     const memoizer = new Memoizer(_logger);
     const mockCallback = createMockCallback("a");
     memoizer.register("cache1", mockCallback, <any>{ interval: 1000 });
-    await expect(memoizer.get("cache1")).resolves.toEqual("a");
+    await expect(memoizer.get("cache1")).resolves.toEqual({
+      data: "a",
+      lastUpdated: expect.any(Date)
+    });
     expect(mockCallback.apply).toHaveBeenNthCalledWith(1, null, []);
     expect(setInterval).toHaveBeenNthCalledWith(1, expect.anything(), 1000);
   });
@@ -88,7 +106,10 @@ describe("Memoizer", () => {
     const memoizer = new Memoizer(_logger);
     const mockCallback = createMockCallback("1");
     memoizer.register("cacheGet", mockCallback);
-    await expect(memoizer.get("cacheGet")).resolves.toEqual("1");
+    await expect(memoizer.get("cacheGet")).resolves.toEqual({
+      data: "1",
+      lastUpdated: expect.any(Date)
+    });
     expect(mockCallback.apply).toHaveBeenNthCalledWith(1, null, []);
   });
 
@@ -108,7 +129,10 @@ describe("Memoizer", () => {
     // second call - should get from the cache
     await expect(
       memoizer.get("cacheGet", { arg1: "arg1", arg2: "arg2" })
-    ).resolves.toEqual("1");
+    ).resolves.toEqual({
+      data: "1",
+      lastUpdated: expect.any(Date)
+    });
     expect(mockCallback.apply).not.toHaveBeenCalledTimes(2);
   });
 
@@ -127,20 +151,6 @@ describe("Memoizer", () => {
     await memoizer.get("cacheGet", { arg1: "arg1", arg2: "arg3" });
   });
 
-  test("startUpdate - no interval throws exception", async () => {
-    const memoizer = new Memoizer(_logger);
-    const mockCallback = createMockCallback("a");
-    memoizer.register("cache", <any>mockCallback, {
-      params: { arg1: "arg1" }
-    });
-
-    await expect(memoizer.startUpdate("cache")).rejects.toEqual(
-      new Error(
-        "No interval was set for cache 'cache' with params: 'undefined'"
-      )
-    );
-  });
-
   test("startUpdate sets setInterval", async () => {
     const memoizer = new Memoizer(_logger);
     const mockCallback = createMockCallback("a");
@@ -148,7 +158,6 @@ describe("Memoizer", () => {
       params: { arg1: "arg1" },
       interval: 1000
     });
-    await memoizer.startUpdate("cache", { arg1: "arg1" });
     expect(setInterval).toHaveBeenNthCalledWith(1, expect.any(Function), 1000);
   });
 
@@ -159,8 +168,25 @@ describe("Memoizer", () => {
       params: { arg1: "arg1" },
       interval: 1000
     });
-    await memoizer.startUpdate("cache", { arg1: "arg1" });
     jest.runOnlyPendingTimers();
     expect(mockCallback.apply).toBeCalled();
+  });
+
+  test("subordinateCache gets deleted when masterCache updated", async () => {
+    const memoizer = new Memoizer(_logger);
+    const mockCallback = createMockCallback("a");
+    memoizer.register("cache", <any>mockCallback, {
+      params: { arg1: "arg1" },
+      interval: 1000
+    });
+
+    // make another variant call - this will create a subordinateCache.
+    await memoizer.get("cache", { arg1: "arg1", arg2: "arg2" });
+    expect(mockCallback.apply).toHaveBeenCalledTimes(1);
+    jest.runOnlyPendingTimers();
+    expect(mockCallback.apply).toHaveBeenCalledTimes(2);
+    // make the same variant call - the subordinateCache should have been deleted
+    await memoizer.get("cache", { arg1: "arg1", arg2: "arg2" });
+    expect(mockCallback.apply).toHaveBeenCalledTimes(3);
   });
 });

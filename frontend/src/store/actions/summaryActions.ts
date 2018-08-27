@@ -21,7 +21,7 @@ export const fetchSummaryFailed = () => {
 export const initSummary = () => {
   return async dispatch => {
     try {
-      const result = await axiosInstance.get<Response<SummaryList>>("summary");
+      const result = await axiosInstance.get<Response<SummaryList>>("summary/6");
       dispatch(setSummary(result.data));
     } catch (e) {
       dispatch(fetchSummaryFailed());

@@ -28,28 +28,28 @@ export default class Memoizer implements Memoize.IMemoizer {
     params = params || {};
     const item = this._cache[name];
     const paramItemKey = this._toParamsKey(params);
-    if (!item.values[paramItemKey]) {
-      item.values[paramItemKey] = {
-        lastUpdated: undefined,
-        status: "",
-        item: undefined,
-        params: params
-      };
+    let paramItem;
+    // try to find from masterCache.
+    if (item.masterCache[paramItemKey]) {
+      paramItem = item.masterCache[paramItemKey];
     }
-    const paramItem = item.values[paramItemKey];
-    return paramItem;
-  };
-
-  private _delete = (name: string) => {
-    // clear interval if the cache already exists
-    if (this._cache[name] && this._cache[name].values) {
-      Object.keys(this._cache[name].values).forEach(params => {
-        const item = this._cache[name].values[params];
-        if (item.intervalKey) {
-          clearInterval(item.intervalKey);
+    // try to find from subordinateCache.
+    if (item.subordinateCache && item.subordinateCache[paramItemKey]) {
+      paramItem = item.subordinateCache[paramItemKey];
+    }
+    // if not found, craete a subordinate cache.
+    if (!paramItem) {
+      item.subordinateCache = {
+        [paramItemKey]: {
+          lastUpdated: undefined,
+          status: "",
+          item: undefined,
+          params: params
         }
-      });
+      };
+      paramItem = item.subordinateCache[paramItemKey];
     }
+    return paramItem;
   };
 
   private _update = async (
@@ -71,6 +71,26 @@ export default class Memoizer implements Memoize.IMemoizer {
     return paramItem;
   };
 
+  private startUpdate = async (
+    name: string,
+    params?: Memoize.MemoizedFuncParams
+  ) => {
+    const paramItem = this._getCacheForParams(name, params);
+    if (paramItem.interval && !paramItem.intervalKey) {
+      paramItem.intervalKey = setInterval(async () => {
+        // delete all variants
+        delete this._cache[name].subordinateCache;
+        // update the base cache
+        await this._update(name, params);
+      }, paramItem.interval);
+      this._logger.info(
+        `START UPDATE ${name}:${JSON.stringify(params)} at ${
+          paramItem.interval
+        }`
+      );
+    }
+  };
+
   register = async <TItem>(
     name: string,
     func: (params: HashMap<any>) => Promise<TItem>,
@@ -84,12 +104,16 @@ export default class Memoizer implements Memoize.IMemoizer {
     };
 
     // delete existing cache entry
-    this._delete(name);
+    if (this._cache[name]) {
+      delete this._cache[name].masterCache;
+      delete this._cache[name].subordinateCache;
+    }
+
     // create a cache entry
     const paramStr = this._toParamsKey(options.params);
     this._cache[name] = {
       func: func,
-      values: {
+      masterCache: {
         [paramStr]: {
           lastUpdated: undefined,
           status: "",
@@ -109,27 +133,6 @@ export default class Memoizer implements Memoize.IMemoizer {
     // update immediately if specified
     if (options.immediate) {
       await this._update(name, options.params);
-    }
-  };
-
-  startUpdate = async (name: string, params?: Memoize.MemoizedFuncParams) => {
-    const paramItem = this._getCacheForParams(name, params);
-    if (!paramItem.interval) {
-      throw new Error(
-        `No interval was set for cache '${name}' with params: '${JSON.stringify(
-          params
-        )}'`
-      );
-    }
-    if (paramItem.interval && !paramItem.intervalKey) {
-      paramItem.intervalKey = setInterval(async () => {
-        await this._update(name, params);
-      }, paramItem.interval);
-      this._logger.info(
-        `START UPDATE ${name}:${JSON.stringify(params)} at ${
-          paramItem.interval
-        }`
-      );
     }
   };
 

@@ -1,7 +1,7 @@
 import { HashMap } from "../types";
 
 export namespace Memoize {
-  export type MemoizedFuncParams = HashMap<string>;
+  export type MemoizedFuncParams = HashMap<any>;
 
   export type MemoizeOption = {
     params?: MemoizedFuncParams;
@@ -18,7 +18,8 @@ export namespace Memoize {
 
   export type MemoizedItem = {
     func: (...params: any[]) => Promise<any>;
-    values: HashMap<MemoizeValue>;
+    masterCache: HashMap<MemoizeValue>;
+    subordinateCache?: HashMap<MemoizeValue>;
   };
 
   export interface IMemoizer {
@@ -27,7 +28,6 @@ export namespace Memoize {
       func: (...params: any[]) => Promise<TItem>,
       options?: Memoize.MemoizeOption
     ) => void;
-    startUpdate: (name: string, params?: Memoize.MemoizedFuncParams) => void;
     get: <TItem>(
       name: string,
       params?: Memoize.MemoizedFuncParams

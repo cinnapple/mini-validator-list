@@ -17,7 +17,7 @@ class OverviewContainer extends React.Component {
   }
 
   render() {
-    const { sum, ana, isLoading } = this.props;
+    const { sum, isLoading } = this.props;
     const { summary } = sum;
 
     return (
@@ -32,8 +32,7 @@ class OverviewContainer extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    sum: state.summary,
-    ana: state.analytics
+    sum: state.summary
   };
 };
 

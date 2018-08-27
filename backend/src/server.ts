@@ -28,12 +28,17 @@ class Server {
 
   private _setRoutes() {
     this._router.get("/api/validators", async ctx => {
-      const result = await this._rippleService.getValidatorInfo();
+      const lastNHours = ctx.params.lastNHours || 6;
+      const result = await this._rippleService.getValidatorInfo(lastNHours);
       ctx.body = result;
     });
     this._router.get("/api/validators/:date", async ctx => {
       const date = ctx.params.date;
-      const result = await this._rippleService.getValidatorInfo(date);
+      const lastNHours = ctx.params.lastNHours || 6;
+      const result = await this._rippleService.getValidatorInfo(
+        lastNHours,
+        date
+      );
       ctx.body = result;
     });
 
@@ -47,8 +52,9 @@ class Server {
       ctx.body = result;
     });
 
-    this._router.get("/api/summary", async ctx => {
-      const result = await this._rippleService.getValidatorSummary();
+    this._router.get("/api/summary/:lastNHours", async ctx => {
+      const lastNHours = ctx.params.lastNHours || 6;
+      const result = await this._rippleService.getValidatorSummary(lastNHours);
       ctx.body = result;
     });
 

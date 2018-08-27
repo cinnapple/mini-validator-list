@@ -148,8 +148,6 @@ export default class RippleService implements IRippleService {
   };
 
   private _mergeAll = async (date?: string) => {
-    const startOfDay = moment().add(-6, "h");
-
     let defaultUnlCache: IServiceResponse<Lib.RippleData.DefaultUnlRawResponse>;
     if (date) {
       // if date is specified, get the one cached from the GitHub repo (archived default UNL)
@@ -172,10 +170,7 @@ export default class RippleService implements IRippleService {
       Cache.TYPES.IPSTACK_GEO
     );
 
-    // remove non active validators in the last 24 hours.
-    const validators = allValidators.data.filter(
-      a => moment(a.last_datetime).diff(startOfDay) > 0
-    );
+    const validators = allValidators.data;
     const defaultUnl = this._crypto.parseDefaultUNLResponse(
       defaultUnlCache.data
     );
@@ -185,9 +180,14 @@ export default class RippleService implements IRippleService {
       validators.map(a => a.validation_public_key)
     );
 
-    const mergedList = allValidationPublicKeys
-      .filter(pubkey => pubkey && pubkey !== "undefined") // remove stale validators
-      .map(pubkey => {
+    const mergedList = allValidationPublicKeys.reduce(
+      (prev, pubkey) => {
+        // remove stale validators
+        if (!pubkey || pubkey === "undefined") {
+          return prev;
+        }
+
+        // get a validator entry
         let v = _first(validators, v => v.validation_public_key === pubkey);
         if (!v) {
           v = {
@@ -202,6 +202,7 @@ export default class RippleService implements IRippleService {
         const isRipple = v && _isRippleValidator(v);
         v.domain = isRipple ? _rippleDomain : v.domain;
 
+        // create a return data
         const data = {
           pubkey: v.validation_public_key,
           domain: v.domain,
@@ -222,6 +223,7 @@ export default class RippleService implements IRippleService {
           last_datetime: v.last_datetime
         };
 
+        // set default UNL flag
         const defaultUnlItem = _first<string>(
           defaultUnl,
           pubkey => pubkey === v.validation_public_key
@@ -230,7 +232,7 @@ export default class RippleService implements IRippleService {
           data.default = !!defaultUnlItem;
         }
 
-        // alt-net check 1: check if the alt net pattern matches.
+        // set ALT-Net flag - check if the alt net pattern matches.
         data.is_alt_net = v.domain && !!altnetRegex.exec(data.domain);
 
         const reportItem = _first<Lib.RippleData.DailyReportRawResponse>(
@@ -238,13 +240,14 @@ export default class RippleService implements IRippleService {
           report => report.validation_public_key === v.validation_public_key
         );
         if (reportItem) {
-          // alt-net check 2: check whether alt-net agreement is greater than the main net.
-          // If so, the domain is considered alt-net.
+          data.is_report_available = true;
+          // set ALT-Net flag - if alt-net agreement is greater than the main net, then the domain is considered alt-net
           if (!data.is_alt_net) {
             data.is_alt_net =
               parseFloat(reportItem.alt_net_agreement) >
               parseFloat(reportItem.main_net_agreement);
           }
+          // set agreement / disagreement / total_ledgers
           data.agreement = !data.is_alt_net
             ? parseFloat(reportItem.main_net_agreement)
             : parseFloat(reportItem.alt_net_agreement);
@@ -260,7 +263,6 @@ export default class RippleService implements IRippleService {
           }
           data.disagreement = parseFloat(disagreement.toFixed(5));
           data.total_ledgers = reportItem.total_ledgers;
-          data.is_report_available = true;
         }
         const geoItem = _first<Lib.IPStackResponse>(
           geoInfo.data,
@@ -274,6 +276,7 @@ export default class RippleService implements IRippleService {
             longitude: undefined
           }
         );
+        // set geo info
         if (geoItem) {
           data.city = geoItem.city;
           data.country_name = geoItem.country_name;
@@ -282,28 +285,58 @@ export default class RippleService implements IRippleService {
           data.latitude = geoItem.latitude;
           data.longitude = geoItem.longitude;
         }
-        return data;
-      });
+
+        prev.push(data);
+        return prev;
+      },
+      <Cache.MergedData[]>[]
+    );
 
     return mergedList;
   };
 
-  private _populateSummary = async () => {
-    const mergedData = await this._memoizer.get<Cache.MergedData[]>(
+  private _populateSummary = async (lastNHours: number = 6) => {
+    let mergedData = await this._memoizer.get<Cache.MergedData[]>(
       Cache.TYPES.MERGED_DATA
     );
-    const mainNetValidators = mergedData.data.filter(a => !a.is_alt_net);
+    // remove non active validators in the last N hours.
+    const threshould = moment().add(-lastNHours, "h");
+    const mainNetValidators = mergedData.data.filter(
+      a => _takeLastNHours(threshould, a) && _takeMainNetOnly(a)
+    );
     const summary = StatsUtil.getSummaryStats(mainNetValidators);
     return summary;
   };
 
-  getValidatorInfo = async (date?: string) => {
-    return this._memoizer.get<Cache.MergedData>(Cache.TYPES.MERGED_DATA, {
-      date: date
-    });
+  getValidatorInfo = async (lastNHours: number, date?: string) => {
+    let data = await this._memoizer.get<Cache.MergedData[]>(
+      Cache.TYPES.MERGED_DATA,
+      {
+        date: date
+      }
+    );
+    // remove non active validators in the last N hours.
+    if (lastNHours && lastNHours > 0) {
+      const current = moment().add(-lastNHours, "h");
+      const newData = data.data.filter(a => _takeLastNHours(current, a));
+      data = {
+        ...data,
+        data: newData
+      };
+    }
+    return data;
   };
 
-  getValidatorSummary = async () => {
-    return this._memoizer.get<Cache.SummaryStats>(Cache.TYPES.SUMMARY_DATA);
+  getValidatorSummary = async (lastNHours: number) => {
+    console.log();
+    return this._memoizer.get<Cache.SummaryStats>(Cache.TYPES.SUMMARY_DATA, {
+      lastNHours: lastNHours
+    });
   };
 }
+
+const _takeLastNHours = (
+  threshould: moment.Moment,
+  validator: Cache.MergedData
+) => moment(validator.last_datetime).diff(threshould) > 0;
+const _takeMainNetOnly = (validator: Cache.MergedData) => !validator.is_alt_net;

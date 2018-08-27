@@ -73,6 +73,7 @@ export namespace Cache {
     region_name: string;
     latitude: number;
     longitude: number;
+    last_datetime: string;
   };
 
   export type SummaryStats = {};
@@ -121,8 +122,13 @@ export interface IQuerier {
 }
 
 export interface IRippleService {
-  getValidatorInfo(date?: string): Promise<IServiceResponse<Cache.MergedData>>;
-  getValidatorSummary(): Promise<IServiceResponse<Cache.SummaryStats>>;
+  getValidatorInfo(
+    lastNHours: number,
+    date?: string
+  ): Promise<IServiceResponse<Cache.MergedData[]>>;
+  getValidatorSummary(
+    lastNHours: number
+  ): Promise<IServiceResponse<Cache.SummaryStats>>;
 }
 
 export interface IGoogleService {
