@@ -138,7 +138,7 @@ const calculateStats = (validators: any[], uniqueDomains: any[]) => {
     dominance: undefined
   };
 
-  stats.dominance = stats.runByRipple / stats.total;
+  stats.dominance = stats.total !== 0 ? stats.runByRipple / stats.total : 0;
   return stats;
 };
 
