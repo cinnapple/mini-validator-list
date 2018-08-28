@@ -32,7 +32,9 @@ export default class Crypto implements ICrypto {
     return address;
   }
 
-  parseDefaultUNLResponse(defaultUNLResponse: Lib.RippleData.DefaultUnlRawResponse) {
+  parseDefaultUNLResponse(
+    defaultUNLResponse: Lib.RippleData.DefaultUnlRawResponse
+  ) {
     const result: string[] = [];
     const validatorList = JSON.parse(base64.decode(defaultUNLResponse.blob))
       .validators;

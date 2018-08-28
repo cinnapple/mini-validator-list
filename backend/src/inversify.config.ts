@@ -9,13 +9,15 @@ import {
   Lib,
   IGoogleService,
   IThirdPartyLibFactory,
-  GitHub
+  GitHub,
+  ILocationClient
 } from "./types";
 import { TYPES } from "./inversify.types";
 import { Server, DevServer } from "./server";
-import RippleService from "./service.ripple/rippleService";
-import GitHubService from "./service.github/githubService";
-import GoogleService from "./service.ga/googleAnalyticsService";
+import RippleService from "./services/rippleService";
+import GitHubService from "./services/githubService";
+import GoogleService from "./services/googleAnalyticsService";
+import LocationClient from "./locationClient";
 import Configuration from "./configuration";
 import Crypto from "./crypto";
 import Querier from "./querier";
@@ -51,6 +53,10 @@ myContainer
 myContainer
   .bind<GitHub.IGitHubService>(TYPES.GitHubService)
   .to(GitHubService)
+  .inSingletonScope();
+myContainer
+  .bind<ILocationClient>(TYPES.LocationClient)
+  .to(LocationClient)
   .inSingletonScope();
 myContainer
   .bind<IConfiguration>(TYPES.Configuration)

@@ -7,13 +7,13 @@ import {
   ICrypto,
   IQuerier,
   Lib,
-  ResolveDnsResponse,
   Cache,
-  IServiceResponse
+  IServiceResponse,
+  ILocationClient
 } from "../types";
 import { TYPES } from "../inversify.types";
 import { _first, _union } from "../util";
-import { geoDataMock } from "../geoDataCache";
+import { geoDataMock } from "../data/geoDataMock";
 import { wellKnownValidators } from "../wellKnownValidators";
 import StatsUtil from "../statsUtil";
 import { Memoize } from "../cache/cache.types";
@@ -50,6 +50,7 @@ export default class RippleService implements IRippleService {
     @inject(TYPES.Lib.Logger) protected _logger: Lib.ILogger,
     @inject(TYPES.Configuration) private _configuration: IConfiguration,
     @inject(TYPES.Querier) private _querier: IQuerier,
+    @inject(TYPES.LocationClient) private _locationClient: ILocationClient,
     @inject(TYPES.Memoizer) private _memoizer: Memoize.IMemoizer,
     @inject(TYPES.Crypto) private _crypto: ICrypto
   ) {
@@ -108,40 +109,32 @@ export default class RippleService implements IRippleService {
     >(Cache.TYPES.RIPPLE_VALIDATORS);
 
     // lookup ip address from the domain
-    const capturedDomains = {};
-    const promises: Promise<ResolveDnsResponse>[] = validators.data.reduce(
-      (prev, v) => {
-        if (v.domain && !capturedDomains[v.domain]) {
-          prev.push(this._querier.getIpFromDomain(v.domain));
-          capturedDomains[v.domain] = true;
-        }
-        return prev;
-      },
-      []
-    );
-
-    // get domain and address pair
-    const domainAndAddressPairs = await Promise.all(promises);
-
-    const list: Lib.IPStackResponse[] = [];
-    const ipStackPromises = domainAndAddressPairs.reduce((prev, curr) => {
-      if (curr.ip) {
-        prev.push(this._querier.getGeoInfo([curr.ip]));
+    const uniqueDomains = {};
+    validators.data.reduce((prev, v) => {
+      if (v.domain && !uniqueDomains[v.domain]) {
+        prev.push(v.domain);
+        uniqueDomains[v.domain] = true;
       }
       return prev;
     }, []);
 
-    const geoDataSet: Lib.IPStackResponse[] = await Promise.all(
-      ipStackPromises
-    );
-    domainAndAddressPairs.forEach(domainAndAddressPair => {
-      if (domainAndAddressPair.ip) {
-        const geoData = geoDataSet.filter(
-          g => g.ip === domainAndAddressPair.ip
-        )[0];
+    const list: Lib.IPStackResponse[] = [];
+    const geoInfoPromises: Lib.IPStackResponse[] = Object.keys(
+      uniqueDomains
+    ).reduce((prev, cDomain) => {
+      if (cDomain) {
+        prev.push(this._locationClient.getGeoInfo(cDomain));
+      }
+      return prev;
+    }, []);
+
+    const geoDataSet = await Promise.all(geoInfoPromises);
+    Object.keys(uniqueDomains).forEach(domain => {
+      const geoData = geoDataSet.find(g => g.domain === domain);
+      if (geoData) {
         list.push({
-          domain: domainAndAddressPair.domain,
-          ip: domainAndAddressPair.ip,
+          domain: domain,
+          ip: geoData.ip,
           country_name: geoData.country_name,
           country_code: geoData.country_code,
           region_name: geoData.region_name,
@@ -151,6 +144,7 @@ export default class RippleService implements IRippleService {
         });
       }
     });
+
     return list;
   };
 

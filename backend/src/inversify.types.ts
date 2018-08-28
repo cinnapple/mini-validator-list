@@ -12,6 +12,7 @@ const TYPES = {
   IntervalManager: Symbol.for("IntervalManager"),
   ThirdPartyLibFactory: Symbol.for("ThirdPartyLibFactory"),
   Memoizer: Symbol.for("Memoizer"),
+  LocationClient: Symbol.for("LocationClient"),
   Lib: {
     Koa: {
       App: Symbol.for("Lib.Koa.App"),

@@ -117,8 +117,6 @@ export interface IQuerier {
   getDefaultUnl(): Promise<Lib.RippleData.DefaultUnlRawResponse>;
   getValidators(): Promise<Lib.RippleData.ValidatorRawResponse[]>;
   getValidatorDailyReports(): Promise<Lib.RippleData.DailyReportRawResponse[]>;
-  getIpFromDomain(domain: string): Promise<ResolveDnsResponse>;
-  getGeoInfo(ips: string[]): Promise<Lib.IPStackResponse>;
 }
 
 export interface IRippleService {
@@ -133,6 +131,10 @@ export interface IRippleService {
 
 export interface IGoogleService {
   getReferrals(): Promise<IServiceResponse<Lib.Google.IApiResponse>>;
+}
+
+export interface ILocationClient {
+  getGeoInfo(ips: string): Promise<Lib.IPStackResponse>;
 }
 
 export interface ICrypto {
