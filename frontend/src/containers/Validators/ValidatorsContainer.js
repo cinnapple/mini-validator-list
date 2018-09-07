@@ -17,22 +17,18 @@ class MainContainer extends React.Component {
     this.props.onInitValidators();
   }
 
-  componentWillReceiveProps(props) {
-    if (this.props.vals.selectedDefaultUnlId) {
-      if (
-        this.props.vals.selectedDefaultUnlId !== props.vals.selectedDefaultUnlId
-      ) {
-        const date = props.vals.selectedDefaultUnlId;
-        const filter = {
-          defaultOnly: true,
-          verifiedOnly: true,
-          mainNetOnly: true,
-          filterWord: ""
-        };
-        this.props.onInitValidators(date, filter);
-      }
-    }
-  }
+  handleDefaultUnlSelected = date => {
+    const filter = {
+      ...this.props.vals._filter,
+      lastNHours: -1
+    };
+    this.props.onUpdateValidators(date, filter);
+  };
+
+  handleDefaultUnlUnselected = () => {
+    const filter = this.props.vals._filter;
+    this.props.onUpdateValidators("", filter);
+  };
 
   render() {
     const {
@@ -40,7 +36,7 @@ class MainContainer extends React.Component {
       app,
       isLoading,
       onApplyFilter,
-      onDefaultUnlSelected,
+      onUpdateValidators,
       onSelectItemPanelOpen,
       onDialogOpen
     } = this.props;
@@ -53,7 +49,9 @@ class MainContainer extends React.Component {
             app={app}
             isLoading={isLoading}
             onApplyFilter={onApplyFilter}
-            onDefaultUnlSelected={onDefaultUnlSelected}
+            onUpdateValidators={onUpdateValidators}
+            handleDefaultUnlSelected={this.handleDefaultUnlSelected}
+            onDefaultUnlUnselected={this.handleDefaultUnlUnselected}
             onDefaultUnlSelectOpen={onSelectItemPanelOpen}
             onDialogOpen={onDialogOpen}
           />
@@ -87,14 +85,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onInitValidators: (date, filter) =>
-      dispatch(actions.initValidators(date, filter)),
+    onInitValidators: () => dispatch(actions.initValidators()),
+    onUpdateValidators: (date, filter) =>
+      dispatch(actions.updateValidators(date, filter)),
     showNotification: (message, variant) =>
       dispatch(actions.showNotification(message, variant, "")),
     onSelectItemPanelOpen: (title, items, handleSelect) =>
       dispatch(actions.openDialog(title, items, handleSelect)),
     onApplyFilter: newFilter => dispatch(actions.filterValidators(newFilter)),
-    onDefaultUnlSelected: date => dispatch(actions.selectDefaultUnl(date)),
     onDialogOpen: (title, items, selectedValue, handleSelect) =>
       dispatch(
         actions.openDialog({

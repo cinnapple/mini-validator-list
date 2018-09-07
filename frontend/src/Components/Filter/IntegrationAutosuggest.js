@@ -8,24 +8,28 @@ import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
 import withStyles from "@material-ui/core/styles/withStyles";
+import Popper from "@material-ui/core/Popper";
 
 import { t, res } from "../../services/i18nService";
 
 let suggestions = [];
 
 function renderInput(inputProps) {
-  const { classes, ref, ...other } = inputProps;
+  const { classes, inputRef = () => {}, ref, ...other } = inputProps;
 
   return (
     <TextField
       fullWidth
       InputProps={{
-        inputRef: ref,
+        inputRef: node => {
+          ref(node);
+          inputRef(node);
+        },
         classes: {
           input: classes.input
-        },
-        ...other
+        }
       }}
+      {...other}
     />
   );
 }
@@ -88,11 +92,6 @@ function getSuggestions(value) {
 }
 
 const styles = theme => ({
-  suggestionsContainerOpen: {
-    position: "absolute",
-    zIndex: 1,
-    marginTop: theme.spacing.unit
-  },
   suggestion: {
     display: "block"
   },
@@ -132,13 +131,12 @@ class IntegrationAutosuggest extends React.Component {
   };
 
   render() {
-    const { classes, handleFilterChange } = this.props;
+    const { classes, handleFilterChange, label, placeholder } = this.props;
     suggestions = this.props.list;
 
     return (
       <Autosuggest
         theme={{
-          suggestionsContainerOpen: classes.suggestionsContainerOpen,
           suggestionsList: classes.suggestionsList,
           suggestion: classes.suggestion
         }}
@@ -150,14 +148,33 @@ class IntegrationAutosuggest extends React.Component {
         onSuggestionsClearRequested={() =>
           this.handleSuggestionsClearRequested(handleFilterChange)
         }
-        renderSuggestionsContainer={renderSuggestionsContainer}
+        renderSuggestionsContainer={options => (
+          <Popper anchorEl={this.popperNode} open={Boolean(options.children)}>
+            <Paper
+              square
+              {...options.containerProps}
+              style={{
+                width: this.popperNode ? this.popperNode.clientWidth : null
+              }}
+            >
+              {options.children}
+            </Paper>
+          </Popper>
+        )}
         getSuggestionValue={getSuggestionValue}
         renderSuggestion={renderSuggestion}
         inputProps={{
           classes,
-          placeholder: t(res.FILTER_BY_DOMAIN_NAME),
+          placeholder: placeholder,
           value: this.props.value,
-          onChange: this.handleChange
+          onChange: this.handleChange,
+          label: label,
+          inputRef: node => {
+            this.popperNode = node;
+          },
+          InputLabelProps: {
+            shrink: true
+          }
         }}
       />
     );

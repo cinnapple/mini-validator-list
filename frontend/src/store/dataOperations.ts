@@ -1,9 +1,9 @@
-import { IFilter } from "../types";
+import { State } from "../types";
 import { _sort } from "./utility";
 
 const filterValidators = (
   validatorList: any[],
-  state: IFilter,
+  state: State.Filter,
   options: any
 ) => {
   const _sorter = (a, b) => {

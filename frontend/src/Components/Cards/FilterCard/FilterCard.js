@@ -5,6 +5,10 @@ import Grid from "@material-ui/core/Grid";
 import Switch from "@material-ui/core/Switch";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import FormControl from "@material-ui/core/FormControl";
 
 import ExpandablePanel from "../../Common/ExpandablePanel";
 import IntegrationAutosuggest from "../../Filter/IntegrationAutosuggest";
@@ -36,17 +40,13 @@ const styles = theme => ({
   },
   clearFilterButton: {
     color: theme.palette.primary
+  },
+  lastNHours_FormCotnrolRoot: {
+    display: "inherit"
   }
 });
 
 const urlbase = "https://minivalist.cinn.app";
-
-const clearFilter = {
-  defaultOnly: true,
-  verifiedOnly: true,
-  mainNetOnly: true,
-  filterWord: ""
-};
 
 class Filter extends React.Component {
   state = {
@@ -58,16 +58,16 @@ class Filter extends React.Component {
       ...this.props.vals.filter,
       [type]: value
     };
-    this.props.onApplyFilter(newFilter);
+    if (type === "lastNHours") {
+      const date = this.props.vals.selectedDefaultUnlId;
+      this.props.onUpdateValidators(date, newFilter);
+    } else {
+      this.props.onApplyFilter(newFilter);
+    }
   };
 
   handleClear = () => {
-    this.props.onApplyFilter(clearFilter);
-    if (
-      this.props.vals.selectedDefaultUnlId !== this.props.vals.archives[0].id
-    ) {
-      this.props.onDefaultUnlSelected(this.props.vals.archives[0].id);
-    }
+    this.props.onDefaultUnlUnselected();
   };
 
   render() {
@@ -75,11 +75,17 @@ class Filter extends React.Component {
       classes,
       vals,
       isLoading,
-      onDefaultUnlSelected,
+      handleDefaultUnlSelected,
       onDialogOpen
     } = this.props;
     const { archives, selectedDefaultUnlId, filter } = vals;
-    const { defaultOnly, verifiedOnly, mainNetOnly, filterWord } = filter;
+    const {
+      defaultOnly,
+      verifiedOnly,
+      mainNetOnly,
+      filterWord,
+      lastNHours
+    } = filter;
     const isDisabled =
       isLoading ||
       (vals.archives && vals.selectedDefaultUnlId !== vals.archives[0].id);
@@ -103,7 +109,7 @@ class Filter extends React.Component {
                 title,
                 items,
                 selectedDefaultUnlId,
-                onDefaultUnlSelected
+                handleDefaultUnlSelected
               )
             }
           />
@@ -121,59 +127,106 @@ class Filter extends React.Component {
         <div className={classes.wrapper} key="Filter">
           <FormGroup row>
             <Grid container spacing={0}>
-              <Grid item xs={12} sm={4}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={defaultOnly}
-                      disabled={isDisabled}
-                      onChange={e =>
-                        this.handleApplyFilter("defaultOnly", !defaultOnly)
-                      }
-                      value="defaultOnly"
-                    />
-                  }
-                  label={t(res.FILTER_BY_DEFAULT_UNL_ONLY)}
-                />
+              <Grid item xs={12} sm={6}>
+                <Grid container spacing={0} />
+                <Grid item xs={12}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={defaultOnly}
+                        disabled={isDisabled}
+                        onChange={e =>
+                          this.handleApplyFilter("defaultOnly", !defaultOnly)
+                        }
+                        value="defaultOnly"
+                      />
+                    }
+                    label={t(res.FILTER_BY_DEFAULT_UNL_ONLY)}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={verifiedOnly}
+                        disabled={isDisabled}
+                        onChange={e =>
+                          this.handleApplyFilter("verifiedOnly", !verifiedOnly)
+                        }
+                        value="verifiedOnly"
+                      />
+                    }
+                    label={t(res.FILTER_BY_VERIFIED_DOMAINS_ONLY)}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={mainNetOnly}
+                        disabled={isDisabled}
+                        onChange={e =>
+                          this.handleApplyFilter("mainNetOnly", !mainNetOnly)
+                        }
+                        value="mainNetOnly"
+                      />
+                    }
+                    label={t(res.FILTER_BY_MAIN_NET_ONLY)}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={4}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={verifiedOnly}
-                      disabled={isDisabled}
-                      onChange={e =>
-                        this.handleApplyFilter("verifiedOnly", !verifiedOnly)
+              <Grid item xs={12} sm={6} style={{ display: "flex" }}>
+                <Grid container spacing={8}>
+                  <Grid item xs={12}>
+                    <FormControl
+                      className={classes.formControl}
+                      classes={{
+                        root: classes.lastNHours_FormCotnrolRoot
+                      }}
+                    >
+                      <InputLabel htmlFor="age-simple">
+                        {t(res.FILTER_BY_LAST_N_HOURS)}
+                      </InputLabel>
+                      <Select
+                        value={lastNHours}
+                        onChange={e =>
+                          this.handleApplyFilter("lastNHours", e.target.value)
+                        }
+                        disabled={isDisabled}
+                        displayEmpty
+                        name="age"
+                        className={classes.selectEmpty}
+                      >
+                        <MenuItem value={6}>
+                          {t(res.FILTER_BY_LAST_N_HOURS_LAST_HOURS, { n: 6 })}
+                        </MenuItem>
+                        <MenuItem value={12}>
+                          {t(res.FILTER_BY_LAST_N_HOURS_LAST_HOURS, { n: 12 })}
+                        </MenuItem>
+                        <MenuItem value={24}>
+                          {t(res.FILTER_BY_LAST_N_HOURS_LAST_HOURS, { n: 24 })}
+                        </MenuItem>
+                        <MenuItem value={24 * 7}>
+                          {t(res.FILTER_BY_LAST_N_HOURS_LAST_1_WEEK)}
+                        </MenuItem>
+                        <MenuItem value={-1}>
+                          {t(res.FILTER_BY_LAST_N_HOURS_ALL_TIME)}
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <IntegrationAutosuggest
+                      label={t(res.FILTER_BY_DOMAIN_NAME)}
+                      placeholder="e.g. ripple.com"
+                      list={vals.filteredValidatorsForAutosuggest}
+                      value={filterWord}
+                      handleFilterChange={value =>
+                        this.handleApplyFilter("filterWord", value)
                       }
-                      value="verifiedOnly"
                     />
-                  }
-                  label={t(res.FILTER_BY_VERIFIED_DOMAINS_ONLY)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={mainNetOnly}
-                      disabled={isDisabled}
-                      onChange={e =>
-                        this.handleApplyFilter("mainNetOnly", !mainNetOnly)
-                      }
-                      value="mainNetOnly"
-                    />
-                  }
-                  label={t(res.FILTER_BY_MAIN_NET_ONLY)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <IntegrationAutosuggest
-                  list={vals.filteredValidatorsForAutosuggest}
-                  value={filterWord}
-                  handleFilterChange={value =>
-                    this.handleApplyFilter("filterWord", value)
-                  }
-                />
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </FormGroup>

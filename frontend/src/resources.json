@@ -34,6 +34,10 @@
     "ja": "フィルター",
     "ru": "Фильтр"
   },
+  "FILTER_BY_ACTIVE_NODES_ONLY": {
+    "en": "Active Last",
+    "ja": "アクティブなノードのみ"
+  },
   "FILTER_BY_DEFAULT_UNL_ONLY": {
     "en": "Default UNL Only",
     "ja": "デフォルトUNLのみ",
@@ -45,6 +49,22 @@
     "ja": "ドメイン名で絞り込む",
     "ru": "Фильтр доменов",
     "de": "Nach Domain filtern"
+  },
+  "FILTER_BY_LAST_N_HOURS": {
+    "en": "Only Active in the last",
+    "ja": "指定時間内にアクティブなノードのみ表示"
+  },
+  "FILTER_BY_LAST_N_HOURS_ALL_TIME": {
+    "en": "All Time",
+    "ja": "すべて"
+  },
+  "FILTER_BY_LAST_N_HOURS_LAST_HOURS": {
+    "en": "{{n}} Hours",
+    "ja": "{{n}}時間以内"
+  },
+  "FILTER_BY_LAST_N_HOURS_LAST_1_WEEK": {
+    "en": "1 Week",
+    "ja": "1週間以内"
   },
   "FILTER_BY_MAIN_NET_ONLY": {
     "en": "Main Net Only",

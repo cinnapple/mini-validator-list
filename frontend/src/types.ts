@@ -19,12 +19,21 @@ export namespace State {
   };
   export type Validator = {
     _validators: any[];
-    filter: IFilter;
+    _filter: Filter;
+    filter: Filter;
     filteredValidators: any[];
     filteredValidatorsForAutosuggest: any[];
     uniqueDomains: any[];
     archives: any[];
     selectedDefaultUnlId: undefined;
+  };
+  export type Filter = {
+    defaultOnly: boolean;
+    verifiedOnly: boolean;
+    mainNetOnly: boolean;
+    sort: boolean;
+    filterWord: string;
+    lastNHours: number;
   };
   export type Analytics = {
     referres: any[];
@@ -72,14 +81,6 @@ export interface GeoList {
   domain: string;
 }
 
-export interface IFilter {
-  defaultOnly: boolean;
-  verifiedOnly: boolean;
-  mainNetOnly: boolean;
-  sort: boolean;
-  filterWord: string;
-}
-
 export type AvailableLanguages = {
   en: string;
   ja?: string;
@@ -94,8 +95,13 @@ export type LanguageKeys = {
   DONATE: AvailableLanguages;
   DONATION_LINK: AvailableLanguages;
   FILTER: AvailableLanguages;
+  FILTER_BY_ACTIVE_NODES_ONLY: AvailableLanguages;
   FILTER_BY_DEFAULT_UNL_ONLY: AvailableLanguages;
   FILTER_BY_DOMAIN_NAME: AvailableLanguages;
+  FILTER_BY_LAST_N_HOURS: AvailableLanguages;
+  FILTER_BY_LAST_N_HOURS_ALL_TIME: AvailableLanguages;
+  FILTER_BY_LAST_N_HOURS_LAST_HOURS: AvailableLanguages;
+  FILTER_BY_LAST_N_HOURS_LAST_1_WEEK: AvailableLanguages;
   FILTER_BY_MAIN_NET_ONLY: AvailableLanguages;
   FILTER_BY_VERIFIED_DOMAINS_ONLY: AvailableLanguages;
   FILTER_CLEAR: AvailableLanguages;

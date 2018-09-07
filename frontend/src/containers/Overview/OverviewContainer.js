@@ -14,7 +14,7 @@ import CountryOverviewCard from "../../components/Cards/CountryOverviewCard/Coun
 const SIZE_XS = 3;
 const SIZE_SM = 6;
 const SIZE_MD = 9;
-const SIZE_LG = 6;
+const SIZE_LG = 12;
 
 class OverviewContainer extends React.Component {
   componentDidMount() {

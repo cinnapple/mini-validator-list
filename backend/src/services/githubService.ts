@@ -58,6 +58,11 @@ export default class GitHubService implements GitHub.IGitHubService {
       };
     });
     _sort(data, "date", "dsc");
+    data.unshift({
+      name: this._configuration.getDefaultUNLsURL(),
+      url: this._configuration.getDefaultUNLsURL(),
+      date: ""
+    });
     return data;
   }
 

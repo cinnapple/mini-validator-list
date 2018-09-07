@@ -18,7 +18,14 @@ class InternationalizationService {
     if (!resource["en"]) {
       throw Error(`No English definition found for ${resource}`);
     }
-    return resource[lang] || resource["en"];
+    let text = resource[lang] || resource["en"];
+    if (params) {
+      Object.keys(params).forEach(key => {
+        const value = params[key];
+        text = text.replace(`{{${key}}}`, value);
+      });
+    }
+    return text;
   };
 }
 

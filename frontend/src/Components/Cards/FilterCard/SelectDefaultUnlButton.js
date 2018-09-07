@@ -13,7 +13,7 @@ class SelectDefaultUnlButton extends React.Component {
       return (
         archives &&
         archives.map(item => ({
-          primaryLabel: item.date,
+          primaryLabel: item.date || "Latest",
           secondaryLabel: item.name,
           value: item.id
         }))

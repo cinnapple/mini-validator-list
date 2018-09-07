@@ -1,5 +1,5 @@
 import * as actionTypes from "../actions/actionTypes";
-import { IFilter, State } from "../../types";
+import { State } from "../../types";
 import { updateObject } from "../utility";
 import {
   filterValidators,
@@ -8,15 +8,19 @@ import {
   calculateStats
 } from "../dataOperations";
 
+const initialFilter: State.Filter = {
+  defaultOnly: true,
+  verifiedOnly: true,
+  mainNetOnly: true,
+  filterWord: "",
+  lastNHours: 6,
+  sort: undefined
+};
+
 const initialState: State.Validator = {
-  _validators: undefined,
-  filter: {
-    defaultOnly: true,
-    verifiedOnly: true,
-    mainNetOnly: true,
-    filterWord: "",
-    sort: undefined
-  },
+  _validators: undefined, // only keep track of the initial validators
+  _filter: initialFilter, // only keep track of the initial fitler
+  filter: initialFilter,
   filteredValidators: undefined,
   filteredValidatorsForAutosuggest: undefined,
   uniqueDomains: undefined,
@@ -37,7 +41,7 @@ const createArchivesSelectOptions = archives =>
   }));
 
 const filterValidatorsReducer = (state: State.Validator, action) => {
-  const filter = <IFilter>action.data;
+  const filter = <State.Filter>action.data || initialFilter;
   const v1 = filterValidators(state._validators, filter, {});
   const v2 = filterValidators(
     state._validators,
@@ -57,7 +61,7 @@ const filterValidatorsReducer = (state: State.Validator, action) => {
   });
 };
 
-const setValidatorsReducer = (state: State.Validator, action) => {
+const setValidatorsAndArchivesReducer = (state: State.Validator, action) => {
   // original validator data
   const data = <any>action.data;
   const archivesSelectOptions = createArchivesSelectOptions(data.archives);
@@ -66,39 +70,32 @@ const setValidatorsReducer = (state: State.Validator, action) => {
     _validators: data.validators,
     archives: data.archives,
     archivesSelectOptions,
-    selectedDefaultUnlId: data.selectedDefaultUnlId
-      ? data.selectedDefaultUnlId
-      : data.archives[0].id,
+    selectedDefaultUnlId: "",
     lastUpdated: data.lastUpdated
   });
   return updateObject(
     newState,
-    filterValidatorsReducer(newState, { data: data.filter || state.filter })
+    filterValidatorsReducer(newState, { data: undefined })
   );
 };
 
-const selectDefaultUnlReducer = (state, action) => {
-  return updateObject(state, {
-    selectedDefaultUnlId: action.data
-  });
-};
-
-const unselectDefaultUnlReducer = (state: State.Validator) => {
-  return updateObject(state, {
-    selectedDefaultUnlId: state.archives[0].id
-  });
+const setValidatorsReducer = (state: State.Validator, action) => {
+  const data = <any>action.data;
+  const newState = updateObject(state, data);
+  return updateObject(
+    newState,
+    filterValidatorsReducer(newState, { data: data.filter })
+  );
 };
 
 const reducer = (state: State.Validator = initialState, action) => {
   switch (action.type) {
+    case actionTypes.INIT_VALIDATORS_AND_ARCHIVES:
+      return setValidatorsAndArchivesReducer(state, action);
     case actionTypes.SET_VALIDATORS:
       return setValidatorsReducer(state, action);
     case actionTypes.FILTER_VALIDATORS:
       return filterValidatorsReducer(state, action);
-    case actionTypes.DEFAULT_UNL_SELECTED:
-      return selectDefaultUnlReducer(state, action);
-    case actionTypes.DEFAULT_UNL_UNSELECTED:
-      return unselectDefaultUnlReducer(state);
     default:
       return state;
   }

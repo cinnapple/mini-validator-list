@@ -1,8 +1,7 @@
 export {
   initValidators,
-  filterValidators,
-  selectDefaultUnl,
-  unselectDefaultUnl
+  updateValidators,
+  filterValidators
 } from "./validatorActions";
 export { initReferrals } from "./analyticsActions";
 export { initSummary } from "./summaryActions";
