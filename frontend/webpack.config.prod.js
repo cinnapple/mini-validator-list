@@ -1,6 +1,8 @@
 const webpack = require("webpack");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
   .BundleAnalyzerPlugin;
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { config } = require("./app.config");
 
 module.exports = {
   entry: ["./src/index.js"],
@@ -47,6 +49,7 @@ module.exports = {
         NODE_ENV: JSON.stringify("production")
       }
     }),
-    new BundleAnalyzerPlugin()
+    new BundleAnalyzerPlugin(),
+    new HtmlWebpackPlugin(config.HtmlWebpackPluginProduction)
   ]
 };

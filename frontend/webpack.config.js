@@ -2,6 +2,8 @@ const WriteFilePlugin = require("write-file-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
   .BundleAnalyzerPlugin;
 const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { config } = require("./app.config");
 
 module.exports = {
   entry: ["react-hot-loader/patch", "./src/index.js"],
@@ -49,7 +51,8 @@ module.exports = {
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new WriteFilePlugin(),
-    new BundleAnalyzerPlugin()
+    new BundleAnalyzerPlugin(),
+    new HtmlWebpackPlugin(config.HtmlWebpackPluginDevelopment)
   ],
   devServer: {
     contentBase: "./dist",

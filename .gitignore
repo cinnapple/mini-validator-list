@@ -11,3 +11,4 @@ backend/build/
 # frontend
 frontend/dist/hot
 frontend/dist/bundle.js*
+frontend/dist/index.html
