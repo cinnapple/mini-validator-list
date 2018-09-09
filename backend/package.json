@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.22",
+    "@types/boom": "^7.2.0",
     "@types/jest": "^23.3.1",
     "@types/koa": "^2.0.46",
     "@types/koa-router": "^7.0.30",
@@ -44,6 +45,7 @@
     "base-64": "^0.1.0",
     "base-x": "^3.0.4",
     "bluebird": "^3.5.1",
+    "boom": "^7.2.0",
     "crypto": "^1.0.1",
     "dotenv": "^6.0.0",
     "googleapis": "^32.0.0",
@@ -51,6 +53,7 @@
     "koa": "^2.5.1",
     "koa-router": "^7.4.0",
     "moment": "^2.22.2",
+    "node-cache": "^4.2.0",
     "node-fetch": "^2.2.0",
     "nodemon": "^1.18.3",
     "reflect-metadata": "^0.1.12",

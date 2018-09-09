@@ -21,6 +21,11 @@ const getValidators = async (date?: string, lastNHours?: number) => {
   return axiosInstance.get<any>(url).then(result => result.data);
 };
 
+const getArchiess = async () => {
+  const url = `/archives`;
+  return axiosInstance.get<any>(url).then(result => result.data);
+};
+
 export const updateValidators = (date: string, filter: State.Filter) => {
   return async dispatch => {
     try {
@@ -49,10 +54,10 @@ export const updateValidators = (date: string, filter: State.Filter) => {
 export const initValidators = () => {
   return async dispatch => {
     try {
-      const promises = [getValidators(), axiosInstance.get<any>("/archives")];
+      const promises = [getValidators(), getArchiess()];
       const data = await Promise.all(promises);
       const validators = data[0].data;
-      const archives = data[1].data.data.map(archive => ({
+      const archives = data[1].data.map(archive => ({
         ...archive,
         id: archive.date
       }));

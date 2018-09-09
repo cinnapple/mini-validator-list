@@ -27,7 +27,7 @@ const withErrorHandler = (WrappedComponent, axios) => {
                 isLoading: false
               });
             }
-          }, 500);
+          }, 200);
           return res;
         },
         error => {
