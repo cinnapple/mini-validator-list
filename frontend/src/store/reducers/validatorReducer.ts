@@ -75,7 +75,7 @@ const setValidatorsAndArchivesReducer = (state: State.Validator, action) => {
   });
   return updateObject(
     newState,
-    filterValidatorsReducer(newState, { data: undefined })
+    filterValidatorsReducer(newState, { data: data.filter })
   );
 };
 

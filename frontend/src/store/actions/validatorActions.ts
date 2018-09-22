@@ -51,7 +51,7 @@ export const updateValidators = (date: string, filter: State.Filter) => {
   };
 };
 
-export const initValidators = () => {
+export const initValidators = (filter: State.Filter) => {
   return async dispatch => {
     try {
       const promises = [getValidators(), getArchiess()];
@@ -67,7 +67,8 @@ export const initValidators = () => {
           lastUpdated: validators.lastUpdated,
           validators: validators,
           archives: archives,
-          selectedDefaultUnlId: ""
+          selectedDefaultUnlId: "",
+          filter
         }
       });
     } catch (e) {

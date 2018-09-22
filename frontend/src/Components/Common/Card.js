@@ -17,10 +17,13 @@ const cancelPadding = {
   paddingLeft: "0px",
   paddingRight: "0px",
   paddingTop: "0px",
-  paddingBottom: "0px"
+  paddingBottom: "0px",
+  "&:last-child": {
+    paddingBottom: "0px"
+  }
 };
 
-const height = 400;
+const height = 370;
 
 const styles = theme => ({
   card: {

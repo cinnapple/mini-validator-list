@@ -36,14 +36,7 @@ class DomainMap extends React.Component {
     let footer = <React.Fragment />;
 
     if (!isLoading && uniqueDomains) {
-      content = (
-        <Map
-          domains={uniqueDomains}
-          selectedDomain={selectedDomain}
-          positions={positions}
-          themeType={app.themeType}
-        />
-      );
+      content = <Map domains={uniqueDomains} themeType={app.themeType} />;
       footer = (
         <div style={{ width: "100%", textAlign: "right" }}>
           <SelectDomainButton

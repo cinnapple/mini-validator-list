@@ -23,6 +23,10 @@ module.exports = {
       { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
       { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
       {
+        test: /\.css$/,
+        use: ["css-loader"]
+      },
+      {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: ["babel-loader"]
@@ -45,7 +49,10 @@ module.exports = {
   },
   externals: {
     react: "React",
-    "react-dom": "ReactDOM"
+    "react-dom": "ReactDOM",
+    leaflet: "L",
+    "leaflet.markercluster": "L.MarkerCluster",
+    "react-leaflet": "ReactLeaflet"
   },
   plugins: [
     new webpack.optimize.OccurrenceOrderPlugin(),

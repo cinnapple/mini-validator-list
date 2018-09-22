@@ -1,16 +1,25 @@
 import React from "react";
 
-import withStyles from "@material-ui/core/styles/withStyles";
+import "leaflet";
+import { Map, TileLayer, Marker, Tooltip } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-markercluster";
 
-const { Map: LeafletMap, TileLayer, Marker, Popup } = window.ReactLeaflet;
+import withStyles from "@material-ui/core/styles/withStyles";
+import Typography from "@material-ui/core/Typography";
+import Chip from "@material-ui/core/Chip";
 
 const styles = theme => ({
   popup: {
+    padding: theme.spacing.unit * 2,
+    backgroundColor: theme.palette.background.default,
+    color: theme.palette.primary,
     fontSize: "1rem",
     fontFamily: theme.typography.fontFamily
   },
-  domain: {
-    fontWeight: "bold"
+  chip: {
+    margin: theme.spacing.unit,
+    marginLeft: 0,
+    marginBottom: 0
   }
 });
 
@@ -31,57 +40,25 @@ const TILE_PROVIDER = {
 };
 
 const getRegionText = domain => {
-  let text = "Unknown location";
+  let text;
   if (domain.region_name) {
     text = `${domain.region_name}, ${domain.country_name}`;
-  }
-  if (domain.country_name) {
+  } else if (domain.country_name) {
     text = `${domain.country_name}`;
   }
-  return <span key={text}>{text}</span>;
+  return <span key={text}>{text || "Unknown location"}</span>;
 };
 
-const getList = (domains, position, classes) => {
-  const elements = [];
-  const domainHashMap = {};
-
-  domains.forEach(domain => {
-    if (!domainHashMap[domain.domain]) {
-      domainHashMap[domain.domain] = 1;
-    } else {
-      domainHashMap[domain.domain]++;
-    }
-  });
-
-  Object.keys(domainHashMap).forEach((domainName, index) => {
-    const key = `${position}-${index}`;
-    const domain = domains.filter(d => d.domain === domainName)[0];
-
-    let text = "";
-    if (domainHashMap[domainName] > 1) {
-      text = `${domain.domain} (${domainHashMap[domainName]})`;
-    } else {
-      text = domain.domain;
-    }
-
-    if (elements.length > 0) {
-      elements.push(<br key={`br-${key}`} />);
-    }
-    elements.push(
-      <span key={`span-${key}`} className={classes.domain}>
-        {text}
-      </span>
-    );
-  });
-
-  // pospend the region info
-  elements.push(<hr key={position} />);
-  elements.push(getRegionText(domains[0]));
-
-  return <div key={position}>{elements}</div>;
+const getDomainDescription = domain => {
+  return (
+    <span>
+      <span>{domain.domain}</span>
+      <br />
+    </span>
+  );
 };
 
-class Map extends React.Component {
+class MyMap extends React.Component {
   state = {
     center: [30, 0],
     zoom: 1
@@ -89,7 +66,9 @@ class Map extends React.Component {
 
   componentWillReceiveProps(props) {
     if (this.props.selectedDomain !== props.selectedDomain) {
-      const domain = this.props.domains.filter(a => a.domain === props.selectedDomain)[0];
+      const domain = this.props.domains.filter(
+        a => a.domain === props.selectedDomain
+      )[0];
       this.setState({
         center: [domain.latitude, domain.longitude],
         zoom: 8
@@ -98,28 +77,58 @@ class Map extends React.Component {
   }
 
   render() {
-    const { classes, positions, themeType } = this.props;
+    const { classes, domains, themeType, height } = this.props;
     const { center, zoom } = this.state;
     return (
-      <LeafletMap center={center} zoom={zoom}>
+      <Map center={center} zoom={zoom} fullscreenControl maxZoom={4} style={{ height: height}}>
         <TileLayer
           attribution={TILE_PROVIDER[themeType].attribution}
           url={TILE_PROVIDER[themeType].url}
         />
-        {Object.keys(positions).map((position, i) => {
-          return (
-            JSON.parse(position)[0] !== null && (
-              <Marker key={position} position={JSON.parse(position)}>
-                <Popup className={classes.popup}>
-                  {getList(positions[position], position, classes)}
-                </Popup>
-              </Marker>
-            )
-          );
-        })}
-      </LeafletMap>
+        {domains && (
+          <MarkerClusterGroup>
+            {domains
+              .filter(d => d.domain && !!d.latitude && !!d.longitude)
+              .map((domain, i) => {
+                return (
+                  <Marker
+                    key={domain.domain}
+                    position={[domain.latitude, domain.longitude]}
+                  >
+                    <Tooltip
+                      className={classes.popup}
+                      sticky
+                      direction="center"
+                      offset={[0, -90]}
+                    >
+                      <Typography variant="title">
+                        {getDomainDescription(domain)}
+                      </Typography>
+                      <Typography variant="subheading">
+                        {getRegionText(domain)}
+                      </Typography>
+                      {(domain.is_ripple || domain.default) && (
+                        <Typography variant="caption">
+                          {domain.is_ripple && (
+                            <Chip label="Ripple" className={classes.chip} />
+                          )}
+                          {domain.default && (
+                            <Chip
+                              label="Default UNL"
+                              className={classes.chip}
+                            />
+                          )}
+                        </Typography>
+                      )}
+                    </Tooltip>
+                  </Marker>
+                );
+              })}
+          </MarkerClusterGroup>
+        )}
+      </Map>
     );
   }
 }
 
-export default withStyles(styles)(Map);
+export default withStyles(styles)(MyMap);

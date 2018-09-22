@@ -14,7 +14,7 @@ const styles = {
     position: "fixed",
     top: 0,
     width: "100%",
-    zIndex: 999
+    zIndex: 9999
   }
 };
 

@@ -2,12 +2,12 @@ import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
 
-import { Pie } from "@vx/shape";
-import { Group } from "@vx/group";
-import { localPoint } from "@vx/event";
+import Pie from "@vx/shape/build/shapes/Pie";
+import Group from "@vx/group/build/Group";
+import localPoint from "@vx/event/build/localPoint";
 import { withTooltip, Tooltip } from "@vx/tooltip";
-import { scaleOrdinal } from "@vx/scale";
-import { LegendOrdinal } from "@vx/legend";
+import scaleOrdinal from "@vx/scale/build/scales/ordinal";
+import LegendOrdinal from "@vx/legend/build/legends/Ordinal";
 
 import { _palette } from "../../util/colors";
 
