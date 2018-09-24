@@ -12,3 +12,4 @@ backend/build/
 frontend/dist/hot
 frontend/dist/bundle.js*
 frontend/dist/index.html
+frontend/chrome-debug

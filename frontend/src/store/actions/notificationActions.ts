@@ -1,24 +1,24 @@
 import * as actionTypes from "./actionTypes";
+import { action } from "../utility";
 
-export const fetchArchivesFailed = () => {
-  return {
-    type: actionTypes.FETCH_ARCHIVES_FAILED
-  };
+export const showNotification = (
+  message: string,
+  variant: string,
+  type: string
+) => async dispatch => {
+  try {
+    dispatch(
+      action<Store.State.Notification>(actionTypes.SHOW_NOTIFICATION, {
+        message,
+        variant,
+        type
+      })
+    );
+  } catch (e) {
+    dispatch(failed());
+  }
 };
 
-export const showNotification = (message, variant, type) => {
-  return async dispatch => {
-    try {
-      dispatch({
-        type: actionTypes.SHOW_NOTIFICATION,
-        data: {
-          message,
-          variant,
-          type
-        }
-      });
-    } catch (e) {
-      dispatch(fetchArchivesFailed());
-    }
-  };
-};
+export const failed = () => ({
+  type: actionTypes.FETCH_ARCHIVES_FAILED
+});

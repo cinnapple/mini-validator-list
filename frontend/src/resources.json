@@ -34,6 +34,10 @@
     "ja": "フィルター",
     "ru": "Фильтр"
   },
+  "CONDITION_FILTER": {
+    "en": "Conditions",
+    "ja": "条件を指定"
+  },
   "FILTER_BY_ACTIVE_NODES_ONLY": {
     "en": "Active Last",
     "ja": "アクティブなノードのみ"

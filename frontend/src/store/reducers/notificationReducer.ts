@@ -1,17 +1,20 @@
 import * as actionTypes from "../actions/actionTypes";
 import { updateObject } from "../utility";
 
-const initialState: any = {
+type S = Store.State.Notification;
+type A = Store.Action<S>;
+
+const initialState: S = {
   message: "",
   type: "",
   variant: ""
 };
 
-const showNotification = (state, action) => {
-  return updateObject(state, action.data);
+const showNotification = (state: S, action: A) => {
+  return updateObject(state, action.payload);
 };
 
-const reducer = (state = initialState, action) => {
+export default (state: S = initialState, action: A) => {
   switch (action.type) {
     case actionTypes.SHOW_NOTIFICATION:
       return showNotification(state, action);
@@ -19,5 +22,3 @@ const reducer = (state = initialState, action) => {
       return state;
   }
 };
-
-export default reducer;

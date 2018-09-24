@@ -1,18 +1,21 @@
 import * as actionTypes from "./actionTypes";
-import { State } from "../../types";
+import { action } from "../utility";
 
-export const closeDialog = () => {
-  return {
-    type: actionTypes.CLOSE_DIALOG,
-    data: {
-      open: false
-    }
-  };
-};
+export const openDialog = (
+  title: string,
+  items: Store.SelectableListItemOption[],
+  selectedValue: string,
+  handleSelect: () => void
+) =>
+  action<Store.State.SelectDialog>(actionTypes.OPEN_DIALOG, {
+    title,
+    items,
+    selectedValue,
+    handleSelect,
+    open: true
+  });
 
-export const openDialog = (newState: State.SelectDialogState) => {
-  return {
-    type: actionTypes.OPEN_DIALOG,
-    data: { ...newState, open: true }
-  };
-};
+export const closeDialog = () =>
+  action<Store.State.SelectDialog>(actionTypes.CLOSE_DIALOG, {
+    open: false
+  });

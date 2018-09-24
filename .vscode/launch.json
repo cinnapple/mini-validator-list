@@ -1,0 +1,20 @@
+{
+  "version": "0.1.0",
+  "configurations": [
+    {
+      "name": "Launch localhost",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost",
+      "webRoot": "${workspaceFolder}/frontend"
+    },
+    {
+      "name": "Attach to localhost",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "url": "http://localhost",
+      "webRoot": "${workspaceFolder}/frontend"
+    }
+  ]
+}

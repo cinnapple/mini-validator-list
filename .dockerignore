@@ -11,3 +11,4 @@ tsconfig.json
 tsconfig.release.json
 tslint.json
 wallaby.js
+chrome-debug/

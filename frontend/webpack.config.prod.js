@@ -1,62 +1,12 @@
-const webpack = require("webpack");
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin;
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { config } = require("./app.config");
+const { config, prodPlugins } = require("./webpack.common");
 
 module.exports = {
-  entry: ["./src/index.js"],
+  entry: config.entry,
   output: {
-    path: __dirname + "/dist",
-    publicPath: "/",
-    filename: "bundle.js"
+    ...config.output
   },
-  resolve: {
-    extensions: ["*", ".js", ".jsx", ".ts", ".tsx", ".json", ".svg"]
-  },
-  module: {
-    rules: [
-      { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
-      {
-        test: /\.css$/,
-        use: ["css-loader"]
-      },
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: ["babel-loader"]
-      },
-      {
-        test: /\.svg$/,
-        use: [
-          {
-            loader: "babel-loader"
-          },
-          {
-            loader: "react-svg-loader",
-            options: {
-              jsx: true // true outputs JSX tags
-            }
-          }
-        ]
-      }
-    ]
-  },
-  externals: {
-    react: "React",
-    "react-dom": "ReactDOM",
-    leaflet: "L",
-    "leaflet.markercluster": "L.MarkerCluster",
-    "react-leaflet": "ReactLeaflet"
-  },
-  plugins: [
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.DefinePlugin({
-      "process.env": {
-        NODE_ENV: JSON.stringify("production")
-      }
-    }),
-    new BundleAnalyzerPlugin(),
-    new HtmlWebpackPlugin(config.HtmlWebpackPluginProduction)
-  ]
+  resolve: config.resolve,
+  module: config.modules,
+  externals: config.externals,
+  plugins: prodPlugins
 };

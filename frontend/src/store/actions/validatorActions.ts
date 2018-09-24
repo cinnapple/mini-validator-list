@@ -1,84 +1,30 @@
-import { State } from "../../types";
 import * as actionTypes from "./actionTypes";
-import axiosInstance from "../../util/axios-api";
+import { get } from "../../services/webClient";
+import { action } from "../utility";
 
-export const filterValidators = (filter?: State.Filter) => {
-  return {
-    type: actionTypes.FILTER_VALIDATORS,
-    data: filter
-  };
+export const applyFilter = (filter: Store.State.Filter) =>
+  action<Store.State.Validator>(actionTypes.APPLY_FILTER, {
+    filter: filter
+  });
+
+export const resetFilter = () =>
+  action<Store.State.Validator>(actionTypes.RESET_FILTER, undefined);
+
+export const fetchValidators = (date?: string) => async dispatch => {
+  try {
+    const result = await get<Store.Model.Validator[]>(
+      `validators?d=${date || ""}&h=${-1}`
+    );
+    dispatch(
+      action<Store.State.Validator>(actionTypes.FETCH_VALIDATORS, {
+        _validators: result.data
+      })
+    );
+  } catch (e) {
+    dispatch(fetchValidatorsFailed());
+  }
 };
 
-export const fetchValidatorsFailed = () => {
-  return {
-    type: actionTypes.FETCH_VALIDATORS_FAILED
-  };
-};
-
-const getValidators = async (date?: string, lastNHours?: number) => {
-  lastNHours = lastNHours || 6;
-  const url = `validators?d=${date || ""}&h=${lastNHours || ""}`;
-  return axiosInstance.get<any>(url).then(result => result.data);
-};
-
-const getArchiess = async () => {
-  const url = `/archives`;
-  return axiosInstance.get<any>(url).then(result => result.data);
-};
-
-export const updateValidators = (date: string, filter: State.Filter) => {
-  return async dispatch => {
-    try {
-      if (date) {
-        // if default unl is selected, query to start the fetch.
-        axiosInstance.get(`/archives/${date}`);
-      }
-      const lastNHours = date ? -1 : filter.lastNHours;
-      const data = await getValidators(date, lastNHours);
-      const validators = data.data;
-      dispatch({
-        type: actionTypes.SET_VALIDATORS,
-        data: {
-          _validators: validators,
-          lastUpdated: validators.lastUpdated,
-          selectedDefaultUnlId: date || "",
-          filter: filter
-        }
-      });
-    } catch (e) {
-      dispatch(fetchValidatorsFailed());
-    }
-  };
-};
-
-export const initValidators = (filter: State.Filter) => {
-  return async dispatch => {
-    try {
-      const promises = [getValidators(), getArchiess()];
-      const data = await Promise.all(promises);
-      const validators = data[0].data;
-      const archives = data[1].data.map(archive => ({
-        ...archive,
-        id: archive.date
-      }));
-      dispatch({
-        type: actionTypes.INIT_VALIDATORS_AND_ARCHIVES,
-        data: {
-          lastUpdated: validators.lastUpdated,
-          validators: validators,
-          archives: archives,
-          selectedDefaultUnlId: "",
-          filter
-        }
-      });
-    } catch (e) {
-      dispatch(fetchValidatorsFailed());
-    }
-  };
-};
-
-export const fetchArchivesFailed = () => {
-  return {
-    type: actionTypes.FETCH_ARCHIVES_FAILED
-  };
-};
+export const fetchValidatorsFailed = () => ({
+  type: actionTypes.FETCH_VALIDATORS_FAILED
+});

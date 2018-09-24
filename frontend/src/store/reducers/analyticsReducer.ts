@@ -1,22 +1,22 @@
 import * as actionTypes from "../actions/actionTypes";
-import { Response, ReferralsList, State } from "../../types";
 import { updateObject } from "../utility";
 
-const initialState: State.Analytics = {
+type S = Store.State.Analytics;
+type A = Store.Action<Store.Model.ReferralsList>;
+
+const initialState: S = {
   referres: undefined,
   ready: false
 };
 
-const setReferralsReducer = (state, action) => {
-  const data = <Response<ReferralsList>>action.data;
+const setReferralsReducer = (state: S, action: A) => {
   return updateObject(state, {
-    referres: data.data,
-    lastUpdated: data.lastUpdated,
+    referres: action.payload,
     ready: true
   });
 };
 
-const reducer = (state = initialState, action) => {
+const reducer = (state: S = initialState, action: A) => {
   switch (action.type) {
     case actionTypes.SET_REFERRERS:
       return setReferralsReducer(state, action);

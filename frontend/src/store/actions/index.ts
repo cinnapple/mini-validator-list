@@ -1,8 +1,5 @@
-export {
-  initValidators,
-  updateValidators,
-  filterValidators
-} from "./validatorActions";
+export { applyFilter, resetFilter, fetchValidators } from "./validatorActions";
+export { fetchArchives } from "./defaultUnlActions";
 export { initReferrals } from "./analyticsActions";
 export { initSummary } from "./summaryActions";
 export { toggleThemeType, setLanguage } from "./appActions";

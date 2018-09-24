@@ -1,5 +1,3 @@
-import { AppData } from "../types";
-
 const KEYS = {
   APP: "APP"
 };
@@ -15,7 +13,7 @@ class LocalStorageRepository {
   constructor(private _key: string) {}
 
   get = () => {
-    let data: AppData;
+    let data: Store.State.AppData;
     try {
       data = JSON.parse(localStorage.getItem(this._key));
     } catch {}

@@ -1,26 +1,43 @@
-export const FETCH_VALIDATORS_FAILED = "FETCH_VALIDATORS_FAILED";
-export const INIT_VALIDATORS_AND_ARCHIVES = "INIT_VALIDATORS_AND_ARCHIVES";
-export const SET_VALIDATORS = "SET_VALIDATORS";
-export const FILTER_VALIDATORS = "FILTER_VALIDATORS";
+/**
+ * Summary Actions
+ */
+export const FETCH_SUMMARY = "FETCH_SUMMARY";
 
+/**
+ * Validator Actions
+ */
+export const FETCH_VALIDATORS = "FETCH_VALIDATORS";
+export const APPLY_FILTER = "FILTER_VALIDATORS";
+export const RESET_FILTER = "RESET_FILTER";
+export const FETCH_VALIDATORS_FAILED = "FETCH_VALIDATORS_FAILED";
+
+/**
+ * Default UNL Actions
+ */
+export const FETCH_ARCHIVES = "FETCH_ARCHIVES";
+export const SELECT_DEFAULT_UNL = "SELECT_DEFAULT_UNL";
+export const FETCH_ARCHIVES_FAILED = "FETCH_ARCHIVES_FAILED";
+
+/**
+ * Reference Actions
+ */
 export const FETCH_REFERRERS = "FETCH_REFERRERS";
 export const FETCH_REFERRERS_FAILED = "FETCH_REFERRERS_FAILED";
 export const SET_REFERRERS = "SET_REFERRERS";
 
-export const FETCH_ARCHIVES = "FETCH_ARCHIVES";
-export const FETCH_ARCHIVES_FAILED = "FETCH_ARCHIVES_FAILED";
-export const SET_ARCHIVES = "SET_ARCHIVES";
-
-export const DEFAULT_UNL_SELECTED = "DEFAULT_UNL_SELECTED";
-export const DEFAULT_UNL_UNSELECTED = "DEFAULT_UNL_UNSELECTED";
-
-export const SHOW_NOTIFICATION = "SHOW_NOTIFICATION";
-
+/**
+ * App Actions
+ */
 export const TOGGLE_THEMETYPE = "TOGGLE_THEMETYPE";
-
 export const SET_LANGUAGE = "SET_LANGUAGE";
 
+/**
+ * Notification Actions
+ */
+export const SHOW_NOTIFICATION = "SHOW_NOTIFICATION";
+
+/**
+ * Dialog Actions
+ */
 export const OPEN_DIALOG = "OPEN_DIALOG";
 export const CLOSE_DIALOG = "CLOSE_DIALOG";
-
-export const FETCH_SUMMARY = "FETCH_SUMMARY";

@@ -1,9 +1,17 @@
-export const updateObject = (oldObject, updatedValues) => {
-  return {
-    ...oldObject,
-    ...updatedValues
+export const updateObject = <TState>(
+  oldObject: TState,
+  updatedValues: TState
+) => {
+  return <TState>{
+    ...(oldObject as any),
+    ...(updatedValues as any)
   };
 };
+
+export const action = <T>(type: string, data: T): Store.Action<T> => ({
+  type: type,
+  payload: data
+});
 
 export const _sort = <T>(
   list: T[],

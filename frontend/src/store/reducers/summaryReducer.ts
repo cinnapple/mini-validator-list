@@ -1,24 +1,17 @@
 import * as actionTypes from "../actions/actionTypes";
-import { Response, State, SummaryList } from "../../types";
 import { updateObject } from "../utility";
+import { initialSummaryState } from "../initialStates";
 
-const initialState: State.Summary = {
-  summary: undefined,
-  ready: false
-};
+type S = Store.State.Summary;
+type A = Store.Action<Store.State.Summary>;
 
-const setSummaryReducer = (state, action) => {
-  const data = <Response<SummaryList>>action.data;
-  return updateObject(state, data);
-};
-
-const reducer = (state = initialState, action) => {
+export default (state: S = initialSummaryState, action: A) => {
   switch (action.type) {
     case actionTypes.FETCH_SUMMARY:
-      return setSummaryReducer(state, action);
+      return updateObject(state, {
+        stats: action.payload.stats
+      });
     default:
       return state;
   }
 };
-
-export default reducer;

@@ -9,9 +9,7 @@ export const toggleThemeType = themeType => {
   };
 };
 
-export const setLanguage = lang => {
-  return {
-    data: lang,
-    type: actionTypes.SET_LANGUAGE
-  };
-};
+export const setLanguage = lang => ({
+  data: lang,
+  type: actionTypes.SET_LANGUAGE
+});

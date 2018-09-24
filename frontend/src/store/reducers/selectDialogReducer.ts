@@ -1,8 +1,10 @@
 import * as actionTypes from "../actions/actionTypes";
 import { updateObject } from "../utility";
-import { State } from "../../types";
 
-const initialState: State.SelectDialogState = {
+type S = Store.State.SelectDialog;
+type A = Store.Action<S>;
+
+const initialState: S = {
   title: undefined,
   items: undefined,
   selectedValue: undefined,
@@ -10,15 +12,15 @@ const initialState: State.SelectDialogState = {
   open: false
 };
 
-const openDialog = (state, action) => {
-  return updateObject(state, action.data);
+const openDialog = (state: S, action: A) => {
+  return updateObject(state, action.payload);
 };
 
-const closeDialog = (state, action) => {
-  return updateObject(state, action.data);
+const closeDialog = (state: S, action: A) => {
+  return updateObject(state, action.payload);
 };
 
-const reducer = (state: State.SelectDialogState = initialState, action) => {
+export default (state: S = initialState, action: A) => {
   switch (action.type) {
     case actionTypes.OPEN_DIALOG:
       return openDialog(state, action);
@@ -28,5 +30,3 @@ const reducer = (state: State.SelectDialogState = initialState, action) => {
       return state;
   }
 };
-
-export default reducer;

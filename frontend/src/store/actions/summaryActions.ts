@@ -1,30 +1,20 @@
-import { Response, SummaryList } from "../../types";
 import * as actionTypes from "./actionTypes";
-import axiosInstance from "../../util/axios-api";
+import { get } from "../../services/webClient";
+import { action } from "../utility";
 
-export const setSummary = (data: Response<SummaryList>) => {
-  return {
-    type: actionTypes.FETCH_SUMMARY,
-    data: {
-      summary: data.data,
-      lastUpdated: data.lastUpdated
-    }
-  };
+export const initSummary = () => async dispatch => {
+  try {
+    const result = await get<Store.Model.SummaryList>("summary/6");
+    dispatch(
+      action<Store.State.Summary>(actionTypes.FETCH_SUMMARY, {
+        stats: result.data
+      })
+    );
+  } catch (e) {
+    dispatch(fetchSummaryFailed());
+  }
 };
 
-export const fetchSummaryFailed = () => {
-  return {
-    type: actionTypes.FETCH_REFERRERS_FAILED
-  };
-};
-
-export const initSummary = () => {
-  return async dispatch => {
-    try {
-      const result = await axiosInstance.get<Response<SummaryList>>("summary/6");
-      dispatch(setSummary(result.data));
-    } catch (e) {
-      dispatch(fetchSummaryFailed());
-    }
-  };
-};
+export const fetchSummaryFailed = () => ({
+  type: actionTypes.FETCH_REFERRERS_FAILED
+});
