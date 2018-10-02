@@ -28,5 +28,9 @@ export const Cache = {
   Stats: {
     key: "aggregated.stats",
     interval: Frequency.Often
+  },
+  UnlMovementStats: {
+    key: "ripple.defaultUNLMovementStats",
+    interval: Frequency.Rarely
   }
 };

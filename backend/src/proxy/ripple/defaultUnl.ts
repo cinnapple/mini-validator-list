@@ -28,4 +28,16 @@ export default class DefaultUnlProxy implements Domains.IDefaultUnl {
   async getDefaultUnlArchives() {
     return this._actual.getDefaultUnlArchives();
   }
+
+  @cache({
+    key: Cache.UnlMovementStats.key,
+    interval: Cache.UnlMovementStats.interval
+  })
+  async getDefaultUnlStats(
+    @cached(Cache.UnlArchives.key) archives: Models.DefaultUnlArchiveEntry[],
+    @cached(Cache.ValidatorsSummary.key)
+    validatorList: Models.ValidatorSummary[]
+  ) {
+    return this._actual.getDefaultUnlStats(archives, validatorList);
+  }
 }

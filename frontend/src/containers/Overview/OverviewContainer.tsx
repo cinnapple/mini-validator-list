@@ -8,6 +8,7 @@ import CardLayoutItem from "../../hoc/Layout/CardLayoutItem";
 
 import ValidatorOverviewCard from "../../components/Cards/ValidatorOverviewCard/ValidatorOverviewCard";
 import DefaultUnlOverviewCard from "../../components/Cards/DefaultUnlOverviewCard/DefaultUnlOverviewCard";
+import DefaultUnlMovementCard from "../../components/Cards/DefaultUnlMovementCard/DefaultUnlMovementCard";
 import CountryOverviewCard from "../../components/Cards/CountryOverviewCard/CountryOverviewCard";
 import ToolbarLayout from "../../hoc/Layout/ToolbarLayout";
 import ContentLayout from "../../hoc/Layout/ContentLayout";
@@ -42,6 +43,13 @@ class OverviewContainer extends React.Component<any, any> {
             </CardLayoutItem>
             <CardLayoutItem sm={SIZE_SM}>
               <DefaultUnlOverviewCard summary={stats} isLoading={isLoading} />
+            </CardLayoutItem>
+            <CardLayoutItem sm={SIZE_LG}>
+              <DefaultUnlMovementCard
+                list={validatorList}
+                app={app}
+                isLoading={isLoading}
+              />
             </CardLayoutItem>
             <CardLayoutItem sm={SIZE_LG}>
               <CountryOverviewCard

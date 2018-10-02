@@ -15,6 +15,11 @@ export default class StatsRoutes implements IRoutes {
         method: "GET",
         path: "/summary/:lastNHours",
         handler: this._handler.getStats
+      },
+      {
+        method: "GET",
+        path: "/defaultUnlMovements",
+        handler: this._handler.getDefaultUnlMovementStats
       }
     ];
   }

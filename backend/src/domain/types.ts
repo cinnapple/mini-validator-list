@@ -27,6 +27,11 @@ export namespace Models {
     longitude: number;
     last_datetime: string;
   };
+  export type DefaultUnlMovementStats = {
+    ripple: number;
+    nonRipple: number;
+    date: string;
+  };
 }
 
 export namespace Domains {
@@ -46,6 +51,10 @@ export namespace Domains {
       archives?: Models.DefaultUnlArchiveEntry[]
     ) => Promise<Models.DefaultUnl>;
     getDefaultUnlArchives: () => Promise<Models.DefaultUnlArchiveEntry[]>;
+    getDefaultUnlStats: (
+      archives: Models.DefaultUnlArchiveEntry[],
+      validatorSummary: Models.ValidatorSummary[]
+    ) => Promise<Models.DefaultUnlMovementStats[]>;
   }
   export interface IGeo {
     getDomainGeoList: (

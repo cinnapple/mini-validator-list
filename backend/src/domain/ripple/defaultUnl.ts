@@ -1,7 +1,12 @@
 import "reflect-metadata";
 import { injectable, inject, TYPES } from "../../inversify";
 import { IDefaultUnlService, IGitHubService } from "../../service/types";
-import { ILogger, IConfiguration, ILoggerFactory } from "../../lib/types";
+import {
+  ILogger,
+  IConfiguration,
+  ILoggerFactory,
+  ICrypto
+} from "../../lib/types";
 import { _sort } from "../../lib/util/util";
 import { Domains, Models } from "../types";
 
@@ -13,6 +18,7 @@ export default class DefaultUnl implements Domains.IDefaultUnl {
     @inject(TYPES.Lib.LoggerFactory) protected _loggerFactory: ILoggerFactory,
     @inject(TYPES.Lib.Configuration) private _configuration: IConfiguration,
     @inject(TYPES.Service.GitHubService) private _githubService: IGitHubService,
+    @inject(TYPES.Lib.Crypto) private _crypto: ICrypto,
     @inject(TYPES.Service.DefaultUnlService)
     private _defaultUnlService: IDefaultUnlService
   ) {
@@ -37,6 +43,37 @@ export default class DefaultUnl implements Domains.IDefaultUnl {
         return this._defaultUnlService.getDefaultUnlByUrl(archive.url);
       }
       return this._defaultUnlService.getDefaultUnl();
+    } catch (err) {
+      this._logger.error(err);
+      throw err;
+    }
+  };
+
+  getDefaultUnlStats = async (
+    archives: Models.DefaultUnlArchiveEntry[],
+    validatorSummary: Models.ValidatorSummary[]
+  ) => {
+    try {
+      const unls = await Promise.all(
+        archives.map(async a => ({
+          date: a.date,
+          parsed: await this._defaultUnlService.getDefaultUnlByUrl(a.url)
+        }))
+      );
+      return unls.map(a => {
+        const parsedPubKeys = this._crypto.parseDefaultUNLBlob(a.parsed.blob);
+        const rippleValidators = validatorSummary.filter(
+          v => parsedPubKeys.indexOf(v.pubkey) >= 0 && v.domain && v.is_ripple
+        );
+        const nonRippleValidators = validatorSummary.filter(
+          v => parsedPubKeys.indexOf(v.pubkey) >= 0 && v.domain && !v.is_ripple
+        );
+        return {
+          ripple: rippleValidators.length,
+          nonRipple: nonRippleValidators.length,
+          date: a.date
+        };
+      });
     } catch (err) {
       this._logger.error(err);
       throw err;

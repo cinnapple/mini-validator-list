@@ -36,4 +36,21 @@ export default class StatsHandler implements Handlers.IStatsHandler {
     );
     return this._stats.getSummary(validatorSummary);
   };
+
+  getDefaultUnlMovementStats = async () => {
+    const archives = await this._defaultUnl.getDefaultUnlArchives();
+    const defaultUnl = await this._defaultUnl.getDefaultUnl();
+    const dailyReports = await this._stats.getDailyReports();
+    const validators = await this._validators.getValidators();
+    const domainGeoList = await this._geo.getDomainGeoList(validators);
+    const validatorSummary = await this._validators.getValidatorSummary(
+      undefined,
+      defaultUnl,
+      dailyReports,
+      validators,
+      domainGeoList
+    );
+    console.log("hi!!");
+    return this._defaultUnl.getDefaultUnlStats(archives, validatorSummary);
+  };
 }
