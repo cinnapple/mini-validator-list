@@ -12,6 +12,8 @@ import LegendOrdinal from "@vx/legend/build/legends/Ordinal";
 
 import { _palette } from "../../util/colors";
 
+import ChartBase from "./ChartBase";
+
 const styles = theme =>
   createStyles({
     tooltip: {
@@ -37,38 +39,7 @@ type Props = {
   hideTooltip: Function;
 } & WithStyles<any>;
 
-type States = {};
-
-class PieChart extends React.Component<Props, States> {
-  private pieChart: React.RefObject<HTMLDivElement>;
-
-  state = {
-    margin: {
-      top: 150
-    },
-    innerWidth: 0,
-    innerHeight: 0
-  };
-
-  constructor(props) {
-    super(props);
-    this.pieChart = React.createRef();
-  }
-
-  componentDidMount() {
-    window.addEventListener("resize", this.resize.bind(this));
-    this.resize();
-  }
-
-  resize = () => {
-    this.setState({
-      innerWidth: this.pieChart.current ? this.pieChart.current.offsetWidth : 0,
-      innerHeight: this.pieChart.current
-        ? this.pieChart.current.offsetHeight
-        : 0
-    });
-  };
-
+class PieChart extends ChartBase<Props> {
   handleTooltip({ event, data }) {
     const { showTooltip } = this.props;
     const { x, y } = localPoint(event);
@@ -91,7 +62,7 @@ class PieChart extends React.Component<Props, States> {
       tooltipData,
       hideTooltip
     } = this.props;
-    const { innerWidth, innerHeight, margin } = this.state;
+    const { innerWidth, innerHeight } = this.state;
 
     const radius = height / 2 - 20;
     const innerRadius = radius - 50;
@@ -107,9 +78,9 @@ class PieChart extends React.Component<Props, States> {
     const centerTooltipHeight = innerRadius;
 
     return (
-      <div ref={this.pieChart} style={{ position: "relative" }}>
+      <div ref={this.chart} style={{ position: "relative" }}>
         <svg width={innerWidth} height={height}>
-          <Group top={margin.top} left={center}>
+          <Group top={150} left={center}>
             <Pie
               data={data}
               pieValue={d => d.y}

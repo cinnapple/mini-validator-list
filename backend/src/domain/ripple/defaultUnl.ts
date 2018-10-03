@@ -1,3 +1,4 @@
+import * as moment from "moment";
 import "reflect-metadata";
 import { injectable, inject, TYPES } from "../../inversify";
 import { IDefaultUnlService, IGitHubService } from "../../service/types";
@@ -60,20 +61,39 @@ export default class DefaultUnl implements Domains.IDefaultUnl {
           parsed: await this._defaultUnlService.getDefaultUnlByUrl(a.url)
         }))
       );
-      return unls.map(a => {
-        const parsedPubKeys = this._crypto.parseDefaultUNLBlob(a.parsed.blob);
-        const rippleValidators = validatorSummary.filter(
-          v => parsedPubKeys.indexOf(v.pubkey) >= 0 && v.domain && v.is_ripple
-        );
-        const nonRippleValidators = validatorSummary.filter(
-          v => parsedPubKeys.indexOf(v.pubkey) >= 0 && v.domain && !v.is_ripple
-        );
-        return {
-          ripple: rippleValidators.length,
-          nonRipple: nonRippleValidators.length,
-          date: a.date
-        };
-      });
+      const seen = {};
+      return unls
+        .reduce((prev, a) => {
+          const date = moment(a.date || undefined);
+          const key = `${date.year()}_${date.month() + 1}`;
+          if (!seen[key]) {
+            seen[key] = true;
+            const parsedPubKeys = this._crypto.parseDefaultUNLBlob(
+              a.parsed.blob
+            );
+            const rippleValidators = validatorSummary.filter(
+              v =>
+                parsedPubKeys.indexOf(v.pubkey) >= 0 && v.domain && v.is_ripple
+            );
+            const nonRippleValidators = validatorSummary.filter(
+              v =>
+                parsedPubKeys.indexOf(v.pubkey) >= 0 && v.domain && !v.is_ripple
+            );
+            const total = rippleValidators.length + nonRippleValidators.length;
+            if (total > 0) {
+              prev.push({
+                total: total,
+                ripple: rippleValidators.length,
+                ripplePer: rippleValidators.length / total,
+                nonRipple: nonRippleValidators.length,
+                nonRipplePer: nonRippleValidators.length / total,
+                date: key
+              });
+            }
+          }
+          return prev;
+        }, [])
+        .reverse();
     } catch (err) {
       this._logger.error(err);
       throw err;

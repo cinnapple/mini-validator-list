@@ -2,21 +2,22 @@ import * as React from "react";
 
 import { withStyles, createStyles } from "@material-ui/core";
 import Card from "../../Common/Card";
-import Map from "../../DomainMap/Map";
+import StackBarChart from "../../Charts/StackBarChart";
 
 const styles = theme => createStyles({});
+const color = "green";
 
-const DefaultUnlMovementCard = ({ classes, list, app, isLoading }) => {
-  if (isLoading || !list) {
+const DefaultUnlMovementCard = ({ classes, data, app, isLoading }) => {
+  if (isLoading || !data) {
     return <React.Fragment />;
   }
 
   const cardDefinition = {
     isTabbed: false,
-    content: <Map domains={list} themeType={app.themeType} height={370} />
+    content: <StackBarChart data={data} color={color} />
   };
 
-  return <Card title="Default UNL Movement" card={cardDefinition} />;
+  return <Card title="Default UNL Dominance Movement" card={cardDefinition} />;
 };
 
 export default withStyles(styles, { withTheme: true })(DefaultUnlMovementCard);

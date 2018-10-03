@@ -2,6 +2,7 @@
  * Summary Actions
  */
 export const FETCH_SUMMARY = "FETCH_SUMMARY";
+export const FETCH_MOVEMENT = "FETCH_MOVEMENT";
 
 /**
  * Validator Actions

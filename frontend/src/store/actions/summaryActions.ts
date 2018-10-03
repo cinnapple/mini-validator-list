@@ -15,6 +15,21 @@ export const initSummary = () => async dispatch => {
   }
 };
 
+export const initDefaultUnlMovement = () => async dispatch => {
+  try {
+    const result = await get<Store.Model.DefaultUnlMovement[]>(
+      "defaultUnlMovements"
+    );
+    dispatch(
+      action<Store.State.Summary>(actionTypes.FETCH_MOVEMENT, {
+        defaultUnlMovement: result.data
+      })
+    );
+  } catch (e) {
+    dispatch(fetchSummaryFailed());
+  }
+};
+
 export const fetchSummaryFailed = () => ({
   type: actionTypes.FETCH_REFERRERS_FAILED
 });

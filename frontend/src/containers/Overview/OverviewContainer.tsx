@@ -22,12 +22,13 @@ const SIZE_LG = 12;
 class OverviewContainer extends React.Component<any, any> {
   componentDidMount() {
     this.props.onInitSummary();
+    this.props.onInitMovement();
     this.props.onInitValidators();
   }
 
   render() {
-    const { sum, validatorList, app, isLoading } = this.props;
-    const { stats } = sum;
+    const { sum, mov, validatorList, app, isLoading } = this.props;
+    const { stats, defaultUnlMovement } = sum;
 
     if (!stats) {
       return <React.Fragment />;
@@ -46,7 +47,7 @@ class OverviewContainer extends React.Component<any, any> {
             </CardLayoutItem>
             <CardLayoutItem sm={SIZE_LG}>
               <DefaultUnlMovementCard
-                list={validatorList}
+                data={defaultUnlMovement}
                 app={app}
                 isLoading={isLoading}
               />
@@ -81,6 +82,7 @@ const mapDispatchToProps = dispatch => {
     onInitValidators: () => dispatch(actions.fetchValidators("")),
     onApplyFilters: filter => dispatch(actions.applyFilter(filter)),
     onInitSummary: () => dispatch(actions.initSummary()),
+    onInitMovement: () => dispatch(actions.initDefaultUnlMovement()),
     showNotification: (message, variant) =>
       dispatch(actions.showNotification(message, variant, ""))
   } as Containers.OverviewProps;

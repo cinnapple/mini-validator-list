@@ -50,7 +50,6 @@ export default class StatsHandler implements Handlers.IStatsHandler {
       validators,
       domainGeoList
     );
-    console.log("hi!!");
     return this._defaultUnl.getDefaultUnlStats(archives, validatorSummary);
   };
 }

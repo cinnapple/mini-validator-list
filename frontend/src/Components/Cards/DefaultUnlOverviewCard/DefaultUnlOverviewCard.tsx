@@ -10,10 +10,9 @@ import { _palette } from "../../../util/colors";
 import StackedListItem from "../../Common/StackedListItem";
 
 const styles = theme => createStyles({});
+const color = "green";
 
 const DefaultUnlOverviewCard = ({ classes, theme, summary, isLoading }) => {
-  const color = "green";
-
   if (isLoading || !summary) {
     return <React.Fragment />;
   }

@@ -73,6 +73,12 @@ declare namespace Store {
       summaryVerifiedGroupByCountryTotal: 15;
     }
 
+    export interface DefaultUnlMovement {
+      ripple: number;
+      nonRipple: number;
+      date: string;
+    }
+
     export interface Archive {
       date: "2018-09-24";
       name: "index.2018-09-24.json";
@@ -127,7 +133,8 @@ declare namespace Store {
     };
 
     export type Summary = {
-      stats: Model.SummaryList;
+      stats?: Model.SummaryList;
+      defaultUnlMovement?: Model.DefaultUnlMovement[];
     };
 
     export type Unl = {
