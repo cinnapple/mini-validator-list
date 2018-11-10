@@ -38,26 +38,34 @@ declare namespace service {
     export type DefaultUnlResponse = DefaultUnlResponseData;
 
     export type GetValidatorsResponseData = {
-      domain: string;
-      domain_state: string;
       validation_public_key: string;
-      last_datetime: string;
+      domain: string;
+      chain: "main" | "alt";
+      current_index: number;
+      agreement_1h: {
+        missed: number;
+        total: number;
+        score: string;
+        incomplete: boolean;
+      };
+      agreement_24h: {
+        missed: number;
+        total: number;
+        score: string;
+        incomplete: boolean;
+      };
+      partial: boolean;
+      unl: boolean;
     };
     export type GetValidatorsResponse = GetValidatorsResponseData[];
 
     export type GetDailyReportResponseData = {
       validation_public_key: string;
       date: string;
-      total_ledgers: number;
-      main_net_agreement: string;
-      main_net_ledgers: number;
-      alt_net_agreement: string;
-      alt_net_ledgers: number;
-      other_ledgers: number;
-      domain: string;
-      domain_state: string;
-      last_datetime: string;
-      is_report_available: boolean;
+      chain: "main" | "test";
+      score: string;
+      total: string;
+      missed: string;
     };
     export type GetDailyReportResponse = GetDailyReportResponseData[];
   }

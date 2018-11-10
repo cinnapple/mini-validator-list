@@ -1,7 +1,7 @@
-import "reflect-metadata";
-import { injectable, inject, TYPES } from "../../inversify";
-import { _union, _first } from "../../lib/util/util";
-import { _isRippleValidator, _rippleDomain } from "../common/util";
+import 'reflect-metadata';
+import { inject, injectable, TYPES } from '../../inversify';
+import { _first, _union } from '../../lib/util/util';
+import { _isRippleValidator, _rippleDomain } from '../common/util';
 
 @injectable()
 export default class Validators implements domain.IValidators {
@@ -13,42 +13,42 @@ export default class Validators implements domain.IValidators {
     @inject(TYPES.Lib.Configuration) private _configuration: lib.IConfiguration,
     @inject(TYPES.Lib.Crypto) private _crypto: lib.ICrypto,
     @inject(TYPES.Service.RippleDataService)
-    private _rippleDataService: service.IRippleDataService
+    private _rippleDataService: service.IRippleDataService,
   ) {
-    this._logger = _loggerFactory.create("Domain.Validators");
+    this._logger = _loggerFactory.create('Domain.Validators');
   }
 
-  getValidators = async () => {
+  public getValidators = async () => {
     try {
       return this._rippleDataService.getValidators();
     } catch (err) {
       this._logger.error(err);
       throw err;
     }
-  };
+  }
 
-  getValidatorSummary = async (
+  public getValidatorSummary = async (
     _date: string,
     defaultUnl: domain.DefaultUnl,
     dailyReports: domain.DailyReports[],
     allValidators: domain.Validator[],
-    domainGeoList: domain.DomainGeo[]
+    domainGeoList: domain.DomainGeo[],
   ) => {
     try {
       const validators = allValidators;
       const defaultUnlValidators = this._crypto.parseDefaultUNLBlob(
-        defaultUnl.blob
+        defaultUnl.blob,
       );
       const altnetRegex = this._configuration.ripple.altNetDomainsPattern;
       const allValidationPublicKeys = _union(
         defaultUnlValidators,
-        validators.map(a => a.validation_public_key)
+        validators.map(a => a.validation_public_key),
       );
 
       const mergedList = allValidationPublicKeys.reduce(
         (prev, pubkey) => {
           // remove stale validators
-          if (!pubkey || pubkey === "undefined") {
+          if (!pubkey || pubkey === 'undefined') {
             return prev;
           }
 
@@ -56,10 +56,14 @@ export default class Validators implements domain.IValidators {
           let v = _first(validators, v => v.validation_public_key === pubkey);
           if (!v) {
             v = {
+              chain: 'alt',
+              current_index: -1,
+              agreement_1h: <any>{},
+              agreement_24h: <any>{},
+              partial: undefined,
+              unl: false,
               validation_public_key: pubkey,
               domain: undefined,
-              domain_state: "unverified",
-              last_datetime: undefined
             };
           }
 
@@ -72,7 +76,7 @@ export default class Validators implements domain.IValidators {
             pubkey: v.validation_public_key,
             domain: v.domain,
             is_ripple: isRipple,
-            verified: v.domain_state === "verified",
+            verified: !!v.domain,
             default: undefined,
             is_report_available: false,
             is_alt_net: false,
@@ -85,13 +89,13 @@ export default class Validators implements domain.IValidators {
             region_name: undefined,
             latitude: 0,
             longitude: 0,
-            last_datetime: v.last_datetime
+            last_datetime: new Date().toString(),
           };
 
           // set default UNL flag
           const defaultUnlItem = _first<string>(
             defaultUnlValidators,
-            pubkey => pubkey === v.validation_public_key
+            pubkey => pubkey === v.validation_public_key,
           );
           if (defaultUnlItem) {
             data.default = !!defaultUnlItem;
@@ -102,32 +106,31 @@ export default class Validators implements domain.IValidators {
 
           const reportItem = _first<domain.DailyReports>(
             dailyReports,
-            report => report.validation_public_key === v.validation_public_key
+            report => report.validation_public_key === v.validation_public_key,
           );
           if (reportItem) {
             data.is_report_available = true;
             // set ALT-Net flag - if alt-net agreement is greater than the main net, then the domain is considered alt-net
             if (!data.is_alt_net) {
-              data.is_alt_net =
-                parseFloat(reportItem.alt_net_agreement) >
-                parseFloat(reportItem.main_net_agreement);
+              data.is_alt_net = reportItem.chain !== 'main';
             }
+            // TODO: later!
             // set agreement / disagreement / total_ledgers
-            data.agreement = !data.is_alt_net
-              ? parseFloat(reportItem.main_net_agreement)
-              : parseFloat(reportItem.alt_net_agreement);
-            let disagreement = 1;
-            if (!data.is_alt_net) {
-              disagreement =
-                reportItem.total_ledgers - reportItem.main_net_ledgers;
-              if (reportItem.total_ledgers > 0) {
-                disagreement /= reportItem.total_ledgers;
-              } else {
-                disagreement = 1;
-              }
-            }
-            data.disagreement = parseFloat(disagreement.toFixed(5));
-            data.total_ledgers = reportItem.total_ledgers;
+            // data.agreement = !data.is_alt_net
+            //   ? parseFloat(reportItem.main_net_agreement)
+            //   : parseFloat(reportItem.alt_net_agreement);
+            // let disagreement = 1;
+            // if (!data.is_alt_net) {
+            //   disagreement =
+            //     reportItem.total_ledgers - reportItem.;
+            //   if (parseInt(reportItem.total) > 0) {
+            //     disagreement /= parseInt(reportItem.total);
+            //   } else {
+            //     disagreement = 1;
+            //   }
+            // }
+            // data.disagreement = parseFloat(disagreement.toFixed(5));
+            // data.total_ledgers = parseInt(reportItem.total);
           }
           const geoItem = _first<domain.DomainGeo>(
             domainGeoList,
@@ -138,8 +141,8 @@ export default class Validators implements domain.IValidators {
               country_code: undefined,
               region_name: undefined,
               latitude: undefined,
-              longitude: undefined
-            }
+              longitude: undefined,
+            },
           );
           // set geo info
           if (geoItem) {
@@ -154,7 +157,7 @@ export default class Validators implements domain.IValidators {
           prev.push(data);
           return prev;
         },
-        <domain.ValidatorSummary[]>[]
+        <domain.ValidatorSummary[]>[],
       );
 
       return mergedList;
@@ -162,5 +165,5 @@ export default class Validators implements domain.IValidators {
       this._logger.error(err);
       throw err;
     }
-  };
+  }
 }

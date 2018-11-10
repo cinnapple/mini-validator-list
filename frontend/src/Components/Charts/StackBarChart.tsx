@@ -37,7 +37,7 @@ const styles = theme =>
     }
   });
 
-type Props = {
+interface Props extends WithStyles<typeof styles> {
   height: number;
   data: any[];
   showTooltip: Function;
@@ -47,7 +47,9 @@ type Props = {
   tooltipTop: number;
   tooltipData: any;
   hideTooltip: Function;
-} & WithStyles<any>;
+  theme;
+  any;
+}
 
 class StackBarChart extends ChartBase<Props> {
   handleTooltip({ event, data, xScale }) {

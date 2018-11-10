@@ -1,5 +1,5 @@
-import "reflect-metadata";
-import { injectable, inject, TYPES } from "../../inversify";
+import 'reflect-metadata';
+import { inject, injectable, TYPES } from '../../inversify';
 
 @injectable()
 export default class StatsHandler implements api.IStatsHandler {
@@ -7,10 +7,10 @@ export default class StatsHandler implements api.IStatsHandler {
     @inject(TYPES.Proxy.DefaultUnl) private _defaultUnl: domain.IDefaultUnl,
     @inject(TYPES.Proxy.Validators) private _validators: domain.IValidators,
     @inject(TYPES.Proxy.Geo) private _geo: domain.IGeo,
-    @inject(TYPES.Proxy.Stats) private _stats: domain.IStats
+    @inject(TYPES.Proxy.Stats) private _stats: domain.IStats,
   ) {}
 
-  getStats = async args => {
+  public getStats = async args => {
     args.params.lastNHours || 6;
 
     const defaultUnl = await this._defaultUnl.getDefaultUnl();
@@ -22,20 +22,12 @@ export default class StatsHandler implements api.IStatsHandler {
       defaultUnl,
       dailyReports,
       validators,
-      domainGeoList
-    );
-    console.log(
-      "DR:",
-      dailyReports[0].last_datetime,
-      "VL:",
-      validators[0].last_datetime,
-      "SY",
-      validatorSummary[0].last_datetime
+      domainGeoList,
     );
     return this._stats.getSummary(validatorSummary);
-  };
+  }
 
-  getDefaultUnlMovementStats = async () => {
+  public getDefaultUnlMovementStats = async () => {
     const archives = await this._defaultUnl.getDefaultUnlArchives();
     const defaultUnl = await this._defaultUnl.getDefaultUnl();
     const dailyReports = await this._stats.getDailyReports();
@@ -46,8 +38,8 @@ export default class StatsHandler implements api.IStatsHandler {
       defaultUnl,
       dailyReports,
       validators,
-      domainGeoList
+      domainGeoList,
     );
     return this._defaultUnl.getDefaultUnlStats(archives, validatorSummary);
-  };
+  }
 }
