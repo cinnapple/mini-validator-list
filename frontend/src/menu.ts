@@ -10,6 +10,10 @@ const links = [
     res: res.MENU_VALIDATORS
   },
   {
+    path: "/unlanalyer",
+    res: res.MENU_UNLANALYZER
+  },
+  {
     path: "/settings",
     res: res.SETTINGS
   },

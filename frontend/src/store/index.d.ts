@@ -193,6 +193,7 @@ declare namespace Store {
       MENU_GET_IN_TOUCH: Model.AvailableLanguages;
       MENU_EXTERNAL: Model.AvailableLanguages;
       MENU_VALIDATORS: Model.AvailableLanguages;
+      MENU_UNLANALYZER: Model.AvailableLanguages;
       SETTINGS: Model.AvailableLanguages;
       SETTINGS_APPEARANCE: Model.AvailableLanguages;
       SETTINGS_LANGUAGE: Model.AvailableLanguages;

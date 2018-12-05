@@ -1,6 +1,6 @@
 # build backend
-echo "building backend..."
-cd backend
+echo "building api..."
+cd api
 yarn run build
 cd ..
 echo

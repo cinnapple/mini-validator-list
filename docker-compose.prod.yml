@@ -2,14 +2,14 @@ version: '3.5'
 
 services:
 
-  mini-validator-list-backend:
-    container_name: mini-validator-list-backend
+  api:
+    container_name: api
     image: cinnapple/mini-validator-list-backend
     networks:
       - nginx-network
     volumes:
-      - .env:/usr/app/.env
-      - ./secret:/usr/app/secret
+      - .env:/usr/api/.env
+      - ./secret:/usr/api/secret
     restart: always
     environment:
       NODE_ENV: production

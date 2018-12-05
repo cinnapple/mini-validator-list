@@ -1,40 +1,43 @@
-version: '3.5'
+version: "3.5"
 
 services:
-
-  mini-validator-list-backend:
-    container_name: mini-validator-list-backend
+  api:
+    container_name: api
     build:
-      context: .
-      dockerfile: backend.Dockerfile
-    image: mini-validator-list-backend
+      context: ./api
+      dockerfile: ./Dockerfile
+    image: mvl-api
+    command: ["yarn", "run", "debug"]
     networks:
       - mini-validator-list
+    ports:
+      - "8081:8081"
+      - "9222:9222"
     volumes:
-      - ./backend/node_modules:/usr/app/node_modules
-      - ./backend/build/src:/usr/app/api
-      - .env:/usr/app/.env
-      - ./secret:/usr/app/secret
+      - ../secret:/usr/api/secret
+      - ./api/.env:/usr/api/.env
+      - ./api/node_modules:/usr/api/node_modules
+      - ./api/build:/usr/api/build
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
 
   mini-validator-list-frontend:
     container_name: mini-validator-list-frontend
     build:
-      context: .
-      dockerfile: frontend.Dockerfile
+      context: ./frontend
+      dockerfile: ./Dockerfile
     image: mini-validator-list-frontend
     networks:
       - mini-validator-list
     volumes:
       - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./frontend/dist:/usr/share/nginx/dist
+      - ./frontend/dist:/usr/share/app/dist
     environment:
       NODE_ENV: development
     ports:
-      - '80:80'
+      - "80:80"
     depends_on:
-      - mini-validator-list-backend
+      - api
 
 networks:
   mini-validator-list:

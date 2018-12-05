@@ -134,6 +134,10 @@
     "en": "Validators",
     "ja": "バリデーター情報"
   },
+  "MENU_UNLANALYZER": {
+    "en": "UNL Analyzer",
+    "ja": "UNL分析"
+  },
   "SETTINGS": {
     "en": "Settings",
     "ja": "設定",

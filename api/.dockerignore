@@ -1,0 +1,8 @@
+__tests__/
+.dockerignore
+node_modules/
+README.md
+src/
+tsconfig.json
+tsconfig.release.json
+tslint.json

@@ -2,6 +2,17 @@
   "version": "0.1.0",
   "configurations": [
     {
+      "type": "node",
+      "request": "attach",
+      "name": "attach:api",
+      "preLaunchTask": "tsc-watch",
+      "port": 9222,
+      "restart": true,
+      "localRoot": "${workspaceFolder}/api",
+      "remoteRoot": "/usr/app/api",
+      "outFiles": ["${workspaceFolder}/api/build/**/*.js"]
+    },
+    {
       "name": "Launch localhost",
       "type": "chrome",
       "request": "launch",

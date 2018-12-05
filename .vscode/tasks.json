@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "tsc-watch",
+      "command": "yarn",
+      "args": ["run", "watch"],
+      "isBackground": true,
+      "problemMatcher": "$tsc-watch",
+      "type": "shell",
+      "group": "build",
+      "presentation": { "reveal": "always" },
+      "options": {
+        "cwd": "${workspaceRoot}/api"
+      }
+    }
+  ]
+}
