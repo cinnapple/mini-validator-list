@@ -14,7 +14,7 @@ export default {
     port: 6379
   },
   ripple: {
-    defaultUnlSite: "https://vl.coil.com",
+    defaultUnlSite: "https://vl.ripple.com",
     validatorsUrl: "https://data.ripple.com/v2/network/validators",
     validatorDailyReportsUrl:
       "https://data.ripple.com/v2/network/validator_reports",

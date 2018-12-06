@@ -7,6 +7,8 @@ import MarkerClusterGroup from "react-leaflet-markercluster";
 
 import Typography from "@material-ui/core/Typography";
 import Chip from "@material-ui/core/Chip";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 
 import { getMarkerForValidator } from "./MapMarker";
 
@@ -23,6 +25,23 @@ const styles = theme =>
       margin: theme.spacing.unit,
       marginLeft: 0,
       marginBottom: 0
+    },
+    mapDiv: {
+      position: "relative"
+    },
+    clusterSwitchDiv: {
+      position: "absolute",
+      zIndex: 9999,
+      right: 0,
+      background: "white",
+      border: "2px solid #CCC",
+      margin: "10px"
+    },
+    switchLabelRoot: {
+      marginLeft: 0
+    },
+    switchLabelLabel: {
+      color: "#000"
     }
   });
 
@@ -61,8 +80,22 @@ const getDomainDescription = domain => {
   );
 };
 
-class MyMap extends React.Component<any, any> {
+interface Props extends WithStyles<typeof styles> {
+  domains: any[];
+  themeType: string;
+  height?: number;
+  selectedDomain?: string;
+}
+
+interface State {
+  clustered?: boolean;
+  center: number[];
+  zoom: number;
+}
+
+class MyMap extends React.Component<Props, State> {
   state = {
+    clustered: true,
     center: [30, 0],
     zoom: 1
   };
@@ -79,67 +112,86 @@ class MyMap extends React.Component<any, any> {
     }
   }
 
+  handleClustering = () => {
+    this.setState({ clustered: !this.state.clustered });
+  };
+
   render() {
     const { classes, domains, themeType, height } = this.props;
-    const { center, zoom } = this.state;
-    return (
-      <Map
-        center={center}
-        zoom={zoom}
-        fullscreenControl
-        maxZoom={6}
-        style={{ height: height }}
-      >
-        <TileLayer
-          attribution={TILE_PROVIDER[themeType].attribution}
-          url={TILE_PROVIDER[themeType].url}
-        />
-        {domains && (
-          <MarkerClusterGroup
-            showCoverageOnHover={false}
-            spiderfyOnMaxZoom={true}
+    const { clustered, center, zoom } = this.state;
+
+    const markers = (domains || [])
+      .filter(d => d.domain && !!d.latitude && !!d.longitude)
+      .map((domain, i) => {
+        return (
+          <Marker
+            key={domain.domain}
+            position={[domain.latitude, domain.longitude]}
+            icon={getMarkerForValidator(domain)}
           >
-            {domains
-              .filter(d => d.domain && !!d.latitude && !!d.longitude)
-              .map((domain, i) => {
-                return (
-                  <Marker
-                    key={domain.domain}
-                    position={[domain.latitude, domain.longitude]}
-                    icon={getMarkerForValidator(domain)}
-                  >
-                    <Tooltip
-                      className={classes.popup}
-                      sticky
-                      direction="right"
-                      offset={[15, 0]}
-                    >
-                      <Typography variant="title">
-                        {getDomainDescription(domain)}
-                      </Typography>
-                      <Typography variant="subheading">
-                        {getRegionText(domain)}
-                      </Typography>
-                      {(domain.is_ripple || domain.default) && (
-                        <Typography variant="caption">
-                          {domain.is_ripple && (
-                            <Chip label="Ripple" className={classes.chip} />
-                          )}
-                          {domain.default && (
-                            <Chip
-                              label="Default UNL"
-                              className={classes.chip}
-                            />
-                          )}
-                        </Typography>
-                      )}
-                    </Tooltip>
-                  </Marker>
-                );
-              })}
-          </MarkerClusterGroup>
-        )}
-      </Map>
+            <Tooltip
+              className={classes.popup}
+              sticky
+              direction="right"
+              offset={[15, 0]}
+            >
+              <Typography variant="title">
+                {getDomainDescription(domain)}
+              </Typography>
+              <Typography variant="subheading">
+                {getRegionText(domain)}
+              </Typography>
+              {(domain.is_ripple || domain.default) && (
+                <Typography variant="caption">
+                  {domain.is_ripple && (
+                    <Chip label="Ripple" className={classes.chip} />
+                  )}
+                  {domain.default && (
+                    <Chip label="Default UNL" className={classes.chip} />
+                  )}
+                </Typography>
+              )}
+            </Tooltip>
+          </Marker>
+        );
+      });
+
+    return (
+      <div className={classes.mapDiv}>
+        <div className={classes.clusterSwitchDiv}>
+          <FormControlLabel
+            classes={{
+              root: classes.switchLabelRoot,
+              label: classes.switchLabelLabel
+            }}
+            control={
+              <Switch checked={clustered} onChange={this.handleClustering} />
+            }
+            label="Cluster"
+          />
+        </div>
+        <Map
+          center={center}
+          zoom={zoom}
+          fullscreenControl
+          maxZoom={6}
+          style={{ height: height }}
+        >
+          <TileLayer
+            attribution={TILE_PROVIDER[themeType].attribution}
+            url={TILE_PROVIDER[themeType].url}
+          />
+          {clustered && (
+            <MarkerClusterGroup
+              showCoverageOnHover={false}
+              spiderfyOnMaxZoom={true}
+            >
+              {markers}
+            </MarkerClusterGroup>
+          )}
+          {!clustered && markers}
+        </Map>
+      </div>
     );
   }
 }
