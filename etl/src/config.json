@@ -1,0 +1,38 @@
+{
+  "jobs": [
+    {
+      "name": "UpdateValidatorsSnapshotJob",
+      "cron": "* * * * *",
+      "runImmediate": true
+    },
+    {
+      "name": "UpdateDomainKeyMapJob",
+      "cron": "* * * * *",
+      "runImmediate": true,
+      "args": {
+        "wellknownKeyFile": "wellknown-validators.json"
+      }
+    },
+    {
+      "name": "UpdateGeoLocationJob",
+      "cron": "0 */6 * * *",
+      "runImmediate": true
+    },
+    {
+      "name": "UpdateUnlSnapshotJob",
+      "cron": "5 * * * *",
+      "runImmediate": true,
+      "args": {
+        "host": "https://vl.ripple.com"
+      }
+    },
+    {
+      "name": "UpdateUnlHistoryJob",
+      "cron": "5 * * * *",
+      "runImmediate": true,
+      "args": {
+        "host": "https://vl.ripple.com"
+      }
+    }
+  ]
+}

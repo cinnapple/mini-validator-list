@@ -1,13 +1,9 @@
 FROM node:10.6.0-alpine
 
-WORKDIR /usr/api
+WORKDIR /usr/app
 
-COPY ./package.json ./yarn.lock ./.env /usr/api/
+COPY ./package.json ./yarn.lock ./index.js /usr/app/
+
+COPY ./schema /usr/app/schema
 
 RUN yarn install --production
-
-COPY ./build /usr/api/build/
-
-EXPOSE 8081
-
-CMD ["yarn", "run", "start"]

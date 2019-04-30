@@ -1,43 +1,66 @@
 version: "3.5"
-
 services:
+  redis_db:
+    image: redis
+    ports:
+      - "6379"
+    restart: always
+    networks:
+      - nginx-network
+  db:
+    image: "postgres:11"
+    env_file: ./.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - database:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+    restart: always
+    networks:
+      - nginx-network
+  etl:
+    build: ./etl
+    image: minivalist-etl
+    volumes:
+      - .env:/usr/app/.env
+      - ./etl/bin:/usr/app/bin
+      - ./etl/node_modules:/usr/app/node_modules
+    command: yarn run dev-all
+    depends_on:
+      - db
+    networks:
+      - nginx-network
   api:
-    container_name: api
-    build:
-      context: ./api
-      dockerfile: ./Dockerfile
-    image: mini-validator-list-api
-    command: ["yarn", "run", "debug"]
-    networks:
-      - mini-validator-list
+    build: ./api
+    image: minivalist-api
     ports:
-      - "8081:8081"
-      - "9222:9222"
+      - "4000:4000"
     volumes:
-      - ../secret:/usr/api/secret
-      - ./api/.env:/usr/api/.env
-      - ./api/node_modules:/usr/api/node_modules
-      - ./api/build:/usr/api/build
-    environment:
-      NODE_ENV: production
-
-  mini-validator-list-frontend:
-    container_name: mini-validator-list-frontend
-    build:
-      context: ./frontend
-      dockerfile: ./Dockerfile
-    image: mini-validator-list-frontend
+      - .env:/usr/app/.env
+      - ./api/schema:/usr/app/schema
+      - ./api/node_modules:/usr/app/node_modules
+    command: node index.js
+    depends_on:
+      - db
+    links:
+      - redis_db
     networks:
-      - mini-validator-list
-    volumes:
-      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./frontend/dist:/usr/share/app/dist
-    environment:
-      NODE_ENV: development
+      - nginx-network
+  web:
+    env_file: ./.env
+    build: ./web
+    image: minivalist-web
     ports:
-      - "80:80"
+      - "3000:3000"
     depends_on:
       - api
+    networks:
+      - nginx-network
+
+volumes:
+  database:
+    driver: local
 
 networks:
-  mini-validator-list:
+  nginx-network:
+    name: nginx-network
