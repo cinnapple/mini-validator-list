@@ -1,32 +1,15 @@
-# build backend
-echo "building api..."
-cd api
+# build etl
+echo "building etl..."
+cd etl
 yarn run build
 cd ..
 echo
 
-# build frontend
-echo "building frontend..."
-cd frontend
+# build web
+echo "building web..."
+cd web
 yarn run build
 cd ..
-echo
-
-# build docker images
-echo "building images..."
-docker-compose build
-echo
-
-# build docker images
-echo "tagging imgaegs with 'cinnapple'..."
-docker image tag mini-validator-list-api cinnapple/mini-validator-list-api
-docker image tag mini-validator-list-frontend cinnapple/mini-validator-list-frontend
-echo
-
-# push docker image
-echo "pushing images to the hub..."
-docker image push cinnapple/mini-validator-list-api
-docker image push cinnapple/mini-validator-list-frontend
 echo
 
 echo "done."

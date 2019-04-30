@@ -1,31 +1,15 @@
 {
-  "version": "0.1.0",
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
   "configurations": [
     {
-      "type": "node",
-      "request": "attach",
-      "name": "attach:api",
-      "preLaunchTask": "tsc-watch",
-      "port": 9222,
-      "restart": true,
-      "localRoot": "${workspaceFolder}/api",
-      "remoteRoot": "/usr/app/api",
-      "outFiles": ["${workspaceFolder}/api/build/**/*.js"]
-    },
-    {
-      "name": "Launch localhost",
       "type": "chrome",
       "request": "launch",
-      "url": "http://localhost",
-      "webRoot": "${workspaceFolder}/frontend"
-    },
-    {
-      "name": "Attach to localhost",
-      "type": "chrome",
-      "request": "attach",
-      "port": 9222,
-      "url": "http://localhost",
-      "webRoot": "${workspaceFolder}/frontend"
+      "name": "Launch Chrome against localhost",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}"
     }
   ]
 }
