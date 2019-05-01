@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Chart, Axis, Tooltip, Geom, Coord, Legend, Guide } from "bizcharts";
 import DataSet from "@antv/data-set";
-import { IChartPropBase } from "../../types";
+import { IChartPropBase, IDonutChartOptions } from "../../types";
 const { Text } = Guide;
 const { DataView } = DataSet;
 
@@ -11,18 +11,10 @@ const scale = {
   }
 };
 
-export interface IDonutChartProps extends IChartPropBase {
-  titleField: string;
-  supportText: [string, string];
-}
-
-const VerifiedValidatorsChart: React.SFC<IDonutChartProps> = ({
-  resultSet,
-  query,
-  titleField,
-  supportText,
-  onDrilldown
-}) => {
+const VerifiedValidatorsChart: React.SFC<
+  IChartPropBase<IDonutChartOptions>
+> = ({ resultSet, query, options, onDrilldown }) => {
+  const { props, titleField, supportText } = options;
   const countMeasure = query.measures[0];
   const dv = new DataView();
   dv.source(resultSet.chartPivot()).transform({
@@ -40,6 +32,7 @@ const VerifiedValidatorsChart: React.SFC<IDonutChartProps> = ({
 
   return (
     <Chart
+      {...props}
       height={400}
       data={dv}
       scale={scale}

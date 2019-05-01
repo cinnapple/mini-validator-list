@@ -1,11 +1,17 @@
 import * as React from "react";
 import { MobileSize, DesktopSize, TabletSize } from "./components/Responsive";
 import { Sizes } from "./types";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch
+} from "react-router-dom";
 
 import DashboardContainer from "./containers/Dashboard";
 import ValidatorListContainer from "./containers/ValidatorList";
 import UnlAnalysisContainer from "./containers/UNLAnalysis";
+import ValidatorDetailsContainer from "./containers/ValidatorDetails";
 
 const withSize = (Component: any) => (
   <>
@@ -23,15 +29,20 @@ const withSize = (Component: any) => (
 
 const DashboardPage = () => withSize(DashboardContainer);
 const ValidatorListPage = () => withSize(ValidatorListContainer);
+const ValidatorDetailsPage = () => withSize(ValidatorDetailsContainer);
 const UnlAnalysisPage = () => withSize(UnlAnalysisContainer);
 
 const App = () => {
   return (
     <Router>
       <div className="App">
-        <Route exact path="/" component={DashboardPage} />
-        <Route exact path="/validators" component={ValidatorListPage} />
-        <Route exact path="/unl-analysis" component={UnlAnalysisPage} />
+        <Switch>
+          <Route exact path="/" component={DashboardPage} />
+          <Route path={`/validators/:id`} component={ValidatorDetailsPage} />
+          <Route exact path="/validators" component={ValidatorListPage} />
+          <Route exact path="/unl-analysis" component={UnlAnalysisPage} />
+          <Redirect to="/" />
+        </Switch>
       </div>
     </Router>
   );

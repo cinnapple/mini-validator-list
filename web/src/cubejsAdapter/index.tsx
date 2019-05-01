@@ -37,7 +37,7 @@ const Chart: React.SFC<Props> = ({
           query,
           size,
           onDrilldown,
-          ...options
+          options
         });
       }
 

@@ -1,16 +1,16 @@
 import React, { SFC } from "react";
 import { Chart, Geom, Axis, Tooltip, Legend } from "bizcharts";
 import dayjs from "dayjs";
-import { Sizes, IChartPropBase } from "../../types";
+import { Sizes, IChartPropBase, IStackBarChartOptions } from "../../types";
 
-export interface ILineChartProps extends IChartPropBase {}
-
-const StackedBar: SFC<ILineChartProps> = ({
+const StackedBar: SFC<IChartPropBase<IStackBarChartOptions>> = ({
   resultSet,
   query,
   size,
+  options,
   onDrilldown
 }) => {
+  const { props } = options;
   const countField = query.measures[0];
   const data = resultSet.rawData().map((a: any) => ({
     ...a,
@@ -24,6 +24,7 @@ const StackedBar: SFC<ILineChartProps> = ({
       }}
     >
       <Chart
+        {...props}
         height={400}
         data={data}
         padding={[20, 20, 90, 25]}

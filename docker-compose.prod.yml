@@ -1,12 +1,14 @@
 version: "3.5"
 services:
   redis_db:
+    container_name: minivalist-redis
     image: redis
     ports:
       - "6379"
     networks:
       - nginx-network
   db:
+    container_name: minivalist-db
     image: "postgres:11"
     env_file: ./.env
     ports:
@@ -18,6 +20,7 @@ services:
     networks:
       - nginx-network
   etl:
+    container_name: minivalist-etl
     image: cinnapple/minivalist-etl
     volumes:
       - .env:/usr/app/.env
@@ -28,6 +31,7 @@ services:
     networks:
       - nginx-network
   api:
+    container_name: minivalist-api
     image: cinnapple/minivalist-api
     ports:
       - "4000:4000"
@@ -42,6 +46,7 @@ services:
     networks:
       - nginx-network
   web:
+    container_name: minivalist-web
     image: cinnapple/minivalist-web
     environment:
       - NODE_ENV=production
@@ -53,7 +58,7 @@ services:
 
 volumes:
   database:
-    driver: local
+    external: true
 
 networks:
   nginx-network:
