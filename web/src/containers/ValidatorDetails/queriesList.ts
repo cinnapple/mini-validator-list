@@ -1,6 +1,11 @@
-import { SupportedCharts, IQueryItem, ITableChartOptions } from "../../types";
+import {
+  QueryList,
+  SupportedCharts,
+  IQueryItem,
+  ITableChartOptions
+} from "../../types";
 
-const validatorListQuery: IQueryItem<ITableChartOptions<any>> = {
+const mainNetValidatorQuery: IQueryItem<ITableChartOptions<any>> = {
   title: "Main Net Validators",
   type: SupportedCharts.Table,
   query: {
@@ -116,4 +121,4 @@ const validatorListQuery: IQueryItem<ITableChartOptions<any>> = {
   }
 };
 
-export default [[validatorListQuery]];
+export default [[mainNetValidatorQuery]];

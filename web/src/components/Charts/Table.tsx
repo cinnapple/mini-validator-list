@@ -1,29 +1,13 @@
 import * as React from "react";
 import { Table as _Table, Statistic, Row, Col, Card } from "antd";
-import { IChartPropBase, Sizes } from "../../types";
-import { ColumnProps } from "antd/lib/table";
+import {
+  Sizes,
+  IStatsOptions,
+  ExtendedColumnProps,
+  IChartPropBase,
+  ITableChartOptions
+} from "../../types";
 import { uniq, sortBy, sort } from "../../helpers/util";
-
-export interface ExtendedColumnProps extends ColumnProps<any> {
-  enableFilter: boolean;
-  type: "shortdate" | "key";
-  format: string;
-}
-
-export interface ITableStats {
-  title: string;
-  value: string;
-  suffix: string;
-}
-
-export interface ITableChartProps extends IChartPropBase {
-  columns: ExtendedColumnProps[];
-  defaultFilteredInfo: any;
-  scroll: any;
-  showHeader: boolean;
-  buildStats: (data: any[]) => ITableStats[];
-  rowKey: string;
-}
 
 const isLastOddIndex = (total: number, i: number) => {
   return total % 2 === 1 && i === total - 1;
@@ -37,7 +21,7 @@ const getColSpan = (size: Sizes, totalItems: number, currentItem: number) => {
     : 24 / totalItems;
 };
 
-const createStats = (stats: ITableStats[], size: Sizes) => (
+const createStats = (stats: IStatsOptions[], size: Sizes) => (
   <Row gutter={16}>
     {stats.map((s, i) => (
       <Col key={s.title} span={getColSpan(size, stats.length, i)}>
@@ -52,7 +36,7 @@ const createStats = (stats: ITableStats[], size: Sizes) => (
   </Row>
 );
 
-const getFormatter = (c: ExtendedColumnProps) => {
+const getFormatter = (c: ExtendedColumnProps<any>) => {
   if (c.type === "key") {
     return (text: string) => {
       return `${text.substr(0, 10)}...`;
@@ -71,16 +55,14 @@ const getFormatter = (c: ExtendedColumnProps) => {
   }
 };
 
-const Table: React.SFC<ITableChartProps> = ({
+const Table: React.SFC<IChartPropBase<ITableChartOptions<any>>> = ({
   resultSet,
-  defaultFilteredInfo,
-  columns,
   size,
-  scroll,
-  showHeader,
-  buildStats,
-  rowKey
+  options
 }) => {
+  const { props, defaultFilteredInfo, buildStats } = options;
+  const { columns } = props;
+
   const data = resultSet.rawData();
   const [state, setState] = React.useState({
     sortedInfo: {
@@ -122,12 +104,11 @@ const Table: React.SFC<ITableChartProps> = ({
     <>
       {buildStats && createStats(stats, size)}
       <_Table
-        showHeader={showHeader}
-        rowKey={rowKey}
+        {...props}
+        bordered
         dataSource={data}
         pagination={false}
         columns={enhancedColumns}
-        bordered
         size={size === Sizes.Mobile ? "default" : "middle"}
         onChange={(pagination, filters, sorter, extra) => {
           setState({
@@ -136,7 +117,6 @@ const Table: React.SFC<ITableChartProps> = ({
             stats: buildStats && buildStats(extra.currentDataSource)
           });
         }}
-        scroll={scroll}
       />
     </>
   );

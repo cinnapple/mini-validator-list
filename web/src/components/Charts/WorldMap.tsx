@@ -3,7 +3,7 @@ import { Card } from "antd";
 import { Map, TileLayer, Marker, Tooltip, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import L from "leaflet";
-import { IChartPropBase } from "../../types";
+import { IChartPropBase, IMapProps } from "../../types";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -31,14 +31,12 @@ const TILE_PROVIDER: any = {
   }
 };
 
-export interface WorldMapChartProps extends IChartPropBase {}
-
 interface State {
   center: [number, number];
   zoom: number;
 }
 
-const WorldMap: React.SFC<WorldMapChartProps> = ({ resultSet }) => {
+const WorldMap: React.SFC<IChartPropBase<IMapProps>> = ({ resultSet }) => {
   const [state, setState] = React.useState<State>({
     center: [30, 0],
     zoom: 1
