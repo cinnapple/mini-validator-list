@@ -8,10 +8,9 @@ interface Props {
   size: Sizes;
 }
 
-const DashboardContainer: React.SFC<Props> = ({ size }) => (
+const UNLScoreboardContainer: React.SFC<Props> = ({ size }) => (
   <LayoutComponent size={size}>
     <QueriesListRenderer size={size} queriesList={queriesList} />
   </LayoutComponent>
 );
-
-export default DashboardContainer;
+export default UNLScoreboardContainer;

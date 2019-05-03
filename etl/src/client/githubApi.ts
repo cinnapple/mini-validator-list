@@ -7,6 +7,7 @@ class GithubApi implements IGithubApi {
   private _client: Octokit;
 
   constructor(@inject(TYPES.Config) private _config: IConfig) {
+    console.log(` token: `, this._config.githubToken);
     this._client = new Octokit({ auth: this._config.githubToken });
   }
 
@@ -16,6 +17,16 @@ class GithubApi implements IGithubApi {
         owner: "ripple",
         repo: "vl",
         path: ""
+      })
+      .then(res => res.data);
+  }
+
+  getDomainIconList() {
+    return this._client.repos
+      .getContents({
+        owner: "cinnapple",
+        repo: "mini-validator-list-data",
+        path: "domain-icons"
       })
       .then(res => res.data);
   }

@@ -33,6 +33,19 @@
       "args": {
         "host": "https://vl.ripple.com"
       }
+    },
+    {
+      "name": "UpdateValidatorProfilesJob",
+      "cron": "*/5 * * * *",
+      "runImmediate": true
+    },
+    {
+      "name": "UpdateValidationReportJob",
+      "cron": "0 */12 * * *",
+      "runImmediate": true,
+      "args": {
+        "waitTime": 30
+      }
     }
   ]
 }

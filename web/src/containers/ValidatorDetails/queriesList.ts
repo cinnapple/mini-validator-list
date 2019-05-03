@@ -1,9 +1,4 @@
-import {
-  QueryList,
-  SupportedCharts,
-  IQueryItem,
-  ITableChartOptions
-} from "../../types";
+import { SupportedCharts, IQueryItem, ITableChartOptions } from "../../types";
 
 const mainNetValidatorQuery: IQueryItem<ITableChartOptions<any>> = {
   title: "Main Net Validators",

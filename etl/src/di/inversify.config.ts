@@ -24,6 +24,8 @@ import UpdateUnlHistoryJob from "../jobs/updateUnlHistoryJob";
 import UpdateValidatorsSnapshotJob from "../jobs/updateValidatorsSnapshotJob";
 import UpdateUnlSnapshotJob from "../jobs/updateUnlSnapshotJob";
 import UpdateDomainKeyMapJob from "../jobs/updateDomainKeyMapJob";
+import UpdateValidatorProfilesJob from "../jobs/updateValidatorProfilesJob";
+import UpdateValidationReportJob from "../jobs/updateValidationReportJob";
 
 const kernel = new Container();
 
@@ -75,6 +77,14 @@ kernel
 kernel
   .bind<IJob>(TYPES.UpdateDomainKeyMapJob)
   .to(UpdateDomainKeyMapJob)
+  .inTransientScope();
+kernel
+  .bind<IJob>(TYPES.UpdateValidatorProfilesJob)
+  .to(UpdateValidatorProfilesJob)
+  .inTransientScope();
+kernel
+  .bind<IJob>(TYPES.UpdateValidationReportJob)
+  .to(UpdateValidationReportJob)
   .inTransientScope();
 
 export { kernel };

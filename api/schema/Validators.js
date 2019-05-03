@@ -67,6 +67,11 @@ cube(`Validators`, {
       type: `string`
     },
 
+    domainOrKey: {
+      sql: `COALESCE(NULLIF(${DomainKeyMap}.domain, ''), NULLIF(${CUBE}.domain, ''), ${CUBE}.validation_public_key)`,
+      type: `string`
+    },
+
     verified: {
       sql: `case when ${CUBE}.domain <> '' then 'Verified' else 'Unverified' end `,
       type: `string`
@@ -88,12 +93,17 @@ cube(`Validators`, {
     },
 
     agreement24h: {
-      sql: `agreement_24h_missed`,
+      sql: `agreement_24h_total`,
       type: `number`
     },
 
     agreement24hMissed: {
       sql: `agreement_24h_missed`,
+      type: `number`
+    },
+
+    agreement24hScore: {
+      sql: `agreement_24h_score`,
       type: `number`
     },
 

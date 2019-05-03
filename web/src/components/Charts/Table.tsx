@@ -1,9 +1,9 @@
 import * as React from "react";
-import { Table as _Table, Statistic, Row, Col, Card } from "antd";
+import { Table as _Table, Statistic, Row, Col, Card, Icon } from "antd";
 import {
   Sizes,
   IStatsOptions,
-  ExtendedColumnProps,
+  IExtendedColumnProps,
   IChartPropBase,
   ITableChartOptions
 } from "../../types";
@@ -36,7 +36,10 @@ const createStats = (stats: IStatsOptions[], size: Sizes) => (
   </Row>
 );
 
-const getFormatter = (c: ExtendedColumnProps<any>) => {
+const renderer = (
+  c: IExtendedColumnProps<any>,
+  onDrilldown?: (opt: any) => void
+) => {
   if (c.type === "key") {
     return (text: string) => {
       return `${text.substr(0, 10)}...`;
@@ -53,37 +56,69 @@ const getFormatter = (c: ExtendedColumnProps<any>) => {
       return "Just now";
     };
   }
+  if (c.type === "score") {
+    return (score: number) => {
+      return score.toFixed(4);
+    };
+  }
+  if (c.type === "domain") {
+    return (domain: string, rec: any) => (
+      <>
+        {onDrilldown ? (
+          <a
+            onClick={() =>
+              c.domainRenderOptions ? onDrilldown({ selected: rec }) : undefined
+            }
+          >
+            {domain !== "Unknown" ? (
+              domain
+            ) : c.domainRenderOptions ? (
+              <code style={{ fontSize: "smaller" }}>
+                {rec[c.domainRenderOptions.textField]}
+              </code>
+            ) : (
+              ""
+            )}
+          </a>
+        ) : (
+          domain
+        )}
+      </>
+    );
+  }
 };
 
 const Table: React.SFC<IChartPropBase<ITableChartOptions<any>>> = ({
-  resultSet,
+  dataSet,
   size,
-  options
+  options,
+  onDrilldown
 }) => {
   const { props, defaultFilteredInfo, buildStats } = options;
   const { columns } = props;
 
-  const data = resultSet.rawData();
   const [state, setState] = React.useState({
     sortedInfo: {
       order: "ascend" as ("descend" | "ascend"),
       columnKey: columns[0].key
     },
     filteredInfo: defaultFilteredInfo || {},
-    stats: buildStats && buildStats(data)
+    stats: buildStats && buildStats(dataSet)
   });
   const { sortedInfo, filteredInfo, stats } = state;
 
   const enhancedColumns = columns.map(c => {
     const key = (c.key as any) as string;
     const idx = c.dataIndex as string;
+    // sorter
     const sortProps = {
       sorter: (a: any, b: any) => sort(a[idx], b[idx]),
       sortOrder: sortedInfo.columnKey === key ? sortedInfo.order : undefined
     };
+    // filter
     let filterProps = {};
     if (c.enableFilter) {
-      const filterValues = sortBy(uniq(data.map((a: any) => a[key])));
+      const filterValues = sortBy(uniq(dataSet.map((a: any) => a[key])));
       filterProps = {
         filters: filterValues.map(a => ({ text: a, value: a })),
         filteredValue: filteredInfo[key] || (null as any),
@@ -92,7 +127,9 @@ const Table: React.SFC<IChartPropBase<ITableChartOptions<any>>> = ({
         }
       };
     }
-    c.render = getFormatter(c);
+    // render
+    c.render = renderer(c, onDrilldown);
+
     return {
       ...c,
       ...sortProps,
@@ -106,7 +143,7 @@ const Table: React.SFC<IChartPropBase<ITableChartOptions<any>>> = ({
       <_Table
         {...props}
         bordered
-        dataSource={data}
+        dataSource={dataSet}
         pagination={false}
         columns={enhancedColumns}
         size={size === Sizes.Mobile ? "default" : "middle"}

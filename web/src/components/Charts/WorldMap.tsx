@@ -36,7 +36,7 @@ interface State {
   zoom: number;
 }
 
-const WorldMap: React.SFC<IChartPropBase<IMapProps>> = ({ resultSet }) => {
+const WorldMap: React.SFC<IChartPropBase<IMapProps>> = ({ dataSet }) => {
   const [state, setState] = React.useState<State>({
     center: [30, 0],
     zoom: 1
@@ -55,7 +55,7 @@ const WorldMap: React.SFC<IChartPropBase<IMapProps>> = ({ resultSet }) => {
         url={TILE_PROVIDER[themeType].url}
       />
       <MarkerClusterGroup showCoverageOnHover={false} spiderfyOnMaxZoom={true}>
-        {resultSet.rawData().map((domain: any) => (
+        {dataSet.map((domain: any) => (
           <Marker
             key={domain["GeoLocation.domain"]}
             position={[
