@@ -11,13 +11,16 @@ const scale = {
   }
 };
 
-const VerifiedValidatorsChart: React.SFC<
-  IChartPropBase<IDonutChartOptions>
-> = ({ resultSet, query, options, onDrilldown }) => {
+const DonutChart: React.SFC<IChartPropBase<IDonutChartOptions>> = ({
+  dataSet,
+  query,
+  options,
+  onDrilldown
+}) => {
   const { props, titleField, supportText } = options;
   const countMeasure = query.measures[0];
   const dv = new DataView();
-  dv.source(resultSet.chartPivot()).transform({
+  dv.source(dataSet).transform({
     type: "percent",
     field: countMeasure,
     dimension: "category",
@@ -98,4 +101,4 @@ const VerifiedValidatorsChart: React.SFC<
   );
 };
 
-export default VerifiedValidatorsChart;
+export default DonutChart;

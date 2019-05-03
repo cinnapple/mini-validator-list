@@ -51,6 +51,10 @@ class PostgresStore implements IStore {
       this._buildUpsertQuery(data, cs, constraintKey, skipUpdateCols)
     );
   }
+
+  get<T>(stmt: string) {
+    return this._db.any<T>(stmt, [true]);
+  }
 }
 
 export default PostgresStore;

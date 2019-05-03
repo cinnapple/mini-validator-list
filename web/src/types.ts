@@ -9,8 +9,13 @@ export enum SupportedCharts {
   StackedBar = "StackedBar",
   HorizontalStackedBar = "HorizontalStackedBar",
   Table = "Table",
-  Map = "Map"
+  Map = "Map",
+  DomainProfile = "ValidatorProfile",
+  ValidationScore = "ValidationScore",
+  Scoreboard = "Scoreboard"
 }
+
+export type SupportedChartTransformOptions = "chartPivot" | "rawData";
 
 export enum Sizes {
   Default = "Default",
@@ -23,25 +28,44 @@ export enum Sizes {
 export interface ICubeQuery {
   measures?: string[];
   dimensions?: string[];
-  timeDimensions?: [
-    {
-      dimension: string;
-      granularity: string;
-    }
-  ];
+  timeDimensions?: ICubeTimeDimension[];
   filters?: ICubeFilter[];
   limit?: number;
   order?: HashTable<"asc" | "desc">;
   timezone?: string;
 }
 
+export interface ICubeTimeDimension {
+  dimension: string;
+  dateRange?: string[];
+  granularity?: string;
+}
+
 export interface ICubeFilter {
   dimension: string;
-  operator: string;
+  operator:
+    | "equals"
+    | "notEquals"
+    | "contains"
+    | "notContains"
+    | "gt"
+    | "gte"
+    | "lt"
+    | "lte"
+    | "set"
+    | "notSet"
+    | "inDateRange"
+    | "notInDateRange"
+    | "beforeDate"
+    | "afterDate";
   values: string[];
 }
 
 export interface IMapProps {}
+
+export interface IProfileProps {}
+
+export interface IValidatorScoreProps {}
 
 // chart options
 export interface IChartOptionsBase {}
@@ -76,13 +100,24 @@ export interface IWorldMapOptions extends IChartOptionsBase {
   props: IMapProps;
 }
 
-export interface IExtendedTableProps<T> extends Omit<TableProps<T>, "columns"> {
-  columns: ExtendedColumnProps<T>[];
+export interface IProfileChartOptions extends IChartOptionsBase {
+  props: IProfileProps;
 }
 
-export interface ExtendedColumnProps<T> extends ColumnProps<T> {
+export interface IValidatorScoreOptions extends IChartOptionsBase {
+  props: IValidatorScoreProps;
+}
+
+export interface IExtendedTableProps<T> extends Omit<TableProps<T>, "columns"> {
+  columns: IExtendedColumnProps<T>[];
+}
+
+export interface IExtendedColumnProps<T> extends ColumnProps<T> {
   enableFilter?: boolean;
-  type?: "shortdate" | "key";
+  type?: "shortdate" | "key" | "domain" | "agreement" | "score";
+  domainRenderOptions?: {
+    textField: string;
+  };
   format?: string;
 }
 
@@ -93,22 +128,25 @@ export interface IStatsOptions extends IChartOptionsBase {
 }
 
 export interface IChartPropBase<T extends IChartOptionsBase> {
-  resultSet: any;
-  query: any;
+  dataSet: any;
+  query?: any;
   size: Sizes;
   options: T;
   onDrilldown?: (opt: any) => void;
 }
 
-export type QueryList<T extends IChartOptionsBase> = IQueryItem<T, any>[];
+export interface ISelectedValue {
+  selected: any;
+}
 
-export interface IQueryItem<
-  T extends IChartOptionsBase,
-  S extends IChartOptionsBase = any
-> {
+export interface IQueryItem<T extends IChartOptionsBase> {
   title: string;
   type: SupportedCharts;
+  chartTransformOption?: SupportedChartTransformOptions;
   query: ICubeQuery;
+  bordered?: boolean;
   options: T;
-  drilldown?: (opt: { selected: any }) => IQueryItem<S>;
+  drilldown?: (opt: ISelectedValue) => QueryList<IChartOptionsBase>;
 }
+
+export type QueryList<T extends IChartOptionsBase> = IQueryItem<T>[];

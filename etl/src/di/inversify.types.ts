@@ -10,6 +10,8 @@ const TYPES = {
   UpdateUnlSnapshotJob: Symbol.for("UpdateUnlSnapshotJob"),
   UpdateUnlHistoryJob: Symbol.for("UpdateUnlHistoryJob"),
   UpdateDomainKeyMapJob: Symbol.for("UpdateDomainKeyMapJob"),
+  UpdateValidatorProfilesJob: Symbol.for("UpdateValidatorProfilesJob"),
+  UpdateValidationReportJob: Symbol.for("UpdateValidationReportJob"),
   UnlHistoryFetchStrategyFactory: Symbol.for("UnlHistoryFetchStrategyFactory")
 };
 

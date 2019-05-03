@@ -1,3 +1,5 @@
+import { AxiosRequestConfig } from "axios";
+
 export type HashTable<T> = { [key: string]: T };
 
 export interface IConfig {
@@ -31,10 +33,14 @@ export interface IStore {
     constraintKey: string,
     skipUpdateCols: string[]
   ) => Promise<void>;
+  get: <T extends IDbTable>(stmt: string) => Promise<T[]>;
 }
 
 export interface IRippleDataApi {
   getNetworkValidators: () => Promise<IGetValidatorsResponse[]>;
+  getValidatorReports: (
+    pubkey: string
+  ) => Promise<IGetValidatorReportReponse[]>;
 }
 
 export interface IGetValidatorsResponse {
@@ -58,12 +64,22 @@ export interface IGetValidatorsResponse {
   unl: boolean;
 }
 
+export interface IGetValidatorReportReponse {
+  validation_public_key: string;
+  date: string;
+  chain: string;
+  score: string;
+  total: string;
+  missed: string;
+}
+
 export interface IWebClient {
-  get<T>(url: string): Promise<T>;
+  get<T>(url: string, config?: AxiosRequestConfig): Promise<T>;
 }
 
 export interface IGithubApi {
   getRippleUnlList: () => Promise<any>;
+  getDomainIconList: () => Promise<any>;
 }
 
 export interface IGeoLocationApi {
@@ -135,6 +151,15 @@ export interface IDbValidatorSchema extends IDbTable {
   agreement_24h_incomplete: boolean;
   partial: boolean;
   unl: boolean;
+}
+
+export interface IDbValidationReport extends IDbTable {
+  validation_public_key: string;
+  date: Date;
+  chain: string;
+  score: number;
+  total: number;
+  missed: number;
 }
 
 export interface IDbDomainKeyMapSchema extends IDbTable {

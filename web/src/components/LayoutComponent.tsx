@@ -49,12 +49,12 @@ const LayoutComponent: React.SFC<LayoutProps> = ({ size, children }) => {
               Validators
             </Link>
           </Menu.Item>
-          <Menu.Item key="/unl-analysis">
+          <Menu.Item key="/unl-scoreboard">
             <Link
-              to="/unl-analysis"
-              onClick={() => setState({ current: "/unl-analysis" })}
+              to="/unl-scoreboard"
+              onClick={() => setState({ current: "/unl-scoreboard" })}
             >
-              UNL Analysis
+              UNL Scoreboard
             </Link>
           </Menu.Item>
         </Menu>

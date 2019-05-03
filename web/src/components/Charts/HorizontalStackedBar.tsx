@@ -9,10 +9,9 @@ import {
 
 const HorizontalStackedBar: SFC<
   IChartPropBase<IHorizontalStackBarChartOptions>
-> = ({ resultSet, query, options, size, onDrilldown }) => {
+> = ({ dataSet, query, options, size, onDrilldown }) => {
   const { props } = options;
-  console.log(resultSet.rawData());
-  const data = resultSet.rawData().map((a: any) => ({
+  const data = dataSet.map((a: any) => ({
     ["GeoLocation.countryName"]: a["GeoLocation.countryName"],
     "Not in UNL but Verified": parseInt(a["GeoLocation.notUnlButVerifiedSum"]),
     "In UNL": parseInt(a["GeoLocation.unlSum"])

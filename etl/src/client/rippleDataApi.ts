@@ -17,11 +17,15 @@ class RippleDataApi implements IRippleDataApi {
     });
   }
 
-  getNetworkValidators() {
-    return this._axios
+  getNetworkValidators = () =>
+    this._axios
       .get("/network/validators")
       .then((res: any) => res.data.validators);
-  }
+
+  getValidatorReports = (pubkey: string) =>
+    this._axios
+      .get(`/network/validators/${pubkey}/reports`)
+      .then((res: any) => res.data.reports);
 }
 
 export default RippleDataApi;

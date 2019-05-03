@@ -1,8 +1,16 @@
-import { SupportedCharts, IQueryItem, ITableChartOptions } from "../../types";
+import {
+  IQueryItem,
+  ITableChartOptions,
+  SupportedCharts
+} from "../../../types";
+import { drilldownProfileQuery } from "./drilldownProfileQuery";
+import { drilldownDomainMapOperatorQuery } from "./drilldownDomainMapQuery";
+import { drilldownValidatorScoreQuery } from "./drilldownValidationScoreQuery";
 
-const validatorListQuery: IQueryItem<ITableChartOptions<any>> = {
+const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
   title: "Main Net Validators",
   type: SupportedCharts.Table,
+  bordered: false,
   query: {
     dimensions: [
       "ValidatorsWithGeo.domain",
@@ -10,8 +18,7 @@ const validatorListQuery: IQueryItem<ITableChartOptions<any>> = {
       "ValidatorsWithGeo.ripple",
       "ValidatorsWithGeo.unlHost",
       "ValidatorsWithGeo.validation_public_key",
-      "ValidatorsWithGeo.agreement24h",
-      "ValidatorsWithGeo.agreement24hMissed",
+      "ValidatorsWithGeo.agreement24hScore",
       "ValidatorsWithGeo.lastUpdatedInHours",
       "ValidatorsWithGeo.countryName"
     ],
@@ -32,7 +39,11 @@ const validatorListQuery: IQueryItem<ITableChartOptions<any>> = {
           title: "Domain",
           dataIndex: "ValidatorsWithGeo.domain",
           key: "ValidatorsWithGeo.domain",
-          enableFilter: true
+          enableFilter: true,
+          type: "domain",
+          domainRenderOptions: {
+            textField: "ValidatorsWithGeo.validation_public_key"
+          }
         },
         {
           title: "Location",
@@ -53,14 +64,10 @@ const validatorListQuery: IQueryItem<ITableChartOptions<any>> = {
           enableFilter: true
         },
         {
-          title: "Agreement (24h)",
-          dataIndex: "ValidatorsWithGeo.agreement24h",
-          key: "ValidatorsWithGeo.agreement24h"
-        },
-        {
-          title: "Missed (24h)",
-          dataIndex: "ValidatorsWithGeo.agreement24hMissed",
-          key: "ValidatorsWithGeo.agreement24hMissed"
+          title: "Score (24h)",
+          dataIndex: "ValidatorsWithGeo.agreement24hScore",
+          key: "ValidatorsWithGeo.agreement24hScore",
+          type: "score"
         },
         {
           title: "Last Seen (UTC)",
@@ -68,12 +75,6 @@ const validatorListQuery: IQueryItem<ITableChartOptions<any>> = {
           key: "ValidatorsWithGeo.lastUpdatedInHours",
           type: "shortdate",
           format: "YYYY-MM-DD HH:mm"
-        },
-        {
-          title: "Key",
-          dataIndex: "ValidatorsWithGeo.validation_public_key",
-          key: "ValidatorsWithGeo.validation_public_key",
-          type: "key"
         }
       ]
     },
@@ -113,7 +114,12 @@ const validatorListQuery: IQueryItem<ITableChartOptions<any>> = {
         }
       ];
     }
-  }
+  },
+  drilldown: opt => [
+    drilldownValidatorScoreQuery(opt),
+    drilldownProfileQuery(opt),
+    drilldownDomainMapOperatorQuery(opt)
+  ]
 };
 
-export default [[validatorListQuery]];
+export { mainNetValidatorListQuery };

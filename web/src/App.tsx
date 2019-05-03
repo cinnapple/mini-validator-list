@@ -10,27 +10,27 @@ import {
 
 import DashboardContainer from "./containers/Dashboard";
 import ValidatorListContainer from "./containers/ValidatorList";
-import UnlAnalysisContainer from "./containers/UNLAnalysis";
-import ValidatorDetailsContainer from "./containers/ValidatorDetails";
+import UNLScoreboardContainer from "./containers/UNLScoreboard";
 
-const withSize = (Component: any) => (
+const withSize = (Component: any, props: any) => (
   <>
     <MobileSize>
-      <Component {...{ size: Sizes.Mobile }} />
+      <Component {...props} {...{ size: Sizes.Mobile }} />
     </MobileSize>
     <TabletSize>
-      <Component {...{ size: Sizes.Tablet }} />
+      <Component {...props} {...{ size: Sizes.Tablet }} />
     </TabletSize>
     <DesktopSize>
-      <Component {...{ size: Sizes.Desktop }} />
+      <Component {...props} {...{ size: Sizes.Desktop }} />
     </DesktopSize>
   </>
 );
 
-const DashboardPage = () => withSize(DashboardContainer);
-const ValidatorListPage = () => withSize(ValidatorListContainer);
-const ValidatorDetailsPage = () => withSize(ValidatorDetailsContainer);
-const UnlAnalysisPage = () => withSize(UnlAnalysisContainer);
+const DashboardPage = (props: any) => withSize(DashboardContainer, props);
+const ValidatorListPage = (props: any) =>
+  withSize(ValidatorListContainer, props);
+const UNLScoreboardPage = (props: any) =>
+  withSize(UNLScoreboardContainer, props);
 
 const App = () => {
   return (
@@ -38,9 +38,9 @@ const App = () => {
       <div className="App">
         <Switch>
           <Route exact path="/" component={DashboardPage} />
-          <Route path={`/validators/:id`} component={ValidatorDetailsPage} />
+          <Route path={`/validators/:id`} component={ValidatorListPage} />
           <Route exact path="/validators" component={ValidatorListPage} />
-          <Route exact path="/unl-analysis" component={UnlAnalysisPage} />
+          <Route exact path="/unl-scoreboard" component={UNLScoreboardPage} />
           <Redirect to="/" />
         </Switch>
       </div>

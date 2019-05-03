@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { Sizes, IChartPropBase, IStackBarChartOptions } from "../../types";
 
 const StackedBar: SFC<IChartPropBase<IStackBarChartOptions>> = ({
-  resultSet,
+  dataSet,
   query,
   size,
   options,
@@ -12,7 +12,7 @@ const StackedBar: SFC<IChartPropBase<IStackBarChartOptions>> = ({
 }) => {
   const { props } = options;
   const countField = query.measures[0];
-  const data = resultSet.rawData().map((a: any) => ({
+  const data = dataSet.map((a: any) => ({
     ...a,
     [countField]: parseInt(a[countField])
   }));

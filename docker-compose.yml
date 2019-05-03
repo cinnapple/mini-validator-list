@@ -28,9 +28,10 @@ services:
     image: minivalist-etl
     volumes:
       - .env:/usr/app/.env
+      - ./etl/package.json:/usr/app/package.json
       - ./etl/bin:/usr/app/bin
       - ./etl/node_modules:/usr/app/node_modules
-    command: yarn run dev-all
+    command: yarn run dev-vals
     depends_on:
       - db
     networks:
