@@ -1,7 +1,7 @@
 import {
   IQueryItem,
   SupportedCharts,
-  IValidatorScoreOptions
+  IScoreboardOptions
 } from "../../../types";
 import dayjs from "dayjs";
 
@@ -12,7 +12,7 @@ const dateRange = [
   dayjs().format("YYYY-MM-DD")
 ];
 
-const scoreboardQuery: IQueryItem<IValidatorScoreOptions> = {
+const scoreboardQuery: IQueryItem<IScoreboardOptions> = {
   title: "Default UNL Scoreboard",
   type: SupportedCharts.Scoreboard,
   bordered: false,
@@ -44,7 +44,17 @@ const scoreboardQuery: IQueryItem<IValidatorScoreOptions> = {
       }
     ]
   },
-  options: { props: {} }
+  options: {
+    props: {
+      validationPublicKeyField:
+        "Calendar_ValidationReports.validation_public_key",
+      domainField: "Calendar_ValidationReports.domain",
+      dayOfWeekField: "Calendar_ValidationReports.dayOfWeek",
+      dateField: "Calendar_ValidationReports.date",
+      statsField: "Calendar_ValidationReports.stats",
+      monthOfYearField: "Calendar_ValidationReports.monthOfYear"
+    }
+  }
 };
 
 export { scoreboardQuery };

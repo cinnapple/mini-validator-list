@@ -9,7 +9,8 @@ import {
 
 const HorizontalStackedBar: SFC<
   IChartPropBase<IHorizontalStackBarChartOptions>
-> = ({ dataSet, query, options, size, onDrilldown }) => {
+> = ({ dataSet, queryItem, size, onDrilldown }) => {
+  const { options } = queryItem;
   const { props } = options;
   const data = dataSet.map((a: any) => ({
     ["GeoLocation.countryName"]: a["GeoLocation.countryName"],

@@ -13,12 +13,12 @@ const scale = {
 
 const DonutChart: React.SFC<IChartPropBase<IDonutChartOptions>> = ({
   dataSet,
-  query,
-  options,
+  queryItem,
   onDrilldown
 }) => {
+  const { options, query } = queryItem;
   const { props, titleField, supportText } = options;
-  const countMeasure = query.measures[0];
+  const countMeasure = query.measures && query.measures[0];
   const dv = new DataView();
   dv.source(dataSet).transform({
     type: "percent",

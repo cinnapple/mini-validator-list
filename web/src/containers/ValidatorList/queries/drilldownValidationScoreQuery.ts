@@ -1,8 +1,7 @@
 import {
   IQueryItem,
-  IProfileChartOptions,
-  ISelectedValue,
-  SupportedCharts
+  SupportedCharts,
+  IValidatorScoreOptions
 } from "../../../types";
 import dayjs from "dayjs";
 
@@ -14,10 +13,12 @@ const dateRange = [
 ];
 
 const drilldownValidatorScoreQuery = (
-  opt: ISelectedValue
-): IQueryItem<IProfileChartOptions> => ({
+  validationPublicKey: string
+): IQueryItem<IValidatorScoreOptions> => ({
   title: `Validation Score`,
   type: SupportedCharts.ValidationScore,
+  bordered: false,
+  pivotType: "table",
   query: {
     dimensions: [
       "Calendar_ValidationReports.date",
@@ -35,14 +36,18 @@ const drilldownValidatorScoreQuery = (
       {
         dimension: "Calendar_ValidationReports.validation_public_key",
         operator: "equals",
-        values: [
-          opt.selected["ValidatorsWithGeo.validation_public_key"],
-          "NULL"
-        ]
+        values: [validationPublicKey]
       }
     ]
   },
-  options: { props: {} }
+  options: {
+    props: {
+      dayOfWeekField: "Calendar_ValidationReports.dayOfWeek",
+      dateField: "Calendar_ValidationReports.date",
+      statsField: "Calendar_ValidationReports.stats",
+      monthOfYearField: "Calendar_ValidationReports.monthOfYear"
+    }
+  }
 });
 
 export { drilldownValidatorScoreQuery };

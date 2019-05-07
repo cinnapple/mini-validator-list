@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Table as _Table, Statistic, Row, Col, Card, Icon } from "antd";
+import { Table as _Table, Statistic, Row, Col, Card, Icon, Badge } from "antd";
 import {
   Sizes,
   IStatsOptions,
@@ -36,13 +36,13 @@ const createStats = (stats: IStatsOptions[], size: Sizes) => (
   </Row>
 );
 
-const getHealthColor = (relativeHours: number) => {
+const getStaus = (relativeHours: number) => {
   if (relativeHours >= 24) {
-    return "#E9190F";
+    return <Badge status="error" />;
   } else if (relativeHours >= 1) {
-    return "#FFAE03";
+    return <Badge status="warning" />;
   }
-  return "#1DA57A";
+  return <Badge status="processing" color="#1DA57A" />;
 };
 
 const renderer = (
@@ -73,19 +73,7 @@ const renderer = (
   if (c.type === "domain") {
     return (domain: string, rec: any) => (
       <>
-        <span
-          style={{
-            height: 8,
-            width: 8,
-            backgroundColor: getHealthColor(
-              c.domainRenderOptions &&
-                rec[c.domainRenderOptions.relativeHoursField]
-            ),
-            borderRadius: "50%",
-            display: "inline-block",
-            marginRight: 5
-          }}
-        />
+        {getStaus(rec[c.domainRenderOptions!.relativeHoursField])}
         {onDrilldown ? (
           <a
             onClick={() =>
@@ -113,9 +101,10 @@ const renderer = (
 const Table: React.SFC<IChartPropBase<ITableChartOptions<any>>> = ({
   dataSet,
   size,
-  options,
+  queryItem,
   onDrilldown
 }) => {
+  const { options } = queryItem;
   const { props, defaultFilteredInfo, buildStats } = options;
   const { columns } = props;
 

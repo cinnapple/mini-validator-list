@@ -9,7 +9,7 @@ import {
 const defaultUnlDominanceQuery: IQueryItem<IDonutChartOptions> = {
   title: "Default UNL Dominance",
   type: SupportedCharts.Donut,
-  chartTransformOption: "chartPivot",
+  pivotType: "chart",
   query: {
     measures: ["UnlValidators.count"],
     dimensions: ["UnlValidators.ripple"]

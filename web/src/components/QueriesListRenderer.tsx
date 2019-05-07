@@ -42,10 +42,8 @@ const QueriesListRenderer: React.SFC<Props> = ({ size, queriesList }) => {
                 }
               >
                 <Chart
-                  query={queryItem.query}
-                  type={queryItem.type}
-                  chartTransformOption={queryItem.chartTransformOption}
-                  options={queryItem.options}
+                  size={size}
+                  queryItem={queryItem}
                   onDrilldown={(opt: any) =>
                     queryItem.drilldown
                       ? setState({
@@ -54,7 +52,6 @@ const QueriesListRenderer: React.SFC<Props> = ({ size, queriesList }) => {
                         })
                       : undefined
                   }
-                  size={size}
                 />
               </Card>
             </Col>
@@ -76,13 +73,7 @@ const QueriesListRenderer: React.SFC<Props> = ({ size, queriesList }) => {
                 }}
               >
                 <Card title={queryItem.title} bordered={false}>
-                  <Chart
-                    query={queryItem.query}
-                    type={queryItem.type}
-                    chartTransformOption={queryItem.chartTransformOption}
-                    options={queryItem.options}
-                    size={size}
-                  />
+                  <Chart queryItem={queryItem} size={size} />
                 </Card>
               </Col>
             </Row>

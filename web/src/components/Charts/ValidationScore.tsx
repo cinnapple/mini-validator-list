@@ -5,12 +5,18 @@ import { Sizes, IChartPropBase, IValidatorScoreOptions } from "../../types";
 
 let dayTracking: { [key: string]: string } = {};
 
-const transform = (result: any[]) => {
+const transform = (result: any[], options: IValidatorScoreOptions) => {
+  const {
+    dayOfWeekField,
+    dateField,
+    statsField,
+    monthOfYearField
+  } = options.props;
   dayTracking = {};
   let weekOfYear = 0;
   let currentDayOfWeek = -1;
   return result.map((r, i) => {
-    const dayOfWeek = r["Calendar_ValidationReports.dayOfWeek"];
+    const dayOfWeek = r[dayOfWeekField];
     if (currentDayOfWeek === -1) {
       weekOfYear = 0;
     }
@@ -18,7 +24,7 @@ const transform = (result: any[]) => {
       weekOfYear++;
     }
 
-    const day = dayjs(r["Calendar_ValidationReports.date"]);
+    const day = dayjs(r[dateField]);
     if (dayOfWeek === 6) {
       const mon = day.format("MMM");
       if (!dayTracking[mon]) {
@@ -26,7 +32,7 @@ const transform = (result: any[]) => {
       }
     }
 
-    const stats = r["Calendar_ValidationReports.stats"].split(";");
+    const stats = r[statsField].split(";");
 
     currentDayOfWeek = dayOfWeek;
     return {
@@ -35,7 +41,7 @@ const transform = (result: any[]) => {
       total: parseInt(stats[1]),
       missed: parseInt(stats[2]),
       score: parseFloat(stats[3]),
-      month: r["Calendar_ValidationReports.monthOfYear"] - 1,
+      month: r[monthOfYearField] - 1,
       day: dayOfWeek,
       week: weekOfYear
     };
@@ -57,9 +63,10 @@ const getColorSet = (score: number) => {
 const ValidationScore: SFC<IChartPropBase<IValidatorScoreOptions>> = ({
   dataSet,
   size,
-  options
+  queryItem
 }) => {
-  const data = transform(dataSet);
+  const { options } = queryItem;
+  const data = transform(dataSet, options);
   data.push({
     date: "1900-01-01",
     chain: "-",

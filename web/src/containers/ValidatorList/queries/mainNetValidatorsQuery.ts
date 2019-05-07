@@ -117,9 +117,11 @@ const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
     }
   },
   drilldown: opt => [
-    drilldownValidatorScoreQuery(opt),
-    drilldownProfileQuery(opt),
-    drilldownDomainMapOperatorQuery(opt)
+    drilldownValidatorScoreQuery(
+      opt.selected["ValidatorsWithGeo.validation_public_key"]
+    ),
+    drilldownProfileQuery(opt.selected["ValidatorsWithGeo.domain"]),
+    drilldownDomainMapOperatorQuery(opt.selected["ValidatorsWithGeo.domain"])
   ]
 };
 

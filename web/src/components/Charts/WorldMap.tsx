@@ -3,7 +3,7 @@ import { Card } from "antd";
 import { Map, TileLayer, Marker, Tooltip, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import L from "leaflet";
-import { IChartPropBase, IMapProps } from "../../types";
+import { IChartPropBase, IWorldMapOptions } from "../../types";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -36,7 +36,12 @@ interface State {
   zoom: number;
 }
 
-const WorldMap: React.SFC<IChartPropBase<IMapProps>> = ({ dataSet }) => {
+const WorldMap: React.SFC<IChartPropBase<IWorldMapOptions>> = ({
+  dataSet,
+  queryItem
+}) => {
+  const { options } = queryItem;
+  const { props } = options;
   const [state, setState] = React.useState<State>({
     center: [30, 0],
     zoom: 1
@@ -57,25 +62,25 @@ const WorldMap: React.SFC<IChartPropBase<IMapProps>> = ({ dataSet }) => {
       <MarkerClusterGroup showCoverageOnHover={false} spiderfyOnMaxZoom={true}>
         {dataSet.map((domain: any) => (
           <Marker
-            key={domain["GeoLocation.domain"]}
+            key={domain[props.domainField]}
             position={[
-              domain["GeoLocation.latitude"],
-              domain["GeoLocation.longitude"]
+              domain[props.latitudeField],
+              domain[props.longitudeField]
             ]}
           >
             <Tooltip direction="bottom" offset={[0, 0]} permanent>
               <Popup>
                 <Card
                   size="small"
-                  title={domain["GeoLocation.domain"]}
+                  title={domain[props.domainField]}
                   bordered={false}
                   extra={<a href="#">More</a>}
                   style={{ width: 300 }}
                 >
-                  <p>{domain["GeoLocation.city"]}</p>
+                  <p>{domain[props.cityField]}</p>
                 </Card>
               </Popup>
-              <div>{domain["GeoLocation.domain"]}</div>
+              <div>{domain[props.domainField]}</div>
             </Tooltip>
           </Marker>
         ))}
