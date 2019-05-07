@@ -20,15 +20,15 @@
     },
     {
       "name": "UpdateUnlSnapshotJob",
-      "cron": "5 * * * *",
+      "cron": "*/5 * * * *",
       "runImmediate": true,
       "args": {
-        "host": "https://vl.ripple.com"
+        "hosts": ["https://vl.ripple.com", "https://vl.coil.com"]
       }
     },
     {
       "name": "UpdateUnlHistoryJob",
-      "cron": "5 * * * *",
+      "cron": "*/5 * * * *",
       "runImmediate": true,
       "args": {
         "host": "https://vl.ripple.com"
