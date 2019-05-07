@@ -36,6 +36,15 @@ const createStats = (stats: IStatsOptions[], size: Sizes) => (
   </Row>
 );
 
+const getHealthColor = (relativeHours: number) => {
+  if (relativeHours >= 24) {
+    return "#E9190F";
+  } else if (relativeHours >= 1) {
+    return "#FFAE03";
+  }
+  return "#1DA57A";
+};
+
 const renderer = (
   c: IExtendedColumnProps<any>,
   onDrilldown?: (opt: any) => void
@@ -64,6 +73,19 @@ const renderer = (
   if (c.type === "domain") {
     return (domain: string, rec: any) => (
       <>
+        <span
+          style={{
+            height: 8,
+            width: 8,
+            backgroundColor: getHealthColor(
+              c.domainRenderOptions &&
+                rec[c.domainRenderOptions.relativeHoursField]
+            ),
+            borderRadius: "50%",
+            display: "inline-block",
+            marginRight: 5
+          }}
+        />
         {onDrilldown ? (
           <a
             onClick={() =>

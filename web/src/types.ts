@@ -117,6 +117,7 @@ export interface IExtendedColumnProps<T> extends ColumnProps<T> {
   type?: "shortdate" | "key" | "domain" | "agreement" | "score";
   domainRenderOptions?: {
     textField: string;
+    relativeHoursField: string;
   };
   format?: string;
 }

@@ -31,7 +31,7 @@ services:
       - ./etl/package.json:/usr/app/package.json
       - ./etl/bin:/usr/app/bin
       - ./etl/node_modules:/usr/app/node_modules
-    command: yarn run dev-vals
+    command: yarn run dev-vs
     depends_on:
       - db
     networks:

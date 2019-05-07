@@ -42,7 +42,8 @@ const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
           enableFilter: true,
           type: "domain",
           domainRenderOptions: {
-            textField: "ValidatorsWithGeo.validation_public_key"
+            textField: "ValidatorsWithGeo.validation_public_key",
+            relativeHoursField: "ValidatorsWithGeo.lastUpdatedInHours"
           }
         },
         {
