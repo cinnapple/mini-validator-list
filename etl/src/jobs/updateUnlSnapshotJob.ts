@@ -2,6 +2,8 @@ import { injectable, inject, TYPES } from "../di";
 import { IJob, IStore, IWebClient, JobContext } from "../types";
 import UnlHelper from "../helpers/unlHelper";
 import FatalError from "../errors/FatalError";
+import * as debug from "debug";
+const _d = debug("etl:UpdateUnlSnapshotJob");
 
 @injectable()
 class UpdateUnlSnapshotJob implements IJob {
@@ -21,21 +23,26 @@ class UpdateUnlSnapshotJob implements IJob {
     }));
   };
 
-  execute(ctx: JobContext) {
-    const host = ctx.args["host"];
-    if (!host) {
-      throw new FatalError(`missing a required arg: host`);
+  async execute(ctx: JobContext) {
+    const hosts: string[] = ctx.args["hosts"];
+    if (!hosts) {
+      throw new FatalError(`missing a required arg: hosts`);
     }
-    return this._webClient
-      .get(host)
-      .then(x => this.transform(x, host))
-      .then(x =>
-        this._store.upsert("unlsnapshot", x, "unique_key", [
-          "created",
-          "validator_public_key",
-          "host"
-        ])
-      );
+    for (let host of hosts) {
+      _d(`fetching for ${host}`);
+      await this._webClient
+        .get(host)
+        .then(x => this.transform(x, host))
+        .then(x =>
+          this._store.upsert("unlsnapshot", x, "unique_key", [
+            "created",
+            "validator_public_key",
+            "host"
+          ])
+        );
+    }
+
+    return Promise.resolve();
   }
 }
 
