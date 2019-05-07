@@ -1,24 +1,24 @@
 import * as React from "react";
 import { Avatar, Tag, Row, Col, Card } from "antd";
-import { Sizes, IChartPropBase, IProfileChartOptions } from "../../types";
+import { IChartPropBase, IProfileChartOptions } from "../../types";
 
 const { Meta } = Card;
 
 const DomainProfile: React.SFC<IChartPropBase<IProfileChartOptions>> = ({
   dataSet,
-  size,
-  options
+  queryItem
 }) => {
+  const { options } = queryItem;
+  const { props } = options;
   if (!dataSet || dataSet.length === 0) {
     return <div>No profiles found!</div>;
   }
   const data = dataSet[0];
-  const name = data["Profiles_GeoLocation.name"];
-  const domain = data["Profiles_GeoLocation.domain"];
-  const twitter = data["Profiles_GeoLocation.twitter"];
-  const description = data["Profiles_GeoLocation.description"];
-  const icon = data["Profiles_GeoLocation.icon"];
-  const { props } = options;
+  const name = data[props.nameField];
+  const domain = data[props.domainField];
+  const twitter = data[props.twitterField];
+  const description = data[props.descriptionField];
+  const icon = data[props.iconField];
   const marginTopStyle = { marginTop: 24 };
   return (
     <>

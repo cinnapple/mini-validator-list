@@ -10,7 +10,7 @@ import { insertIf } from "../../../helpers/util";
 const verifiedValidatorQuery: IQueryItem<IDonutChartOptions> = {
   title: "Verified Validators",
   type: SupportedCharts.Donut,
-  chartTransformOption: "chartPivot",
+  pivotType: "chart",
   query: {
     measures: ["MainNetValidators.count"],
     dimensions: ["MainNetValidators.verified"]

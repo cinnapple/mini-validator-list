@@ -15,7 +15,13 @@ export enum SupportedCharts {
   Scoreboard = "Scoreboard"
 }
 
-export type SupportedChartTransformOptions = "chartPivot" | "rawData";
+export type SupportedPivotTypes = "chart" | "table";
+
+export interface ICubePivotConfig {
+  x?: string[];
+  y?: string[];
+  fillMissingDates?: boolean;
+}
 
 export enum Sizes {
   Default = "Default",
@@ -61,11 +67,32 @@ export interface ICubeFilter {
   values: string[];
 }
 
-export interface IMapProps {}
+export interface IMapProps {
+  domainField: string;
+  latitudeField: string;
+  longitudeField: string;
+  cityField: string;
+}
 
-export interface IProfileProps {}
+export interface IProfileProps {
+  nameField: string;
+  domainField: string;
+  twitterField: string;
+  descriptionField: string;
+  iconField: string;
+}
 
-export interface IValidatorScoreProps {}
+export interface IValidatorScoreProps {
+  dateField: string;
+  dayOfWeekField: string;
+  statsField: string;
+  monthOfYearField: string;
+}
+
+export interface IScoreboardProps extends IValidatorScoreProps {
+  validationPublicKeyField: string;
+  domainField: string;
+}
 
 // chart options
 export interface IChartOptionsBase {}
@@ -108,6 +135,10 @@ export interface IValidatorScoreOptions extends IChartOptionsBase {
   props: IValidatorScoreProps;
 }
 
+export interface IScoreboardOptions extends IChartOptionsBase {
+  props: IScoreboardProps;
+}
+
 export interface IExtendedTableProps<T> extends Omit<TableProps<T>, "columns"> {
   columns: IExtendedColumnProps<T>[];
 }
@@ -130,10 +161,9 @@ export interface IStatsOptions extends IChartOptionsBase {
 
 export interface IChartPropBase<T extends IChartOptionsBase> {
   dataSet: any;
-  query?: any;
   size: Sizes;
-  options: T;
   onDrilldown?: (opt: any) => void;
+  queryItem: IQueryItem<T>;
 }
 
 export interface ISelectedValue {
@@ -143,7 +173,8 @@ export interface ISelectedValue {
 export interface IQueryItem<T extends IChartOptionsBase> {
   title: string;
   type: SupportedCharts;
-  chartTransformOption?: SupportedChartTransformOptions;
+  pivotType?: SupportedPivotTypes;
+  pivotConfig?: ICubePivotConfig;
   query: ICubeQuery;
   bordered?: boolean;
   options: T;

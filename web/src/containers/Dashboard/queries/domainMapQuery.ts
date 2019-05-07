@@ -27,7 +27,14 @@ const unlOperatorMapQuery: IQueryItem<IWorldMapOptions> = {
       }
     ]
   },
-  options: { props: {} }
+  options: {
+    props: {
+      domainField: "GeoLocation.domain",
+      latitudeField: "GeoLocation.latitude",
+      longitudeField: "GeoLocation.longitude",
+      cityField: "GeoLocation.city"
+    }
+  }
 };
 
 export { unlOperatorMapQuery };

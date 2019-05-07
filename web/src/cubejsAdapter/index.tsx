@@ -6,15 +6,14 @@ import { SupportedComponents } from "../components/Charts";
 import {
   SupportedCharts,
   Sizes,
-  SupportedChartTransformOptions
+  IQueryItem,
+  SupportedPivotTypes,
+  ICubePivotConfig
 } from "../types";
 
 interface Props {
-  query: any;
-  type: SupportedCharts;
-  chartTransformOption?: SupportedChartTransformOptions;
-  options: any;
   size: Sizes;
+  queryItem: IQueryItem<any>;
   onDrilldown?: (opt: any) => void;
 }
 
@@ -25,36 +24,36 @@ const renderChart = (type: SupportedCharts, props: any) => {
 
 const Loading = () => <Spin />;
 
-const transformDataSet = (
+const pivot = (
   resultSet: any,
-  type?: SupportedChartTransformOptions
+  type?: SupportedPivotTypes,
+  config?: ICubePivotConfig
 ) => {
-  if (type === "chartPivot") {
-    return resultSet.chartPivot();
+  if (type === "chart") {
+    return resultSet.chartPivot(config);
+  }
+  if (type === "table") {
+    return resultSet.tablePivot(config);
   }
   return resultSet.rawData();
 };
 
-const Chart: React.SFC<Props> = ({
-  query,
-  type,
-  chartTransformOption,
-  size,
-  options,
-  onDrilldown
-}) => (
+const Chart: React.SFC<Props> = ({ queryItem, size, onDrilldown }) => (
   <QueryRenderer
     cubejsApi={cubejsApi}
-    query={query}
+    query={queryItem.query}
     render={({ resultSet, error }: any) => {
       if (resultSet) {
-        const dataSet = transformDataSet(resultSet, chartTransformOption);
-        return renderChart(type, {
+        const dataSet = pivot(
+          resultSet,
+          queryItem.pivotType,
+          queryItem.pivotConfig
+        );
+        return renderChart(queryItem.type, {
           dataSet,
-          query,
           size,
           onDrilldown,
-          options
+          queryItem
         });
       }
 

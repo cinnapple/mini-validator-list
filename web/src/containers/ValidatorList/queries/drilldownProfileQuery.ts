@@ -1,15 +1,15 @@
 import {
   IQueryItem,
   IProfileChartOptions,
-  ISelectedValue,
   SupportedCharts
 } from "../../../types";
 
 const drilldownProfileQuery = (
-  opt: ISelectedValue
+  domain: string
 ): IQueryItem<IProfileChartOptions> => ({
   title: `Operator`,
   type: SupportedCharts.DomainProfile,
+  bordered: false,
   query: {
     dimensions: [
       "Profiles_GeoLocation.domain",
@@ -26,12 +26,18 @@ const drilldownProfileQuery = (
       {
         dimension: "Profiles_GeoLocation.domain",
         operator: "equals",
-        values: [opt.selected["ValidatorsWithGeo.domain"]]
+        values: [domain]
       }
     ]
   },
   options: {
-    props: {}
+    props: {
+      nameField: "Profiles_GeoLocation.name",
+      domainField: "Profiles_GeoLocation.domain",
+      twitterField: "Profiles_GeoLocation.twitter",
+      descriptionField: "Profiles_GeoLocation.description",
+      iconField: "Profiles_GeoLocation.icon"
+    }
   }
 });
 

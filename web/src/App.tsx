@@ -11,6 +11,7 @@ import {
 import DashboardContainer from "./containers/Dashboard";
 import ValidatorListContainer from "./containers/ValidatorList";
 import UNLScoreboardContainer from "./containers/UNLScoreboard";
+import ValidatorDetailsContainer from "./containers/ValidatorDetails";
 
 const withSize = (Component: any, props: any) => (
   <>
@@ -29,6 +30,8 @@ const withSize = (Component: any, props: any) => (
 const DashboardPage = (props: any) => withSize(DashboardContainer, props);
 const ValidatorListPage = (props: any) =>
   withSize(ValidatorListContainer, props);
+const ValidatorDetailsPage = (props: any) =>
+  withSize(ValidatorDetailsContainer, props);
 const UNLScoreboardPage = (props: any) =>
   withSize(UNLScoreboardContainer, props);
 
@@ -38,7 +41,7 @@ const App = () => {
       <div className="App">
         <Switch>
           <Route exact path="/" component={DashboardPage} />
-          <Route path={`/validators/:id`} component={ValidatorListPage} />
+          <Route path={`/validators/:id`} component={ValidatorDetailsPage} />
           <Route exact path="/validators" component={ValidatorListPage} />
           <Route exact path="/unl-scoreboard" component={UNLScoreboardPage} />
           <Redirect to="/" />

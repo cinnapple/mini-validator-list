@@ -1,15 +1,11 @@
-import {
-  IQueryItem,
-  IWorldMapOptions,
-  SupportedCharts,
-  ISelectedValue
-} from "../../../types";
+import { IQueryItem, IWorldMapOptions, SupportedCharts } from "../../../types";
 
 const drilldownDomainMapOperatorQuery = (
-  opt: ISelectedValue
+  domain: string
 ): IQueryItem<IWorldMapOptions> => ({
   title: "Operator Location",
   type: SupportedCharts.Map,
+  bordered: false,
   query: {
     measures: [
       "GeoLocation.latitude",
@@ -23,11 +19,18 @@ const drilldownDomainMapOperatorQuery = (
       {
         dimension: "GeoLocation.domain",
         operator: "equals",
-        values: [opt.selected["ValidatorsWithGeo.domain"]]
+        values: [domain]
       }
     ]
   },
-  options: { props: {} }
+  options: {
+    props: {
+      domainField: "GeoLocation.domain",
+      latitudeField: "GeoLocation.latitude",
+      longitudeField: "GeoLocation.longitude",
+      cityField: "GeoLocation.city"
+    }
+  }
 });
 
 export { drilldownDomainMapOperatorQuery };

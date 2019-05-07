@@ -2,29 +2,32 @@ import React, { SFC } from "react";
 import { uniq } from "../../helpers/util";
 import { Col, Row, Card } from "antd";
 import ValidationScore from "./ValidationScore";
-import { IChartPropBase } from "../../types";
+import { IChartPropBase, IScoreboardOptions } from "../../types";
 
-const Scoreboard: SFC<IChartPropBase<any>> = ({ dataSet, size }) => {
+const Scoreboard: SFC<IChartPropBase<IScoreboardOptions>> = ({
+  dataSet,
+  size,
+  queryItem
+}) => {
+  const { options } = queryItem;
+  const { props } = options;
   const publicKeys = uniq(
-    dataSet.map(
-      (a: any) => a["Calendar_ValidationReports.validation_public_key"]
-    )
+    dataSet.map((a: any) => a[props.validationPublicKeyField])
   );
   return (
     <Row gutter={0}>
       {publicKeys.map((p: string, i: number) => {
         const relatedData = dataSet.filter(
-          (d: any) =>
-            d["Calendar_ValidationReports.validation_public_key"] === p
+          (d: any) => d[props.validationPublicKeyField] === p
         );
-        const domain = relatedData[0]["Calendar_ValidationReports.domain"];
+        const domain = relatedData[0][props.domainField];
         return (
           <Col xs={24} md={12} lg={6} key={i}>
             <Card title={`${domain}`} style={{ margin: "8px 8px" }}>
               <ValidationScore
                 dataSet={relatedData}
                 size={size}
-                options={{ props: {} }}
+                queryItem={{ options } as any}
               />
             </Card>
           </Col>

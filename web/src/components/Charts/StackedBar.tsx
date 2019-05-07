@@ -5,13 +5,13 @@ import { Sizes, IChartPropBase, IStackBarChartOptions } from "../../types";
 
 const StackedBar: SFC<IChartPropBase<IStackBarChartOptions>> = ({
   dataSet,
-  query,
   size,
-  options,
-  onDrilldown
+  onDrilldown,
+  queryItem
 }) => {
+  const { options, query } = queryItem;
   const { props } = options;
-  const countField = query.measures[0];
+  const countField = (query.measures && query.measures[0]) as string;
   const data = dataSet.map((a: any) => ({
     ...a,
     [countField]: parseInt(a[countField])
