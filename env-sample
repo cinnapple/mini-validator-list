@@ -16,3 +16,6 @@ CUBEJS_DB_PASS=
 CUBEJS_DB_TYPE=postgres
 CUBEJS_API_SECRET=
 REDIS_URL=redis://redis_db:6379/0
+
+# web
+REACT_APP_PAYMENT_POINTER=twitter.xrptipbot.com/CinnappleFun
