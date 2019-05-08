@@ -11,6 +11,7 @@
     "dev-dkm": "DEBUG='etl:*' nodemon -r dotenv/config bin/index.js UpdateDomainKeyMapJob",
     "dev-vp": "DEBUG='etl:*' nodemon -r dotenv/config bin/index.js UpdateValidatorProfilesJob",
     "dev-vr": "DEBUG='etl:*' nodemon -r dotenv/config bin/index.js UpdateValidationReportJob",
+    "dev-m": "DEBUG='etl:*' nodemon -r dotenv/config bin/index.js UpdateManifestsJob",
     "dev": "tsc --watch",
     "build": "tsc"
   },
