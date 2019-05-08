@@ -46,6 +46,14 @@
       "args": {
         "waitTime": 30
       }
+    },
+    {
+      "name": "UpdateManifestsJob",
+      "cron": "*/10 * * * *",
+      "runImmediate": true,
+      "args": {
+        "waitTime": 15
+      }
     }
   ]
 }

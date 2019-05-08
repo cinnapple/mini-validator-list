@@ -174,3 +174,22 @@ create index if not exists calendar_week_of_year
 create index if not exists calendar_days_to_end_of_month
     on calendar (days_to_end_of_month);
 
+create table if not exists manifests
+(
+    master_public_key    varchar(60)                            not null
+        constraint manifests_pk
+            primary key,
+    ephemeral_public_key varchar(60),
+    master_signature     text,
+    signature            text,
+    count                integer,
+    sequence             integer,
+    first_datetime       timestamp with time zone default now() not null,
+    last_datetime        timestamp with time zone default now() not null,
+    last_updated         timestamp with time zone,
+    created              timestamp with time zone
+);
+
+alter table manifests
+    owner to minivalist;
+

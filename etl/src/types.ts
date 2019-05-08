@@ -41,6 +41,7 @@ export interface IRippleDataApi {
   getValidatorReports: (
     pubkey: string
   ) => Promise<IGetValidatorReportReponse[]>;
+  getManifests: (pubkey: string) => Promise<IGetValidatorManifestsReponse[]>;
 }
 
 export interface IGetValidatorsResponse {
@@ -71,6 +72,17 @@ export interface IGetValidatorReportReponse {
   score: string;
   total: string;
   missed: string;
+}
+
+export interface IGetValidatorManifestsReponse {
+  count: number;
+  ephemeral_public_key: string;
+  first_datetime: string;
+  last_datetime: string;
+  master_public_key: string;
+  master_signature: string;
+  sequence: string;
+  signature: string;
 }
 
 export interface IWebClient {
@@ -160,6 +172,17 @@ export interface IDbValidationReport extends IDbTable {
   score: number;
   total: number;
   missed: number;
+}
+
+export interface IDbManifests extends IDbTable {
+  count: number;
+  ephemeral_public_key: string;
+  first_datetime: Date;
+  last_datetime: Date;
+  master_public_key: string;
+  master_signature: string;
+  sequence: number;
+  signature: string;
 }
 
 export interface IDbDomainKeyMapSchema extends IDbTable {
