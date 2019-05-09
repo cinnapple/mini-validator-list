@@ -3,6 +3,7 @@ const TYPES = {
   Store: Symbol.for("Store"),
   WebClient: Symbol.for("WebClient"),
   RippleDataApi: Symbol.for("RippleDataApi"),
+  RippleLibApi: Symbol.for("RippleLibApi"),
   GithubApi: Symbol.for("GithubApi"),
   GeoLocationApi: Symbol.for("GeoLocationApi"),
   UpdateValidatorsSnapshotJob: Symbol.for("UpdateValidatorsSnapshotJob"),
@@ -13,6 +14,7 @@ const TYPES = {
   UpdateValidatorProfilesJob: Symbol.for("UpdateValidatorProfilesJob"),
   UpdateValidationReportJob: Symbol.for("UpdateValidationReportJob"),
   UpdateManifestsJob: Symbol.for("UpdateManifestsJob"),
+  UpdateRealtimeDataJob: Symbol.for("UpdateRealtimeDataJob"),
   UnlHistoryFetchStrategyFactory: Symbol.for("UnlHistoryFetchStrategyFactory")
 };
 

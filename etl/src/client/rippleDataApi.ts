@@ -31,6 +31,11 @@ class RippleDataApi implements IRippleDataApi {
     this._axios
       .get(`/network/validators/${pubkey}/manifests`)
       .then((res: any) => res.data.manifests);
+
+  getTopologyNodes = () =>
+    this._axios
+      .get(`/network/topology/nodes`)
+      .then((res: any) => res.data.nodes);
 }
 
 export default RippleDataApi;

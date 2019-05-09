@@ -1,0 +1,29 @@
+{
+  "name": "minivalist-streaming",
+  "version": "1.0.0",
+  "scripts": {
+    "prod": "DEBUG='streaming:*' node -r dotenv/config bin/server.js",
+    "dev": "DEBUG='streaming:*' nodemon -r dotenv/config bin/server.js",
+    "watch": "tsc --build --watch",
+    "build": "tsc --build",
+    "postinstall": "npm rebuild grpc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/debug": "^4.1.4",
+    "@types/ioredis": "^4.0.10",
+    "@types/node": "^12.0.0",
+    "prettier": "1.17.0"
+  },
+  "dependencies": {
+    "@grpc/proto-loader": "^0.5.1",
+    "@types/protobufjs": "^6.0.0",
+    "debug": "^4.1.1",
+    "dotenv": "^8.0.0",
+    "grpc": "^1.21.1",
+    "ioredis": "^4.9.5",
+    "nodemon": "^1.19.0",
+    "reflect-metadata": "^0.1.13"
+  }
+}

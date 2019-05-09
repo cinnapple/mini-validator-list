@@ -30,6 +30,17 @@ services:
       - db
     networks:
       - nginx-network
+  streaming:
+    container_name: minivalist-streaming
+    image: cinnapple/minivalist-streaming
+    volumes:
+      - .env:/usr/app/.env
+    command: yarn run prod
+    restart: always
+    depends_on:
+      - etl
+    networks:
+      - nginx-network
   api:
     container_name: minivalist-api
     image: cinnapple/minivalist-api
@@ -40,21 +51,6 @@ services:
     command: node index.js
     restart: always
     depends_on:
-      - db
-    links:
-      - redis_db
-    networks:
-      - nginx-network
-  web:
-    container_name: minivalist-web
-    image: cinnapple/minivalist-web
-    environment:
-      - NODE_ENV=production
-    restart: always
-    depends_on:
-      - api
-    networks:
-      - nginx-network
 
 volumes:
   database:

@@ -14,10 +14,12 @@ import {
   IWebClient,
   IGeoLocationApi,
   IJob,
-  IHistoryFetchStrategyFactory
+  IHistoryFetchStrategyFactory,
+  IRippleLibApi
 } from "../types";
 import UnlHistoryFetchStrategyFactory from "../helpers/historyFetchStrategyFactory";
 
+import RippleLibApi from "../client/rippleLibApi";
 import GeoLocationApi from "../client/geoLocationApi";
 import UpdateGeoLocationJob from "../jobs/updateGeoLocationJob";
 import UpdateUnlHistoryJob from "../jobs/updateUnlHistoryJob";
@@ -27,6 +29,7 @@ import UpdateDomainKeyMapJob from "../jobs/updateDomainKeyMapJob";
 import UpdateValidatorProfilesJob from "../jobs/updateValidatorProfilesJob";
 import UpdateValidationReportJob from "../jobs/updateValidationReportJob";
 import UpdateManifestsJob from "../jobs/updateManifestsJob";
+import UpdateRealtimeDataJob from "../jobs/updateRealtimeDataJob";
 
 const kernel = new Container();
 
@@ -44,6 +47,10 @@ kernel
 kernel
   .bind<IRippleDataApi>(TYPES.RippleDataApi)
   .to(RippleDataApi)
+  .inSingletonScope();
+kernel
+  .bind<IRippleLibApi>(TYPES.RippleLibApi)
+  .to(RippleLibApi)
   .inSingletonScope();
 kernel
   .bind<IGithubApi>(TYPES.GithubApi)
@@ -90,6 +97,10 @@ kernel
 kernel
   .bind<IJob>(TYPES.UpdateValidationReportJob)
   .to(UpdateValidationReportJob)
+  .inTransientScope();
+kernel
+  .bind<IJob>(TYPES.UpdateRealtimeDataJob)
+  .to(UpdateRealtimeDataJob)
   .inTransientScope();
 
 export { kernel };

@@ -67,7 +67,7 @@ class UpdateManifestsJob implements IJob {
     }
     return this._store
       .get<IDbValidatorSchema>(
-        `select validation_public_key from validatorssnapshot where unl = true`
+        `select validation_public_key from validatorssnapshot`
       )
       .then(x => this.fetchAndStoreManifests(x, waitTime));
   }

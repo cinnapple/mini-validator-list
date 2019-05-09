@@ -2,8 +2,8 @@
   "name": "minivalist-etl",
   "version": "1.0.0",
   "scripts": {
-    "prod-all": "DEBUG='etl:*' node -r dotenv/config bin/index.js",
-    "dev-all": "DEBUG='etl:*' nodemon -r dotenv/config bin/index.js",
+    "prod": "DEBUG='etl:*' node -r dotenv/config bin/index.js",
+    "dev": "DEBUG='etl:*' nodemon -r dotenv/config bin/index.js",
     "dev-us": "DEBUG='etl:*' nodemon -r dotenv/config bin/index.js UpdateUnlSnapshotJob",
     "dev-uh": "DEBUG='etl:*' nodemon -r dotenv/config bin/index.js UpdateUnlHistoryJob",
     "dev-gl": "DEBUG='etl:*' nodemon -r dotenv/config bin/index.js UpdateGeoLocationJob",
@@ -12,23 +12,25 @@
     "dev-vp": "DEBUG='etl:*' nodemon -r dotenv/config bin/index.js UpdateValidatorProfilesJob",
     "dev-vr": "DEBUG='etl:*' nodemon -r dotenv/config bin/index.js UpdateValidationReportJob",
     "dev-m": "DEBUG='etl:*' nodemon -r dotenv/config bin/index.js UpdateManifestsJob",
-    "dev": "tsc --watch",
+    "dev-fr": "DEBUG='etl:*' nodemon -r dotenv/config bin/index.js UpdateRealtimeDataJob FeedRealtimeDataJob",
+    "watch": "tsc --watch",
     "build": "tsc"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@octokit/rest": "^16.25.3",
     "@types/base-64": "^0.1.3",
     "@types/base-x": "^3.0.0",
-    "@types/node": "^12.0.0",
-    "@types/node-schedule": "^1.2.3",
-    "prettier": "1.17.0"
-  },
-  "dependencies": {
-    "@octokit/rest": "^16.25.3",
     "@types/bluebird": "^3.5.26",
     "@types/debug": "^4.1.4",
     "@types/js-yaml": "^3.12.1",
+    "@types/node": "^12.0.0",
+    "@types/node-schedule": "^1.2.3",
+    "@types/ioredis": "^4.0.10",
+    "prettier": "1.17.0"
+  },
+  "dependencies": {
     "axios": "^0.18.0",
     "base-64": "^0.1.0",
     "base-x": "^3.0.5",
@@ -37,12 +39,14 @@
     "debug": "^4.1.1",
     "dotenv": "^8.0.0",
     "inversify": "^5.0.1",
+    "ioredis": "^4.9.5",
     "js-yaml": "^3.13.1",
     "moment": "^2.24.0",
     "node-schedule": "^1.3.2",
     "nodemon": "^1.19.0",
     "pg-promise": "^8.7.1",
     "reflect-metadata": "^0.1.13",
+    "ripple-lib": "^1.2.3",
     "supports-color": "^6.1.0"
   }
 }

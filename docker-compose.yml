@@ -30,9 +30,23 @@ services:
       - ./etl/package.json:/usr/app/package.json
       - ./etl/bin:/usr/app/bin
       - ./etl/node_modules:/usr/app/node_modules
-    command: yarn run dev-all
+    command: yarn run dev-fr
     depends_on:
       - db
+    networks:
+      - nginx-network
+  streaming:
+    container_name: minivalist-streaming
+    build: ./streaming
+    volumes:
+      - .env:/usr/app/.env
+      - ./streaming/package.json:/usr/app/package.json
+      - ./streaming/bin:/usr/app/bin
+      # - ./streaming/node_modules:/usr/app/node_modules
+    command: yarn run dev
+    depends_on:
+      - redis_db
+      - etl
     networks:
       - nginx-network
   api:
@@ -59,6 +73,32 @@ services:
       - "3000:3000"
     depends_on:
       - api
+      - envoy
+    networks:
+      - nginx-network
+  envoy:
+    container_name: minivalist-envoy
+    image: envoyproxy/envoy
+    volumes:
+      - ./streaming/envoy.yml:/etc/envoy/envoy.yaml
+    ports:
+      - "8080:8080"
+    command: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml
+    restart: always
+    networks:
+      - nginx-network
+  envoy-ui:
+    container_name: minivalist-envoy-ui
+    image: gonitro/envoy-ui:42bae1c
+    environment:
+      - ENVOY_UI_HOST=envoy
+      - ENVOY_UI_PORT=9901
+      - ENVOY_UI_LISTEN_PORT=8081
+    ports:
+      - "8081:8081"
+    restart: always
+    depends_on:
+      - envoy
     networks:
       - nginx-network
 

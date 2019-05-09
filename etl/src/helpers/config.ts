@@ -9,7 +9,8 @@ const envVars = {
   postgresUser: process.env["POSTGRES_USER"],
   postgresPassword: process.env["POSTGRES_PASSWORD"],
   postgresDb: process.env["POSTGRES_DB"],
-  dbHost: process.env["DB_HOST"]
+  dbHost: process.env["DB_HOST"],
+  redisUrl: process.env["REDIS_URL"]
 };
 
 Object.keys(envVars).forEach(key => {
@@ -23,6 +24,7 @@ const merged = <IConfig>{
   ...config,
   ipstackToken: envVars.ipstackToken,
   githubToken: envVars.githubToken,
+  redisUrl: envVars.redisUrl,
   connectionString: `postgresql://${envVars.postgresUser}:${
     envVars.postgresPassword
   }@${envVars.dbHost}:5432/${envVars.postgresDb}`

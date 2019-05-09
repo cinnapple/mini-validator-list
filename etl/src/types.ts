@@ -6,12 +6,14 @@ export interface IConfig {
   connectionString: string;
   githubToken: string;
   ipstackToken: string;
+  redisUrl: string;
   jobs: IJobConfig[];
 }
 
 export interface IJobConfig {
   name: string;
-  cron: string;
+  cron?: string;
+  spawn?: boolean;
   runImmediate: boolean;
   args?: HashTable<any>;
 }
@@ -43,6 +45,17 @@ export interface IRippleDataApi {
     pubkey: string
   ) => Promise<IGetValidatorReportReponse[]>;
   getManifests: (pubkey: string) => Promise<IGetValidatorManifestsReponse[]>;
+  getTopologyNodes: () => Promise<IGetTopologyNodesResponse[]>;
+}
+
+export interface IRippleLibApiConfig {
+  maxConnections: number;
+  handleValidation?: (item: RealtimeValidationData) => void;
+  handleLedger?: (item: RealtimeLedgerData) => void;
+}
+
+export interface IRippleLibApi {
+  subscribe: (config: IRippleLibApiConfig) => Promise<void>;
 }
 
 export interface IGetValidatorsResponse {
@@ -86,6 +99,16 @@ export interface IGetValidatorManifestsReponse {
   signature: string;
 }
 
+export interface IGetTopologyNodesResponse {
+  node_public_key: string;
+  ip?: string;
+  port?: number;
+  version: string;
+  uptime: number;
+  inbound_count: number;
+  outbound_count: number;
+}
+
 export interface IWebClient {
   get<T>(url: string, config?: AxiosRequestConfig): Promise<T>;
 }
@@ -124,6 +147,39 @@ export interface IUnlHistory {
 
 export interface IHistoryFetchStrategy {
   getList(): Promise<IUnlHistory[]>;
+}
+
+export interface ILedgerEventArg {
+  baseFeeXRP: string; // e.g. "0.00001";
+  ledgerHash: string; // e.g. "27FEF1A12C4BFB8B0B70C85A196BC75C27E312460D23F7F2B7707C14B4649AC5";
+  ledgerVersion: number; // e.g. 47508326;
+  ledgerTimestamp: string; // e.g. "2019-05-25T20:05:42.000Z";
+  reserveBaseXRP: string; // e.g. "20";
+  reserveIncrementXRP: string; // e.g. "5";
+  transactionCount: number; // e.g. 33;
+  validatedLedgerVersions: string; // e.g. "47472353-47508326";
+}
+
+export interface IValidationEventArg {
+  flags: number; // e.g. 2147483649;
+  full: boolean; // e.g. true;
+  ledger_hash: string; //e.g. '8AA9576962C61E4A6FAEB982189B6D8D9C78389422A552166ACEFA924D45DA50',
+  ledger_index: string; // e.g. '19682531',
+  signature: string; // e.g.'304402200A6B2FFB4483C5912C444F2B07BE485B765CD6C943C9AD7F53A61B3C530799D002201B6DF02BE3C799FD1D074C773D5312365984BBDC88E5942E618A7BB4CA7D9806',
+  signing_time: number; // e.g. 612132986,
+  type: string; // e.g. 'validationReceived',
+  validation_public_key: string; // e.g. 'n944nVL4GHUBpZWUn2XaQXYT92b42BYHpwAisiCqvL159tEmWY46' }
+}
+
+export interface RealtimeLedgerData extends ILedgerEventArg {
+  validation_public_key: string;
+  domain: string;
+  elapsedSeconds: number;
+}
+
+export interface RealtimeValidationData extends IValidationEventArg {
+  validation_public_key: string;
+  domain: string;
 }
 
 export interface IDbTable {

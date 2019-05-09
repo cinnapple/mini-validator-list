@@ -54,6 +54,11 @@
       "args": {
         "waitTime": 15
       }
+    },
+    {
+      "name": "UpdateRealtimeDataJob",
+      "spawn": true,
+      "runImmediate": true
     }
   ]
 }

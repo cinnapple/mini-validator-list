@@ -1,0 +1,10 @@
+{
+  "name": "minivalist-shared",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "google-protobuf": "^3.8.0",
+    "grpc-web": "^1.0.4"
+  }
+}
