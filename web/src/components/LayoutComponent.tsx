@@ -3,6 +3,7 @@ import { Layout, Menu } from "antd";
 import { Sizes } from "../types";
 import { Link } from "react-router-dom";
 import { Typography } from "antd";
+import withSize from "../hoc/withSize";
 import XRPTipBotButton from "./XRPTipBotButton";
 
 const { Title } = Typography;
@@ -13,12 +14,12 @@ interface LayoutProps {
   size: Sizes;
 }
 
-const LayoutComponent: React.SFC<LayoutProps> = ({ size, children }) => {
+const LayoutComponent: React.SFC<LayoutProps> = ({ children, size }) => {
   const [state, setState] = React.useState({
     current: window.location.pathname
   });
   return (
-    <Layout className="layout">
+    <Layout className="App">
       <Header>
         <div
           style={{
@@ -63,17 +64,17 @@ const LayoutComponent: React.SFC<LayoutProps> = ({ size, children }) => {
             background: "#fff",
             maringTop: "16px",
             padding: size === Sizes.Mobile ? 12 : 24,
-            minHeight: 280
+            minHeight: 700
           }}
         >
-          {children}
+          <React.Suspense fallback={<div />}>{children}</React.Suspense>
         </div>
+        <Footer style={{ textAlign: "center" }}>
+          <XRPTipBotButton amount="0.25" to="CinnappleFun" network="twitter" />
+        </Footer>
       </Content>
-      <Footer style={{ textAlign: "center" }}>
-        <XRPTipBotButton amount="0.25" to="CinnappleFun" network="twitter" />
-      </Footer>
     </Layout>
   );
 };
 
-export default LayoutComponent;
+export default withSize(LayoutComponent);

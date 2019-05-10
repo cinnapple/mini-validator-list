@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Drawer as _Drawer } from "antd";
 import { Sizes } from "../types";
+import withSize from "../hoc/withSize";
 
 interface Props {
   open: boolean;
@@ -22,4 +23,4 @@ const Drawer: React.SFC<Props> = ({ children, open, onClose, size }) => {
   );
 };
 
-export default Drawer;
+export default withSize(Drawer);

@@ -2,6 +2,7 @@ import React, { SFC } from "react";
 import { Chart, Geom, Axis, Tooltip, Coord, Shape, Util } from "bizcharts";
 import dayjs from "dayjs";
 import { Sizes, IChartPropBase, IValidatorScoreOptions } from "../../types";
+import withSize from "../../hoc/withSize";
 
 let dayTracking: { [key: string]: string } = {};
 
@@ -176,4 +177,4 @@ const ValidationScore: SFC<IChartPropBase<IValidatorScoreOptions>> = ({
   );
 };
 
-export default ValidationScore;
+export default withSize(ValidationScore);

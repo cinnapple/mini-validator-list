@@ -3,6 +3,7 @@ import { uniq } from "../../helpers/util";
 import { Col, Row, Card } from "antd";
 import ValidationScore from "./ValidationScore";
 import { IChartPropBase, IScoreboardOptions } from "../../types";
+import withSize from "../../hoc/withSize";
 
 const Scoreboard: SFC<IChartPropBase<IScoreboardOptions>> = ({
   dataSet,
@@ -37,4 +38,4 @@ const Scoreboard: SFC<IChartPropBase<IScoreboardOptions>> = ({
   );
 };
 
-export default Scoreboard;
+export default withSize(Scoreboard);

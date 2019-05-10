@@ -1,16 +1,12 @@
 import * as React from "react";
-import LayoutComponent from "../../components/LayoutComponent";
 import queriesList from "./queries";
-import { Sizes } from "../../types";
 import QueriesListRenderer from "../../components/QueriesListRenderer";
 import { RouteComponentProps } from "react-router";
 import cubejsClient from "../../cubejsAdapter/cubejs";
 
-interface Props extends RouteComponentProps<{ id: string }> {
-  size: Sizes;
-}
+interface Props extends RouteComponentProps<{ id: string }> {}
 
-const ValidatorDetailsContainer: React.SFC<Props> = ({ size, match }) => {
+const ValidatorDetailsContainer: React.SFC<Props> = ({ match }) => {
   const [state, setState] = React.useState({
     domain: undefined,
     validationPublicKey: match.params.id
@@ -42,17 +38,14 @@ const ValidatorDetailsContainer: React.SFC<Props> = ({ size, match }) => {
   }
 
   return (
-    <LayoutComponent size={size}>
-      <QueriesListRenderer
-        size={size}
-        queriesList={queriesList({
-          selected: {
-            validationPublicKey,
-            domain
-          }
-        })}
-      />
-    </LayoutComponent>
+    <QueriesListRenderer
+      queriesList={queriesList({
+        selected: {
+          validationPublicKey,
+          domain
+        }
+      })}
+    />
   );
 };
 export default ValidatorDetailsContainer;

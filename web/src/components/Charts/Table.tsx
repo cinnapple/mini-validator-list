@@ -8,6 +8,7 @@ import {
   ITableChartOptions
 } from "../../types";
 import { uniq, sortBy, sort } from "../../helpers/util";
+import withSize from "../../hoc/withSize";
 
 const isLastOddIndex = (total: number, i: number) => {
   return total % 2 === 1 && i === total - 1;
@@ -170,4 +171,4 @@ const Table: React.SFC<IChartPropBase<ITableChartOptions<any>>> = ({
   );
 };
 
-export default Table;
+export default withSize(Table);
