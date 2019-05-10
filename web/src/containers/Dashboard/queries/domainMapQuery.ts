@@ -1,38 +1,34 @@
 import { IQueryItem, IWorldMapOptions, SupportedCharts } from "../../../types";
 
 const unlOperatorMapQuery: IQueryItem<IWorldMapOptions> = {
-  title: "UNL Operator Map",
+  title: "Validator Operator Map",
   type: SupportedCharts.Map,
   query: {
-    measures: [
-      "GeoLocation.latitude",
-      "GeoLocation.longitude",
-      "GeoLocation.unlSum",
-      "GeoLocation.altNetChainSum",
-      "GeoLocation.validatorCount"
+    dimensions: [
+      "Vw_DomainDetails.domain",
+      "Vw_DomainDetails.city",
+      "Vw_DomainDetails.country_name",
+      "Vw_DomainDetails.latitude",
+      "Vw_DomainDetails.longitude",
+      "Vw_DomainDetails.unl_count",
+      "Vw_DomainDetails.icon"
     ],
-    dimensions: ["GeoLocation.domain", "GeoLocation.city"],
     filters: [
       {
-        // exclude test net
-        dimension: "GeoLocation.altNetChainSum",
+        dimension: "Vw_DomainDetails.altnet_chain_count",
         operator: "equals",
         values: ["0"]
-      },
-      {
-        // exclude test net
-        dimension: "MainNetValidators.chain",
-        operator: "notEquals",
-        values: ["altnet"]
       }
     ]
   },
   options: {
     props: {
-      domainField: "GeoLocation.domain",
-      latitudeField: "GeoLocation.latitude",
-      longitudeField: "GeoLocation.longitude",
-      cityField: "GeoLocation.city"
+      domainField: "Vw_DomainDetails.domain",
+      latitudeField: "Vw_DomainDetails.latitude",
+      longitudeField: "Vw_DomainDetails.longitude",
+      cityField: "Vw_DomainDetails.city",
+      countryNameField: "Vw_DomainDetails.country_name",
+      iconField: "Vw_DomainDetails.icon"
     }
   }
 };

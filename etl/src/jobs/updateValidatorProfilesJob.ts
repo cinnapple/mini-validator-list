@@ -27,15 +27,17 @@ class UpdateValidatorProfilesJob implements IJob {
           .split(".")
           .slice(0, -1)
           .join(".");
-        _d(`fetching icon for ${imageDomain}`);
-        await this._webClient
-          .get(i.download_url, { responseType: "arraybuffer" })
-          .then(
-            (res: any) =>
-              (data[imageDomain].icon = Buffer.from(res, "binary").toString(
-                "base64"
-              ))
-          );
+        if (data[imageDomain]) {
+          _d(`fetching icon for ${imageDomain}`);
+          await this._webClient
+            .get(i.download_url, { responseType: "arraybuffer" })
+            .then(
+              (res: any) =>
+                (data[imageDomain].icon = Buffer.from(res, "binary").toString(
+                  "base64"
+                ))
+            );
+        }
       }
       return data;
     });

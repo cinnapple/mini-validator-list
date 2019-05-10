@@ -1,34 +1,21 @@
 import * as React from "react";
-import { Card } from "antd";
+import { IChartPropBase, IWorldMapOptions, Sizes } from "../../types";
+import { Typography } from "antd";
+import { icon } from "leaflet";
 import { Map, TileLayer, Marker, Tooltip, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-markercluster";
-import L from "leaflet";
-import { IChartPropBase, IWorldMapOptions } from "../../types";
-
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  shadowUrl: require("leaflet/dist/images/marker-shadow.png")
-});
+import "./worldmap.css";
+import withSize from "../../hoc/withSize";
+const { Text, Paragraph } = Typography;
 
 /**
  * https://leaflet-extras.github.io/leaflet-providers/preview/index.html
  */
 const TILE_PROVIDER: any = {
-  light: {
-    url:
-      "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png",
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-  },
-  dark: {
-    url:
-      "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png",
-    attribution:
-      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-  }
+  url:
+    "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
 };
 
 interface State {
@@ -37,6 +24,7 @@ interface State {
 }
 
 const WorldMap: React.SFC<IChartPropBase<IWorldMapOptions>> = ({
+  size,
   dataSet,
   queryItem
 }) => {
@@ -47,19 +35,19 @@ const WorldMap: React.SFC<IChartPropBase<IWorldMapOptions>> = ({
     zoom: 1
   });
   const { center, zoom } = state;
-  const themeType = "light";
   return (
-    <Map
-      center={center as any}
-      zoom={zoom}
-      maxZoom={50}
-      style={{ height: 400 }}
-    >
+    <Map center={center as any} zoom={zoom} maxZoom={4} style={{ height: 400 }}>
       <TileLayer
-        attribution={TILE_PROVIDER[themeType].attribution}
-        url={TILE_PROVIDER[themeType].url}
+        attribution={TILE_PROVIDER.attribution}
+        url={TILE_PROVIDER.url}
       />
-      <MarkerClusterGroup showCoverageOnHover={false} spiderfyOnMaxZoom={true}>
+      <MarkerClusterGroup
+        maxClusterRadius={40}
+        spiderfyDistanceMultiplier={1.2}
+        showCoverageOnHover={false}
+        spiderfyOnMaxZoom={true}
+        spiderLegPolylineOptions={{ weight: 1.5, color: "#000", opacity: 0.5 }}
+      >
         {dataSet.map((domain: any) => (
           <Marker
             key={domain[props.domainField]}
@@ -67,21 +55,38 @@ const WorldMap: React.SFC<IChartPropBase<IWorldMapOptions>> = ({
               domain[props.latitudeField],
               domain[props.longitudeField]
             ]}
+            icon={icon({
+              className: "leaflet-icon",
+              iconUrl: domain[props.iconField]
+                ? `data:image/png;base64, ${domain[props.iconField]}`
+                : `default-map-icon.png`,
+              iconSize: domain[props.iconField] ? [40, 40] : [30, 30]
+            })}
           >
-            <Tooltip direction="bottom" offset={[0, 0]} permanent>
-              <Popup>
-                <Card
-                  size="small"
-                  title={domain[props.domainField]}
-                  bordered={false}
-                  extra={<a href="#">More</a>}
-                  style={{ width: 300 }}
-                >
-                  <p>{domain[props.cityField]}</p>
-                </Card>
-              </Popup>
-              <div>{domain[props.domainField]}</div>
-            </Tooltip>
+            <Popup offset={[0, -25]}>
+              <Typography>
+                <Text strong>{domain[props.domainField]}</Text>
+                <Paragraph>
+                  {domain[props.cityField]
+                    ? `${domain[props.cityField]}, `
+                    : ``}
+                  {domain[props.countryNameField]}
+                </Paragraph>
+              </Typography>
+            </Popup>
+            {size === Sizes.Desktop ? (
+              <Tooltip direction="bottom" offset={[0, 25]}>
+                <Typography>
+                  <Text strong>{domain[props.domainField]}</Text>
+                  <Paragraph>
+                    {domain[props.cityField]
+                      ? `${domain[props.cityField]}, `
+                      : ``}
+                    {domain[props.countryNameField]}
+                  </Paragraph>
+                </Typography>
+              </Tooltip>
+            ) : null}
           </Marker>
         ))}
       </MarkerClusterGroup>
@@ -89,4 +94,4 @@ const WorldMap: React.SFC<IChartPropBase<IWorldMapOptions>> = ({
   );
 };
 
-export default WorldMap;
+export default withSize(WorldMap);

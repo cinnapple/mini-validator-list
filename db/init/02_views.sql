@@ -22,3 +22,46 @@ FROM (((calendar c
 alter table validatorreportcalendar
     owner to minivalist;
 
+create or replace view domaindetails(domain, city, continent_name, country_code, country_name, latitude, longitude,
+                                     name, twitter, web, description, icon, last_updated, validator_count, validators,
+                                     unl_count, main_chain_count, altnet_chain_count) as
+SELECT dk.domain,
+       g.city,
+       g.continent_name,
+       g.country_code,
+       g.country_name,
+       COALESCE(g.latitude, (0.00)::double precision)          AS latitude,
+       COALESCE(g.longitude, (0.00)::double precision)         AS longitude,
+       p.name,
+       p.twitter,
+       p.web,
+       p.description,
+       p.icon,
+       p.last_updated,
+       count(dk.validation_public_key)                         AS validator_count,
+       string_agg((dk.validation_public_key)::text, ';'::text) AS validators,
+       sum(
+               CASE
+                   WHEN (v.unl = true) THEN 1
+                   ELSE 0
+                   END)                                        AS unl_count,
+       sum(
+               CASE
+                   WHEN ((v.chain)::text = 'main'::text) THEN 1
+                   ELSE 0
+                   END)                                        AS main_chain_count,
+       sum(
+               CASE
+                   WHEN ((v.chain)::text = 'altnet'::text) THEN 1
+                   ELSE 0
+                   END)                                        AS altnet_chain_count
+FROM (((domainkeymap dk
+    LEFT JOIN geolocation g ON (((dk.domain)::text = (g.domain)::text)))
+    LEFT JOIN profiles p ON (((dk.domain)::text = (p.domain)::text)))
+         LEFT JOIN validatorssnapshot v ON (((v.validation_public_key)::text = (dk.validation_public_key)::text)))
+GROUP BY dk.domain, g.city, g.continent_name, g.country_code, g.country_name, g.latitude, g.longitude, p.name,
+         p.twitter, p.web, p.description, p.icon, p.last_updated;
+
+alter table domaindetails
+    owner to minivalist;
+

@@ -5,7 +5,7 @@ import {
   IGeoLocationApi,
   IRippleDataApi,
   IDbGeoLocationSchema,
-  IGetValidatorsResponse
+  IDbDomainKeyMapSchema
 } from "../types";
 import { uniq } from "../helpers/util";
 import * as debug from "debug";
@@ -19,13 +19,13 @@ class UpdateGeoLocationJob implements IJob {
     @inject(TYPES.GeoLocationApi) private _geoLocationApi: IGeoLocationApi
   ) {}
 
-  private transform = async (data: IGetValidatorsResponse[]) => {
+  private transform = async (data: Pick<IDbDomainKeyMapSchema, "domain">[]) => {
     const last_updated = new Date();
     const results: IDbGeoLocationSchema[] = [];
     const failedDomains: string[] = [];
 
-    for (let domain of uniq(data.map((v: any) => v.domain))) {
-      _d(domain);
+    for (let domain of uniq(data.map(d => d.domain))) {
+      _d(`fetching for ${domain}`);
       await this._geoLocationApi
         .tryGetGeoData(domain)
         .then(
@@ -59,8 +59,8 @@ class UpdateGeoLocationJob implements IJob {
   };
 
   execute() {
-    return this._rippleApi
-      .getNetworkValidators()
+    return this._store
+      .get<IDbDomainKeyMapSchema>("select domain from domainkeymap")
       .then(this.transform)
       .then(x =>
         this._store.upsert("geolocation", x, "geoinfo_pk", [

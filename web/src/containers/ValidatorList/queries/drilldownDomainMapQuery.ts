@@ -7,17 +7,18 @@ const drilldownDomainMapOperatorQuery = (
   type: SupportedCharts.Map,
   bordered: false,
   query: {
-    measures: [
-      "GeoLocation.latitude",
-      "GeoLocation.longitude",
-      "GeoLocation.unlSum",
-      "GeoLocation.altNetChainSum",
-      "GeoLocation.validatorCount"
+    dimensions: [
+      "Vw_DomainDetails.domain",
+      "Vw_DomainDetails.city",
+      "Vw_DomainDetails.country_name",
+      "Vw_DomainDetails.latitude",
+      "Vw_DomainDetails.longitude",
+      "Vw_DomainDetails.unl_count",
+      "Vw_DomainDetails.icon"
     ],
-    dimensions: ["GeoLocation.domain", "GeoLocation.city"],
     filters: [
       {
-        dimension: "GeoLocation.domain",
+        dimension: "Vw_DomainDetails.domain",
         operator: "equals",
         values: [domain]
       }
@@ -25,10 +26,12 @@ const drilldownDomainMapOperatorQuery = (
   },
   options: {
     props: {
-      domainField: "GeoLocation.domain",
-      latitudeField: "GeoLocation.latitude",
-      longitudeField: "GeoLocation.longitude",
-      cityField: "GeoLocation.city"
+      domainField: "Vw_DomainDetails.domain",
+      latitudeField: "Vw_DomainDetails.latitude",
+      longitudeField: "Vw_DomainDetails.longitude",
+      cityField: "Vw_DomainDetails.city",
+      countryNameField: "Vw_DomainDetails.country_name",
+      iconField: "Vw_DomainDetails.icon"
     }
   }
 });
