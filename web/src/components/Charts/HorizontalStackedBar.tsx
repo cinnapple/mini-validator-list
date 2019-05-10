@@ -6,6 +6,7 @@ import {
   IChartPropBase,
   IHorizontalStackBarChartOptions
 } from "../../types";
+import withSize from "../../hoc/withSize";
 
 const HorizontalStackedBar: SFC<
   IChartPropBase<IHorizontalStackBarChartOptions>
@@ -65,4 +66,4 @@ const HorizontalStackedBar: SFC<
   );
 };
 
-export default HorizontalStackedBar;
+export default withSize(HorizontalStackedBar);

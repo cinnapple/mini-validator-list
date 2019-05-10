@@ -3,6 +3,7 @@ import { Card, Col, Row } from "antd";
 import Chart from "../cubejsAdapter";
 import Drawer from "./Drawer";
 import { QueryList, Sizes, IChartOptionsBase } from "../types";
+import withSize from "../hoc/withSize";
 
 interface Props {
   size: Sizes;
@@ -42,15 +43,12 @@ const QueriesListRenderer: React.SFC<Props> = ({ size, queriesList }) => {
                 }
               >
                 <Chart
-                  size={size}
                   queryItem={queryItem}
                   onDrilldown={(opt: any) =>
-                    queryItem.drilldown
-                      ? setState({
-                          drilldownOpen: true,
-                          drilldownQuery: queryItem.drilldown(opt)
-                        })
-                      : undefined
+                    setState({
+                      drilldownOpen: true,
+                      drilldownQuery: queryItem.drilldown!(opt)
+                    })
                   }
                 />
               </Card>
@@ -73,7 +71,7 @@ const QueriesListRenderer: React.SFC<Props> = ({ size, queriesList }) => {
                 }}
               >
                 <Card title={queryItem.title} bordered={false}>
-                  <Chart queryItem={queryItem} size={size} />
+                  <Chart queryItem={queryItem} />
                 </Card>
               </Col>
             </Row>
@@ -83,4 +81,4 @@ const QueriesListRenderer: React.SFC<Props> = ({ size, queriesList }) => {
   );
 };
 
-export default QueriesListRenderer;
+export default withSize(QueriesListRenderer);

@@ -2,6 +2,7 @@ import React, { SFC } from "react";
 import { Chart, Geom, Axis, Tooltip, Legend } from "bizcharts";
 import dayjs from "dayjs";
 import { Sizes, IChartPropBase, IStackBarChartOptions } from "../../types";
+import withSize from "../../hoc/withSize";
 
 const StackedBar: SFC<IChartPropBase<IStackBarChartOptions>> = ({
   dataSet,
@@ -52,4 +53,4 @@ const StackedBar: SFC<IChartPropBase<IStackBarChartOptions>> = ({
   );
 };
 
-export default StackedBar;
+export default withSize(StackedBar);

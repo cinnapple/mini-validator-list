@@ -5,14 +5,12 @@ import { Spin } from "antd";
 import { SupportedComponents } from "../components/Charts";
 import {
   SupportedCharts,
-  Sizes,
   IQueryItem,
   SupportedPivotTypes,
   ICubePivotConfig
 } from "../types";
 
 interface Props {
-  size: Sizes;
   queryItem: IQueryItem<any>;
   onDrilldown?: (opt: any) => void;
 }
@@ -38,7 +36,7 @@ const pivot = (
   return resultSet.rawData();
 };
 
-const Chart: React.SFC<Props> = ({ queryItem, size, onDrilldown }) => (
+const Chart: React.SFC<Props> = ({ queryItem, onDrilldown }) => (
   <QueryRenderer
     cubejsApi={cubejsApi}
     query={queryItem.query}
@@ -51,7 +49,6 @@ const Chart: React.SFC<Props> = ({ queryItem, size, onDrilldown }) => (
         );
         return renderChart(queryItem.type, {
           dataSet,
-          size,
           onDrilldown,
           queryItem
         });

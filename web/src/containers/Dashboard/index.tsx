@@ -1,17 +1,11 @@
 import * as React from "react";
-import LayoutComponent from "../../components/LayoutComponent";
 import queriesList from "./queries";
-import { Sizes } from "../../types";
 import QueriesListRenderer from "../../components/QueriesListRenderer";
 
-interface Props {
-  size: Sizes;
-}
+interface Props {}
 
-const DashboardContainer: React.SFC<Props> = ({ size }) => (
-  <LayoutComponent size={size}>
-    <QueriesListRenderer size={size} queriesList={queriesList} />
-  </LayoutComponent>
+const DashboardContainer: React.SFC<Props> = () => (
+  <QueriesListRenderer queriesList={queriesList} />
 );
 
 export default DashboardContainer;
