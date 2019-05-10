@@ -72,6 +72,8 @@ export interface IMapProps {
   latitudeField: string;
   longitudeField: string;
   cityField: string;
+  countryNameField: string;
+  iconField: string;
 }
 
 export interface IProfileProps {

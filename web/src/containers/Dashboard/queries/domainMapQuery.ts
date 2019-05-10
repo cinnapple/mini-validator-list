@@ -8,10 +8,14 @@ const unlOperatorMapQuery: IQueryItem<IWorldMapOptions> = {
       "GeoLocation.latitude",
       "GeoLocation.longitude",
       "GeoLocation.unlSum",
-      "GeoLocation.altNetChainSum",
-      "GeoLocation.validatorCount"
+      "GeoLocation.altNetChainSum"
     ],
-    dimensions: ["GeoLocation.domain", "GeoLocation.city"],
+    dimensions: [
+      "GeoLocation.domain",
+      "GeoLocation.city",
+      "GeoLocation.countryName",
+      "Profiles_GeoLocation.icon"
+    ],
     filters: [
       {
         // exclude test net
@@ -32,7 +36,9 @@ const unlOperatorMapQuery: IQueryItem<IWorldMapOptions> = {
       domainField: "GeoLocation.domain",
       latitudeField: "GeoLocation.latitude",
       longitudeField: "GeoLocation.longitude",
-      cityField: "GeoLocation.city"
+      cityField: "GeoLocation.city",
+      countryNameField: "GeoLocation.countryName",
+      iconField: "Profiles_GeoLocation.icon"
     }
   }
 };

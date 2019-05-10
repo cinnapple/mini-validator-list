@@ -14,7 +14,12 @@ const drilldownDomainMapOperatorQuery = (
       "GeoLocation.altNetChainSum",
       "GeoLocation.validatorCount"
     ],
-    dimensions: ["GeoLocation.domain", "GeoLocation.city"],
+    dimensions: [
+      "GeoLocation.domain",
+      "GeoLocation.city",
+      "GeoLocation.countryName",
+      "Profiles_GeoLocation.icon"
+    ],
     filters: [
       {
         dimension: "GeoLocation.domain",
@@ -28,7 +33,9 @@ const drilldownDomainMapOperatorQuery = (
       domainField: "GeoLocation.domain",
       latitudeField: "GeoLocation.latitude",
       longitudeField: "GeoLocation.longitude",
-      cityField: "GeoLocation.city"
+      cityField: "GeoLocation.city",
+      countryNameField: "GeoLocation.countryName",
+      iconField: "Profiles_GeoLocation.icon"
     }
   }
 });

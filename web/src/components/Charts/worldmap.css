@@ -1,0 +1,9 @@
+.leaflet-container {
+  height: 400px;
+  width: 100%;
+}
+
+.leaflet-icon {
+  border-radius: 50%;
+  border: solid 1px #ccc;
+}
