@@ -1,5 +1,10 @@
-main(){
+setup_env(){
   yarn global add typescript
 }
 
-main
+encrypt(){
+  travis login --pro
+  travis encrypt --com $1=$2
+}
+
+"$@"

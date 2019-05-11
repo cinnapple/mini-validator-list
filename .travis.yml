@@ -1,18 +1,18 @@
 language: node_js
 node_js:
   - "10"
-
+env:
+  secure: kALRZKN9/QgTqnUUCOjQTXmEuV9Xy3ifmZfTtwiyakSqJM0XtNfP1VayKu3WFTb/TJsXltYU6AFcpoUxT7NyQzisdEC1cKY93fJH0qa3uJ0MZD4iqE/sIlAANtqCXxiw0LpVkcUNlw9P/RsEbEOV/tMAgarFIye24fbk8fxEG3kt337wLuq3FPGauxy7NUt76kYFcVnWIvcgHQxZinWJes83XHxZDG0Us14GykyvDzxQ+nrsOxOj6F9vskuUVGNdQFXChylAci52KjGbNsy4TNK4JGdHkw62Ulj1a36oVDTg+nx9/PP/ZS8Cm5M5P4z03FxTgwV/ywoDVJKd6i5ENwjWARUF+nvN7LB5AJtb27+vws7jv9iVRE1eYxAkcGdeNQ4ladZn+2aR2s7tEmH6ntejLwvgJDzHv71sWN/7vuofxw5leaDtvTZ3bprJXofB2Zq58I6YJXBmJKrWveh6Pp2M7CzVj9m/PivtnuMMHMfMkiGwREhGPqlT47+qummRZIXgo8GxhfF2ALteyn0YnB0G3QhH/98bJMtMvz8YfMPEwWhTy+VT/UVsL/3Gcn782vAA/5NDEDEOW9NaMBhV6AMMKisU67dL0PVtJQS+DBoUFXhfIkS+q6mySqGnv/TbJh300yi0xfrOUr2w3KH9xBLG+UeDLGXKqv1M6XKF60g=
 services:
-  - "docker"
-
+  - docker
 before_install:
   - chmod +x ./.travis/main.sh
-  - "./.travis/main.sh"
+  - "./.travis/main.sh setup_env"
 script:
-  - "make build"
-  - "make build-image"
+  - make build
+  - make build-image
 after_success:
   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then
-    docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ;
+    docker login -u cinnapple -p $DOCKER_PASSWORD ;
     make push-image;
     fi
