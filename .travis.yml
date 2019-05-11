@@ -2,17 +2,22 @@ language: node_js
 node_js:
   - "10"
 
+env:
+  - DOCKER_USERNAME=cinnapple
+  # encrypted docker login password
+  secure: "aXELCKyR/MpQwhGeDq0diHm9AT4L/dvc6p1OX9YgacInUhlRpPgM+dziBBQe/7bY4v5fKh9d/7hTslEW3h0t81v9+uzMcYQPiscXwSKnHbQA0N9L5NEZ6r8jDV8iI4cb2b02IKBVSfhwBrJNgMZkDUHq4cNoOSVd7N4TgB56rXotIPnigltYdnHyjvLbpx/GEdonz2TWPV2hlknerHvqmjW9rETxXvEVRvaeSDFxe6TyFJeMv9f4oN0T0qE0BXkHyU1M/vAqGGDo4GufXFGHMa2LGUiWsD6gvrqLLf/l1nYG2juPU2Gg7J3A3+xBWTAfQKwdIll4tZkYWe5M6CCiOBSXXttRdwCYyOedZuXCHTgzDTs9VliBZxbk959fLNH0eeRT8cnNnNVLVlnJZpdBE/Nwp94/HYT00xg6dUCAAUOZBTlWy59s7pOeMw1FjvGYFxojD4fJa4Nd97MTz1TPcs348TM+/s4w1N5+opuNOQWgikX8ItRNjBzhAJ7EFsOI0BVZCF5fDUzcSaghFyGxLbNqDww2QyokyJgPZvE4md3IkeKEFtkhAU4u1qOX04EkQOQqjVyECzK54B25neNUuCncxVqlmYAK/1dG8lljozz/26lAoLcAiVgElq1b/IsJifS/DYv1gBCy5LVz8vpe3QFiHfbkw8YasSvtx5ZnKrc="
+
 services:
   - "docker"
 
 before_install:
+  - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ;
   - chmod +x ./.travis/main.sh
-  - "./.travis/main.sh"
+  - "./.travis/main.sh setup_env"
 script:
   - "make build"
   - "make build-image"
 after_success:
   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then
-    docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ;
     make push-image;
     fi
