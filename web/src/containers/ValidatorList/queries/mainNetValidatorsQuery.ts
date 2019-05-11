@@ -81,6 +81,7 @@ const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
     },
     buildStats: (data: any[]) => {
       const total = data.length;
+      let active = 0;
       let defaultUnl = 0;
       let ripple = 0;
       const countries: any = {};
@@ -91,13 +92,17 @@ const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
         if (c["ValidatorsWithGeo.countryName"]) {
           countries[c["ValidatorsWithGeo.countryName"]] = 1;
         }
+        if (c["ValidatorsWithGeo.lastUpdatedInHours"] < 1) {
+          active++;
+        }
       });
       const defaultUnlRate = total === 0 ? 0 : defaultUnl / total;
       const dominance = total === 0 ? 0 : ripple / total;
       return [
         {
-          title: "Validators",
-          value: total
+          title: "Active / Total",
+          value: active,
+          suffix: `/ ${total}`
         },
         {
           title: "Countries",
