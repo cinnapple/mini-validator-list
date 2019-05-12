@@ -21,20 +21,20 @@ const drilldownValidatorScoreQuery = (
   pivotType: "table",
   query: {
     dimensions: [
-      "Calendar_ValidationReports.date",
-      "Calendar_ValidationReports.monthOfYear",
-      "Calendar_ValidationReports.dayOfWeek",
-      "Calendar_ValidationReports.stats"
+      "Vw_ValidatorReportCalendar.date",
+      "Vw_ValidatorReportCalendar.monthOfYear",
+      "Vw_ValidatorReportCalendar.dayOfWeek",
+      "Vw_ValidatorReportCalendar.stats"
     ],
     timeDimensions: [
       {
-        dimension: "Calendar_ValidationReports.date",
+        dimension: "Vw_ValidatorReportCalendar.date",
         dateRange
       }
     ],
     filters: [
       {
-        dimension: "Calendar_ValidationReports.validation_public_key",
+        dimension: "Vw_ValidatorReportCalendar.validation_public_key",
         operator: "equals",
         values: [validationPublicKey]
       }
@@ -42,10 +42,10 @@ const drilldownValidatorScoreQuery = (
   },
   options: {
     props: {
-      dayOfWeekField: "Calendar_ValidationReports.dayOfWeek",
-      dateField: "Calendar_ValidationReports.date",
-      statsField: "Calendar_ValidationReports.stats",
-      monthOfYearField: "Calendar_ValidationReports.monthOfYear"
+      dayOfWeekField: "Vw_ValidatorReportCalendar.dayOfWeek",
+      dateField: "Vw_ValidatorReportCalendar.date",
+      statsField: "Vw_ValidatorReportCalendar.stats",
+      monthOfYearField: "Vw_ValidatorReportCalendar.monthOfYear"
     }
   }
 });

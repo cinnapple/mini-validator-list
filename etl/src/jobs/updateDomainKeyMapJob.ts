@@ -64,7 +64,8 @@ class UpdateDomainKeyMapJob implements IJob {
           "created",
           "validation_public_key"
         ])
-      );
+      )
+      .then(x => this._store.refreshMaterializedView(["m_validatordetails"]));
   }
 }
 

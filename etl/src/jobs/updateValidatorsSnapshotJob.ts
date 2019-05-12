@@ -49,7 +49,8 @@ class UpdateValidatorsSnapshotJob implements IJob {
           "validation_public_key",
           "domain"
         ])
-      );
+      )
+      .then(x => this._store.refreshMaterializedView(["m_validatordetails"]));
   }
 }
 

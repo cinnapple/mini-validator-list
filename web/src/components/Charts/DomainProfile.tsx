@@ -27,7 +27,9 @@ const DomainProfile: React.SFC<IChartPropBase<IProfileChartOptions>> = ({
           <Col>
             <Avatar
               size={128}
-              src={`data:image/png;base64, ${icon}`}
+              src={
+                icon ? `data:image/png;base64, ${icon}` : `default-map-icon.png`
+              }
               style={{
                 borderRadius: "50%",
                 border: "solid 1px #ccc"

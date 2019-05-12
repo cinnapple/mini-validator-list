@@ -2,6 +2,8 @@ import { injectable, inject, TYPES } from "../di";
 import { IStore, IConfig } from "../types";
 import * as PgPromise from "pg-promise";
 const pgp = PgPromise();
+import * as debug from "debug";
+const _d = debug("etl:PostgresStore");
 
 // timestamp without time zone
 pgp.pg.types.setTypeParser(1114, stringValue => {
@@ -54,6 +56,16 @@ class PostgresStore implements IStore {
 
   get<T>(stmt: string) {
     return this._db.any<T>(stmt, [true]);
+  }
+
+  refreshMaterializedView(viewNames: string[]) {
+    _d(`refreshing materialized views ${JSON.stringify(viewNames)}`);
+    return this._db.tx(t => {
+      var queries = viewNames.map(name => {
+        return t.none(`REFRESH MATERIALIZED VIEW CONCURRENTLY $1~`, name);
+      });
+      return t.batch(queries);
+    });
   }
 }
 

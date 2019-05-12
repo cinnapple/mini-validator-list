@@ -34,6 +34,7 @@ export interface IStore {
     skipUpdateCols: string[]
   ) => Promise<void>;
   get: <T extends IDbTable>(stmt: string) => Promise<T[]>;
+  refreshMaterializedView: (viewNames: string[]) => Promise<void>;
 }
 
 export interface IRippleDataApi {

@@ -2,6 +2,17 @@ const uniq = (arry: any[] = []) => {
   return Array.from(new Set<string>(arry.map(x => x).filter(x => x)).values());
 };
 
+const flat = (arry: any[] = []) => {
+  return arry.reduce((a, b) => a.concat(b), []);
+};
+
+const nullIf = <T>(val: any, or: T) => {
+  if (val === undefined || val === null || val === "") {
+    return or;
+  }
+  return val;
+};
+
 const sort = (a: string | number, b: string | number) => {
   if (typeof a === "string" && typeof b === "string") {
     const _a = a.toLocaleLowerCase();
@@ -31,4 +42,9 @@ const isEmpty = (obj: any) => {
 const insertIf = (cond: boolean, itemIfTrue: any, itemIfFalse?: any) =>
   cond ? itemIfTrue : itemIfFalse || (Array.isArray(itemIfTrue) ? [] : {});
 
-export { uniq, sort, sortBy, isEmpty, insertIf };
+const unlRegex = new RegExp(/.*\/\/([.\w]*)\/?/);
+const parseUnlHost = (url: string) => {
+  return url.match(unlRegex)![1];
+};
+
+export { uniq, flat, nullIf, sort, sortBy, isEmpty, insertIf, parseUnlHost };

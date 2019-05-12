@@ -147,7 +147,7 @@ export interface IExtendedTableProps<T> extends Omit<TableProps<T>, "columns"> {
 
 export interface IExtendedColumnProps<T> extends ColumnProps<T> {
   enableFilter?: boolean;
-  type?: "shortdate" | "key" | "domain" | "agreement" | "score";
+  type?: "shortdate" | "key" | "domain" | "agreement" | "score" | "unls";
   domainRenderOptions?: {
     textField: string;
     relativeHoursField: string;

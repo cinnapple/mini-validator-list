@@ -42,7 +42,7 @@ class UpdateUnlSnapshotJob implements IJob {
         );
     }
 
-    return Promise.resolve();
+    return this._store.refreshMaterializedView(["m_validatordetails"]);
   }
 }
 
