@@ -42,13 +42,7 @@ const DomainProfile: React.SFC<IChartPropBase<IProfileChartOptions>> = ({
             <Meta
               title={name}
               description={
-                <>
-                  <div>
-                    <Tag color="gold">Default UNL</Tag>
-                    <Tag color="green">Verified</Tag>
-                  </div>
-                  {/* <div style={{ marginTop: 24 }}>{description}</div> */}
-                </>
+                <>{/* <div style={{ marginTop: 24 }}>{description}</div> */}</>
               }
             />
           </Col>

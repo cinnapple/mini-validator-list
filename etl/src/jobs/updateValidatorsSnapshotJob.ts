@@ -46,8 +46,7 @@ class UpdateValidatorsSnapshotJob implements IJob {
       .then(x =>
         this._store.upsert("validatorssnapshot", x, "validatorssnapshot_pk", [
           "created",
-          "validation_public_key",
-          "domain"
+          "validation_public_key"
         ])
       )
       .then(x => this._store.refreshMaterializedView(["m_validatordetails"]));
