@@ -22,8 +22,8 @@
   },
   "dependencies": {
     "@antv/data-set": "^0.10.2",
-    "@cubejs-client/core": "^0.7.3",
-    "@cubejs-client/react": "^0.7.3",
+    "@cubejs-client/core": "^0.9.0",
+    "@cubejs-client/react": "^0.9.0",
     "antd": "^3.16.5",
     "bizcharts": "^3.5.2",
     "dayjs": "^1.8.13",

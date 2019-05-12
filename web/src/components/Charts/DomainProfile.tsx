@@ -25,7 +25,14 @@ const DomainProfile: React.SFC<IChartPropBase<IProfileChartOptions>> = ({
       <Card style={{}} bordered={false}>
         <Row gutter={16} style={{}}>
           <Col>
-            <Avatar size={128} src={`data:image/png;base64, ${icon}`} />
+            <Avatar
+              size={128}
+              src={`data:image/png;base64, ${icon}`}
+              style={{
+                borderRadius: "50%",
+                border: "solid 1px #ccc"
+              }}
+            />
           </Col>
         </Row>
         <Row gutter={16} style={{ ...marginTopStyle }}>
