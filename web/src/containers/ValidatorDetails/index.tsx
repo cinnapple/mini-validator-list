@@ -16,17 +16,17 @@ const ValidatorDetailsContainer: React.SFC<Props> = ({ match }) => {
   React.useEffect(() => {
     const fetchData = async () => {
       const resultSet = await cubejsClient.load({
-        dimensions: ["ValidatorsWithGeo.domain"],
+        dimensions: ["Vw_ValidatorDetails.domain"],
         filters: [
           {
-            dimension: "ValidatorsWithGeo.validation_public_key",
+            dimension: "Vw_ValidatorDetails.validation_public_key",
             operator: "equals",
             values: [validationPublicKey]
           }
         ]
       });
       setState({
-        domain: resultSet.rawData()[0]["ValidatorsWithGeo.domain"],
+        domain: resultSet.rawData()[0]["Vw_ValidatorDetails.domain"],
         validationPublicKey
       });
     };

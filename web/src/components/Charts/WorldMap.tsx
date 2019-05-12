@@ -36,7 +36,7 @@ const WorldMap: React.SFC<IChartPropBase<IWorldMapOptions>> = ({
   });
   const { center, zoom } = state;
   return (
-    <Map center={center as any} zoom={zoom} maxZoom={4} style={{ height: 400 }}>
+    <Map center={center as any} zoom={zoom} maxZoom={6} style={{ height: 400 }}>
       <TileLayer
         attribution={TILE_PROVIDER.attribution}
         url={TILE_PROVIDER.url}

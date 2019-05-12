@@ -1,3 +1,7 @@
+------------------------------------------------------
+-- validatorreportcalendar
+------------------------------------------------------
+
 create or replace view validatorreportcalendar(date, month_of_year, day_of_week_num, validation_public_key, chain,
                                                score, total, missed, last_updated, domain, unl) as
 SELECT c.cal_date                                                       AS date,
@@ -21,6 +25,10 @@ FROM (((calendar c
 
 alter table validatorreportcalendar
     owner to minivalist;
+
+------------------------------------------------------
+-- domaindetails
+------------------------------------------------------
 
 create or replace view domaindetails(domain, city, continent_name, country_code, country_name, latitude, longitude,
                                      name, twitter, web, description, icon, last_updated, validator_count, validators,
@@ -64,4 +72,67 @@ GROUP BY dk.domain, g.city, g.continent_name, g.country_code, g.country_name, g.
 
 alter table domaindetails
     owner to minivalist;
+
+------------------------------------------------------
+-- m_validatordetails
+------------------------------------------------------
+
+create materialized view if not exists m_validatordetails as
+SELECT COALESCE(NULLIF((v.domain)::text, ''::text), (dk.domain)::text)                AS domain,
+       v.validation_public_key,
+       v.chain,
+       v.unl,
+       v.last_updated                                                                 AS last_seen,
+       v.agreement_1h_incomplete,
+       v.agreement_1h_missed,
+       v.agreement_1h_score,
+       v.agreement_1h_total,
+       v.agreement_24h_incomplete,
+       v.agreement_24h_missed,
+       v.agreement_24h_score,
+       v.agreement_24h_total,
+       v.current_index,
+       v.partial,
+       g.country_name,
+       g.country_code,
+       g.continent_name,
+       g.continent_code,
+       p.name,
+       p.twitter,
+       p.description,
+       p.web,
+       p.icon,
+       now()                                                                          AS last_updated,
+       (SELECT string_agg(((((((vc.date || ':'::text) || round((vc.score)::numeric, 2)) || ':'::text) || vc.total) ||
+                            ':'::text) || vc.missed), ';'::text ORDER BY vc.date) AS string_agg
+        FROM validatorreportcalendar vc
+        WHERE (((v.validation_public_key)::text = (vc.validation_public_key)::text) AND
+               (vc.date >= (date_trunc('week'::text, now()) - '14 days'::interval)))) AS scores_2_weeks,
+       (SELECT string_agg(((((((vc.date || ':'::text) || round((vc.score)::numeric, 2)) || ':'::text) || vc.total) ||
+                            ':'::text) || vc.missed), ';'::text ORDER BY vc.date) AS string_agg
+        FROM validatorreportcalendar vc
+        WHERE (((v.validation_public_key)::text = (vc.validation_public_key)::text) AND
+               (vc.date >= (date_trunc('month'::text, now()) - '6 mons'::interval)))) AS scores_6_months,
+       (SELECT string_agg((u_1.host)::text, ';'::text ORDER BY (u_1.host)::text) AS string_agg
+        FROM unlsnapshot u_1
+        WHERE ((u_1.validator_public_key)::text = (v.validation_public_key)::text))   AS hosts
+FROM ((((validatorssnapshot v
+    LEFT JOIN domainkeymap dk ON (((dk.validation_public_key)::text = (v.validation_public_key)::text)))
+    LEFT JOIN geolocation g ON ((COALESCE(NULLIF((v.domain)::text, ''::text), (dk.domain)::text) = (g.domain)::text)))
+    LEFT JOIN profiles p ON ((COALESCE(NULLIF((v.domain)::text, ''::text), (dk.domain)::text) = (p.domain)::text)))
+         LEFT JOIN (SELECT u1.host,
+                           u1.validator_public_key
+                    FROM unlsnapshot u1) u ON (((u.validator_public_key)::text = (v.validation_public_key)::text)))
+GROUP BY COALESCE(NULLIF((v.domain)::text, ''::text), (dk.domain)::text), v.validation_public_key, v.chain, v.unl,
+         v.last_updated, v.agreement_1h_incomplete, v.agreement_1h_missed, v.agreement_1h_score, v.agreement_1h_total,
+         v.agreement_24h_incomplete, v.agreement_24h_missed, v.agreement_24h_score, v.agreement_24h_total,
+         v.current_index, v.partial, g.country_name, g.country_code, g.continent_name, g.continent_code, p.name,
+         p.twitter, p.description, p.web, p.icon, (now());
+
+alter materialized view m_validatordetails owner to minivalist;
+
+create unique index if not exists m_validatordetails_idx
+    on m_validatordetails (validation_public_key, domain);
+
+
 

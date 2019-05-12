@@ -18,27 +18,27 @@ const scoreboardQuery: IQueryItem<IScoreboardOptions> = {
   bordered: false,
   query: {
     dimensions: [
-      "Calendar_ValidationReports.domain",
-      "Calendar_ValidationReports.validation_public_key",
-      "Calendar_ValidationReports.date",
-      "Calendar_ValidationReports.monthOfYear",
-      "Calendar_ValidationReports.dayOfWeek",
-      "Calendar_ValidationReports.stats"
+      "Vw_ValidatorReportCalendar.domain",
+      "Vw_ValidatorReportCalendar.validation_public_key",
+      "Vw_ValidatorReportCalendar.date",
+      "Vw_ValidatorReportCalendar.monthOfYear",
+      "Vw_ValidatorReportCalendar.dayOfWeek",
+      "Vw_ValidatorReportCalendar.stats"
     ],
     timeDimensions: [
       {
-        dimension: "Calendar_ValidationReports.date",
+        dimension: "Vw_ValidatorReportCalendar.date",
         dateRange
       }
     ],
     filters: [
       {
-        dimension: "Calendar_ValidationReports.unl",
+        dimension: "Vw_ValidatorReportCalendar.unl",
         operator: "equals",
         values: ["Y"]
       },
       {
-        dimension: "Calendar_ValidationReports.chain",
+        dimension: "Vw_ValidatorReportCalendar.chain",
         operator: "notEquals",
         values: ["altnet"]
       }
@@ -47,12 +47,12 @@ const scoreboardQuery: IQueryItem<IScoreboardOptions> = {
   options: {
     props: {
       validationPublicKeyField:
-        "Calendar_ValidationReports.validation_public_key",
-      domainField: "Calendar_ValidationReports.domain",
-      dayOfWeekField: "Calendar_ValidationReports.dayOfWeek",
-      dateField: "Calendar_ValidationReports.date",
-      statsField: "Calendar_ValidationReports.stats",
-      monthOfYearField: "Calendar_ValidationReports.monthOfYear"
+        "Vw_ValidatorReportCalendar.validation_public_key",
+      domainField: "Vw_ValidatorReportCalendar.domain",
+      dayOfWeekField: "Vw_ValidatorReportCalendar.dayOfWeek",
+      dateField: "Vw_ValidatorReportCalendar.date",
+      statsField: "Vw_ValidatorReportCalendar.stats",
+      monthOfYearField: "Vw_ValidatorReportCalendar.monthOfYear"
     }
   }
 };

@@ -1,4 +1,4 @@
-cube(`Calendar_ValidationReports`, {
+cube(`Vw_ValidatorReportCalendar`, {
   sql: `select * from validatorreportcalendar`,
 
   refreshKey: {

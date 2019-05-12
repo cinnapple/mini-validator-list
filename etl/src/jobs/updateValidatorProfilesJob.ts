@@ -66,9 +66,11 @@ class UpdateValidatorProfilesJob implements IJob {
   };
 
   execute() {
-    return this.fetchData().then(x =>
-      this._store.upsert("profiles", x, "profiles_pk", ["created", "domain"])
-    );
+    return this.fetchData()
+      .then(x =>
+        this._store.upsert("profiles", x, "profiles_pk", ["created", "domain"])
+      )
+      .then(x => this._store.refreshMaterializedView(["m_validatordetails"]));
   }
 }
 

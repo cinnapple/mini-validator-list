@@ -12,19 +12,19 @@ const drilldownProfileQuery = (
   bordered: false,
   query: {
     dimensions: [
-      "Profiles_GeoLocation.domain",
-      "Profiles_GeoLocation.name",
-      "Profiles_GeoLocation.description",
-      "Profiles_GeoLocation.twitter",
-      "Profiles_GeoLocation.web",
-      "Profiles_GeoLocation.icon",
-      "Profiles_GeoLocation.countryName",
-      "Profiles_GeoLocation.continentName",
-      "Profiles_GeoLocation.city"
+      "Vw_DomainDetails.domain",
+      "Vw_DomainDetails.name",
+      "Vw_DomainDetails.description",
+      "Vw_DomainDetails.twitter",
+      "Vw_DomainDetails.web",
+      "Vw_DomainDetails.icon",
+      "Vw_DomainDetails.country_name",
+      "Vw_DomainDetails.continent_name",
+      "Vw_DomainDetails.city"
     ],
     filters: [
       {
-        dimension: "Profiles_GeoLocation.domain",
+        dimension: "Vw_DomainDetails.domain",
         operator: "equals",
         values: [domain]
       }
@@ -32,11 +32,11 @@ const drilldownProfileQuery = (
   },
   options: {
     props: {
-      nameField: "Profiles_GeoLocation.name",
-      domainField: "Profiles_GeoLocation.domain",
-      twitterField: "Profiles_GeoLocation.twitter",
-      descriptionField: "Profiles_GeoLocation.description",
-      iconField: "Profiles_GeoLocation.icon"
+      nameField: "Vw_DomainDetails.name",
+      domainField: "Vw_DomainDetails.domain",
+      twitterField: "Vw_DomainDetails.twitter",
+      descriptionField: "Vw_DomainDetails.description",
+      iconField: "Vw_DomainDetails.icon"
     }
   }
 });

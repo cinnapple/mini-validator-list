@@ -3,7 +3,6 @@ import {
   IJob,
   IStore,
   IGeoLocationApi,
-  IRippleDataApi,
   IDbGeoLocationSchema,
   IDbDomainKeyMapSchema
 } from "../types";
@@ -15,7 +14,6 @@ const _d = debug("etl:UpdateGeoLocationJob");
 class UpdateGeoLocationJob implements IJob {
   constructor(
     @inject(TYPES.Store) private _store: IStore,
-    @inject(TYPES.RippleDataApi) private _rippleApi: IRippleDataApi,
     @inject(TYPES.GeoLocationApi) private _geoLocationApi: IGeoLocationApi
   ) {}
 
@@ -67,7 +65,8 @@ class UpdateGeoLocationJob implements IJob {
           "created",
           "domain"
         ])
-      );
+      )
+      .then(x => this._store.refreshMaterializedView(["m_validatordetails"]));
   }
 }
 

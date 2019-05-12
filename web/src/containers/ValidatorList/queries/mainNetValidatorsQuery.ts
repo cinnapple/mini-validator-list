@@ -6,6 +6,7 @@ import {
 import { drilldownProfileQuery } from "./drilldownProfileQuery";
 import { drilldownDomainMapOperatorQuery } from "./drilldownDomainMapQuery";
 import { drilldownValidatorScoreQuery } from "./drilldownValidationScoreQuery";
+import { nullIf } from "../../../helpers/util";
 
 const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
   title: "Main Net Validators",
@@ -13,18 +14,18 @@ const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
   bordered: false,
   query: {
     dimensions: [
-      "ValidatorsWithGeo.domain",
-      "ValidatorsWithGeo.chain",
-      "ValidatorsWithGeo.ripple",
-      "ValidatorsWithGeo.unlHost",
-      "ValidatorsWithGeo.validation_public_key",
-      "ValidatorsWithGeo.agreement24hScore",
-      "ValidatorsWithGeo.lastUpdatedInHours",
-      "ValidatorsWithGeo.countryName"
+      "Vw_ValidatorDetails.domain",
+      "Vw_ValidatorDetails.chain",
+      "Vw_ValidatorDetails.ripple",
+      "Vw_ValidatorDetails.hosts",
+      "Vw_ValidatorDetails.validation_public_key",
+      "Vw_ValidatorDetails.agreement24hScore",
+      "Vw_ValidatorDetails.lastUpdatedInHours",
+      "Vw_ValidatorDetails.countryName"
     ],
     filters: [
       {
-        dimension: "ValidatorsWithGeo.chain",
+        dimension: "Vw_ValidatorDetails.chain",
         operator: "notEquals",
         values: ["altnet"]
       }
@@ -32,48 +33,49 @@ const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
   },
   options: {
     props: {
-      rowKey: "ValidatorsWithGeo.validation_public_key",
+      rowKey: "Vw_ValidatorDetails.validation_public_key",
       scroll: { x: 1000 },
       columns: [
         {
           title: "Domain",
-          dataIndex: "ValidatorsWithGeo.domain",
-          key: "ValidatorsWithGeo.domain",
+          dataIndex: "Vw_ValidatorDetails.domain",
+          key: "Vw_ValidatorDetails.domain",
           enableFilter: true,
           type: "domain",
           domainRenderOptions: {
-            textField: "ValidatorsWithGeo.validation_public_key",
-            relativeHoursField: "ValidatorsWithGeo.lastUpdatedInHours"
+            textField: "Vw_ValidatorDetails.validation_public_key",
+            relativeHoursField: "Vw_ValidatorDetails.lastUpdatedInHours"
           }
         },
         {
           title: "Location",
-          dataIndex: "ValidatorsWithGeo.countryName",
-          key: "ValidatorsWithGeo.countryName",
+          dataIndex: "Vw_ValidatorDetails.countryName",
+          key: "Vw_ValidatorDetails.countryName",
           enableFilter: true
         },
         {
-          title: "UNLs",
-          dataIndex: "ValidatorsWithGeo.unlHost",
-          key: "ValidatorsWithGeo.unlHost",
-          enableFilter: true
+          title: "In UNLs",
+          dataIndex: "Vw_ValidatorDetails.hosts",
+          key: "Vw_ValidatorDetails.hosts",
+          enableFilter: true,
+          type: "unls"
         },
         {
           title: "Chain",
-          dataIndex: "ValidatorsWithGeo.chain",
-          key: "ValidatorsWithGeo.chain",
+          dataIndex: "Vw_ValidatorDetails.chain",
+          key: "Vw_ValidatorDetails.chain",
           enableFilter: true
         },
         {
           title: "Score (24h)",
-          dataIndex: "ValidatorsWithGeo.agreement24hScore",
-          key: "ValidatorsWithGeo.agreement24hScore",
+          dataIndex: "Vw_ValidatorDetails.agreement24hScore",
+          key: "Vw_ValidatorDetails.agreement24hScore",
           type: "score"
         },
         {
-          title: "Last Seen (UTC)",
-          dataIndex: "ValidatorsWithGeo.lastUpdatedInHours",
-          key: "ValidatorsWithGeo.lastUpdatedInHours",
+          title: "Last Seen",
+          dataIndex: "Vw_ValidatorDetails.lastUpdatedInHours",
+          key: "Vw_ValidatorDetails.lastUpdatedInHours",
           type: "shortdate",
           format: "YYYY-MM-DD HH:mm"
         }
@@ -86,13 +88,16 @@ const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
       let ripple = 0;
       const countries: any = {};
       data.forEach(c => {
-        defaultUnl +=
-          c["ValidatorsWithGeo.unlHost"] === "vl.ripple.com" ? 1 : 0;
-        ripple += c["ValidatorsWithGeo.ripple"] === "Ripple" ? 1 : 0;
-        if (c["ValidatorsWithGeo.countryName"]) {
-          countries[c["ValidatorsWithGeo.countryName"]] = 1;
+        defaultUnl += nullIf(c["Vw_ValidatorDetails.hosts"], "").includes(
+          "vl.ripple.com"
+        )
+          ? 1
+          : 0;
+        ripple += c["Vw_ValidatorDetails.ripple"] === "Ripple" ? 1 : 0;
+        if (c["Vw_ValidatorDetails.countryName"]) {
+          countries[c["Vw_ValidatorDetails.countryName"]] = 1;
         }
-        if (c["ValidatorsWithGeo.lastUpdatedInHours"] < 1) {
+        if (c["Vw_ValidatorDetails.lastUpdatedInHours"] < 1) {
           active++;
         }
       });
@@ -123,10 +128,10 @@ const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
   },
   drilldown: opt => [
     drilldownValidatorScoreQuery(
-      opt.selected["ValidatorsWithGeo.validation_public_key"]
+      opt.selected["Vw_ValidatorDetails.validation_public_key"]
     ),
-    drilldownProfileQuery(opt.selected["ValidatorsWithGeo.domain"]),
-    drilldownDomainMapOperatorQuery(opt.selected["ValidatorsWithGeo.domain"])
+    drilldownProfileQuery(opt.selected["Vw_ValidatorDetails.domain"]),
+    drilldownDomainMapOperatorQuery(opt.selected["Vw_ValidatorDetails.domain"])
   ]
 };
 

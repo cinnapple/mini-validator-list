@@ -3,7 +3,7 @@ import { SupportedCharts } from "../../types";
 import Donut from "./Donut";
 import StackedBar from "./StackedBar";
 import HorizontalStackedBar from "./HorizontalStackedBar";
-import Table from "./Table";
+import Table from "./Table/Table";
 import WorldMap from "./WorldMap";
 import DomainProfile from "./DomainProfile";
 import ValidationScore from "./ValidationScore";
