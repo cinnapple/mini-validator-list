@@ -25,7 +25,6 @@ services:
   etl:
     container_name: minivalist-etl
     build: ./etl
-    image: minivalist-etl
     volumes:
       - .env:/usr/app/.env
       - ./etl/package.json:/usr/app/package.json
@@ -39,7 +38,6 @@ services:
   api:
     container_name: minivalist-api
     build: ./api
-    image: minivalist-api
     ports:
       - "4000:4000"
     volumes:
@@ -57,7 +55,6 @@ services:
     container_name: minivalist-web
     env_file: ./.env
     build: ./web
-    image: minivalist-web
     ports:
       - "3000:3000"
     depends_on:

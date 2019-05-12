@@ -1,6 +1,6 @@
 ## Mini Validator List
 
-[![travis-ci.org: Build Status](https://travis-ci.org/cinnapple/mini-validator-list.svg?branch=master)](https://travis-ci.org/cinnapple/mini-validator-list)
+[![Build Status](https://travis-ci.com/cinnapple/mini-validator-list.svg?branch=master)](https://travis-ci.com/cinnapple/mini-validator-list)
 
 Please view [Issues](https://github.com/cinnapple/mini-validator-list/issues) for the list of enhancements/bug fixes to be implemented in the future.
 

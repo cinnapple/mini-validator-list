@@ -7,7 +7,6 @@ class GithubApi implements IGithubApi {
   private _client: Octokit;
 
   constructor(@inject(TYPES.Config) private _config: IConfig) {
-    console.log(` token: `, this._config.githubToken);
     this._client = new Octokit({ auth: this._config.githubToken });
   }
 
