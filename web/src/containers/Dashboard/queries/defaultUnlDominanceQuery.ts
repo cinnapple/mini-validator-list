@@ -11,8 +11,20 @@ const defaultUnlDominanceQuery: IQueryItem<IDonutChartOptions> = {
   type: SupportedCharts.Donut,
   pivotType: "chart",
   query: {
-    measures: ["UnlValidators.count"],
-    dimensions: ["UnlValidators.ripple"]
+    measures: ["Vw_ValidatorDetails.count"],
+    dimensions: ["Vw_ValidatorDetails.ripple"],
+    filters: [
+      {
+        dimension: "Vw_ValidatorDetails.chain",
+        operator: "notEquals",
+        values: ["altnet"]
+      },
+      {
+        dimension: "Vw_ValidatorDetails.unl",
+        operator: "equals",
+        values: ["Yes"]
+      }
+    ]
   },
   options: {
     props: {},
@@ -28,10 +40,20 @@ const drilldown = (
   title: `${opt.selected.category} validators in Default UNL`,
   type: SupportedCharts.Table,
   query: {
-    dimensions: ["UnlValidators.domain"],
+    dimensions: ["Vw_ValidatorDetails.domain"],
     filters: [
       {
-        dimension: "UnlValidators.ripple",
+        dimension: "Vw_ValidatorDetails.chain",
+        operator: "notEquals",
+        values: ["altnet"]
+      },
+      {
+        dimension: "Vw_ValidatorDetails.unl",
+        operator: "equals",
+        values: ["Yes"]
+      },
+      {
+        dimension: "Vw_ValidatorDetails.ripple",
         operator: "equals",
         values: [opt.selected.category]
       }
@@ -39,11 +61,11 @@ const drilldown = (
   },
   options: {
     props: {
-      rowKey: "UnlValidators.validation_public_key",
+      rowKey: "Vw_ValidatorDetails.validation_public_key",
       columns: [
         {
           title: "Domain",
-          dataIndex: "UnlValidators.domain",
+          dataIndex: "Vw_ValidatorDetails.domain",
           key: "1"
         }
       ]

@@ -66,7 +66,12 @@ class UpdateGeoLocationJob implements IJob {
           "domain"
         ])
       )
-      .then(x => this._store.refreshMaterializedView(["m_validatordetails"]));
+      .then(x =>
+        this._store.refreshMaterializedView([
+          "m_validatordetails",
+          "m_domaindetails"
+        ])
+      );
   }
 }
 

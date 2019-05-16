@@ -35,10 +35,16 @@ cube(`Vw_ValidatorDetails`, {
       format: `percent`
     },
 
-    unlCount: {
+    unlSum: {
       sql: `1`,
       type: `count`,
       filters: [{ sql: `unl = true` }]
+    },
+
+    notUnlButVerifiedSum: {
+      sql: `1`,
+      type: `count`,
+      filters: [{ sql: `unl = false and domain <> ''` }]
     }
   },
 

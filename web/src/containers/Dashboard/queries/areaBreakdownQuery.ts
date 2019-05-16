@@ -11,22 +11,22 @@ const areaBreakdownQuery: IQueryItem<IHorizontalStackBarChartOptions> = {
   type: SupportedCharts.HorizontalStackedBar,
   query: {
     measures: [
-      "GeoLocation.count",
-      "GeoLocation.unlSum",
-      "GeoLocation.notUnlButVerifiedSum"
+      "Vw_ValidatorDetails.count",
+      "Vw_ValidatorDetails.unlSum",
+      "Vw_ValidatorDetails.notUnlButVerifiedSum"
     ],
-    dimensions: ["GeoLocation.countryName"],
+    dimensions: ["Vw_ValidatorDetails.countryName"],
     filters: [
       {
         // exclude test net
-        dimension: "MainNetValidators.chain",
+        dimension: "Vw_ValidatorDetails.chain",
         operator: "notEquals",
         values: ["altnet"]
       }
     ],
     order: {
-      "GeoLocation.count": "desc",
-      "GeoLocation.countryName": "asc"
+      "Vw_ValidatorDetails.count": "desc",
+      "Vw_ValidatorDetails.countryName": "asc"
     }
   },
   options: { props: {} },
@@ -36,25 +36,25 @@ const areaBreakdownQuery: IQueryItem<IHorizontalStackBarChartOptions> = {
 const drilldown = (
   opt: ISelectedValue
 ): IQueryItem<ITableChartOptions<any>> => ({
-  title: `Validators in ${opt.selected["GeoLocation.countryName"]}`,
+  title: `Validators in ${opt.selected["Vw_ValidatorDetails.countryName"]}`,
   type: SupportedCharts.Table,
   query: {
     dimensions: [
-      "GeoLocation.domain",
-      "MainNetValidators.validation_public_key",
-      "MainNetValidators.unl",
-      "MainNetValidators.ripple",
-      "MainNetValidators.unlHost"
+      "Vw_ValidatorDetails.domain",
+      "Vw_ValidatorDetails.validation_public_key",
+      "Vw_ValidatorDetails.unl",
+      "Vw_ValidatorDetails.ripple",
+      "Vw_ValidatorDetails.hosts"
     ],
     filters: [
       {
-        dimension: "GeoLocation.countryName",
+        dimension: "Vw_ValidatorDetails.countryName",
         operator: "equals",
-        values: [opt.selected["GeoLocation.countryName"]]
+        values: [opt.selected["Vw_ValidatorDetails.countryName"]]
       },
       {
         // exclude test net
-        dimension: "MainNetValidators.chain",
+        dimension: "Vw_ValidatorDetails.chain",
         operator: "notEquals",
         values: ["altnet"]
       }
@@ -62,21 +62,21 @@ const drilldown = (
   },
   options: {
     props: {
-      rowKey: "MainNetValidators.validation_public_key",
+      rowKey: "Vw_ValidatorDetails.validation_public_key",
       columns: [
         {
           title: "Domain",
-          dataIndex: "GeoLocation.domain",
+          dataIndex: "Vw_ValidatorDetails.domain",
           key: "1"
         },
         {
           title: "UNL?",
-          dataIndex: "MainNetValidators.unl",
+          dataIndex: "Vw_ValidatorDetails.unl",
           key: "2"
         },
         {
           title: "Key",
-          dataIndex: "MainNetValidators.validation_public_key",
+          dataIndex: "Vw_ValidatorDetails.validation_public_key",
           key: "3",
           type: "key"
         }
@@ -87,9 +87,12 @@ const drilldown = (
       let defaultUnl = 0;
       let ripple = 0;
       data.forEach(c => {
-        defaultUnl +=
-          c["MainNetValidators.unlHost"] === "vl.ripple.com" ? 1 : 0;
-        ripple += c["MainNetValidators.ripple"] === "Ripple" ? 1 : 0;
+        defaultUnl += (c["Vw_ValidatorDetails.hosts"] || "").includes(
+          "vl.ripple.com"
+        )
+          ? 1
+          : 0;
+        ripple += c["Vw_ValidatorDetails.ripple"] === "Ripple" ? 1 : 0;
       });
       const defaultUnlRate = total === 0 ? 0 : defaultUnl / total;
       const dominance = total === 0 ? 0 : ripple / total;

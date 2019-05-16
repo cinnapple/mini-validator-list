@@ -70,7 +70,12 @@ class UpdateValidationReportJob implements IJob {
         `select validation_public_key from validatorssnapshot`
       )
       .then(x => this.fetchAndStoreReports(x, waitTime))
-      .then(x => this._store.refreshMaterializedView(["m_validatordetails"]));
+      .then(x =>
+        this._store.refreshMaterializedView([
+          "m_validatordetails",
+          "m_m_validatorreportcalendar"
+        ])
+      );
   }
 }
 

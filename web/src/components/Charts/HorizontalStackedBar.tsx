@@ -14,9 +14,11 @@ const HorizontalStackedBar: SFC<
   const { options } = queryItem;
   const { props } = options;
   const data = dataSet.map((a: any) => ({
-    ["GeoLocation.countryName"]: a["GeoLocation.countryName"],
-    "Not in UNL but Verified": parseInt(a["GeoLocation.notUnlButVerifiedSum"]),
-    "In UNL": parseInt(a["GeoLocation.unlSum"])
+    ["Vw_ValidatorDetails.countryName"]: a["Vw_ValidatorDetails.countryName"],
+    "Not in UNL but Verified": parseInt(
+      a["Vw_ValidatorDetails.notUnlButVerifiedSum"]
+    ),
+    "In UNL": parseInt(a["Vw_ValidatorDetails.unlSum"])
   }));
   const ds = new DataSet();
   const dv = ds.createView().source(data);
@@ -25,7 +27,7 @@ const HorizontalStackedBar: SFC<
     fields: ["In UNL", "Not in UNL but Verified"],
     key: "Category",
     value: "Total",
-    retains: ["GeoLocation.countryName"]
+    retains: ["Vw_ValidatorDetails.countryName"]
   });
   return (
     <div
@@ -49,7 +51,7 @@ const HorizontalStackedBar: SFC<
         <Legend />
         <Coord />
         <Axis
-          name="GeoLocation.countryName"
+          name="Vw_ValidatorDetails.countryName"
           label={{
             offset: 12
           }}
@@ -58,7 +60,7 @@ const HorizontalStackedBar: SFC<
         <Tooltip />
         <Geom
           type="intervalStack"
-          position="GeoLocation.countryName*Total"
+          position="Vw_ValidatorDetails.countryName*Total"
           color={"Category"}
         />
       </Chart>
