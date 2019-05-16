@@ -14,13 +14,9 @@ cube(`UnlHistory`, {
   },
 
   joins: {
-    HistoricalValidators: {
+    Vw_ValidatorDetails: {
       relationship: `hasOne`,
-      sql: `${UnlHistory}.validator_public_key = ${HistoricalValidators}.validation_public_key`
-    },
-    DomainKeyMap: {
-      relationship: `hasOne`,
-      sql: `${UnlHistory}.validator_public_key = ${DomainKeyMap}.validation_public_key`
+      sql: `${UnlHistory}.validator_public_key = ${Vw_ValidatorDetails}.validation_public_key`
     }
   },
 
@@ -59,12 +55,12 @@ cube(`UnlHistory`, {
     },
 
     domainCategory: {
-      sql: `case when COALESCE(NULLIF(${DomainKeyMap}.domain, ''), NULLIF(${HistoricalValidators}.domain, ''), 'Unknown') = 'ripple.com' then 'Ripple' else 'Non-Ripple' end`,
+      sql: `case when ${Vw_ValidatorDetails}.domain = 'ripple.com' then 'Ripple' else 'Non-Ripple' end`,
       type: `string`
     },
 
     domain: {
-      sql: `COALESCE(NULLIF(${DomainKeyMap}.domain, ''), NULLIF(${HistoricalValidators}.domain, ''), 'Unknown')`,
+      sql: `COALESCE(NULLIF(${Vw_ValidatorDetails}.domain, ''), 'Unknown')`,
       type: `string`
     }
   }

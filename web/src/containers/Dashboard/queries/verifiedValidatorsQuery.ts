@@ -12,8 +12,15 @@ const verifiedValidatorQuery: IQueryItem<IDonutChartOptions> = {
   type: SupportedCharts.Donut,
   pivotType: "chart",
   query: {
-    measures: ["MainNetValidators.count"],
-    dimensions: ["MainNetValidators.verified"]
+    measures: ["Vw_ValidatorDetails.count"],
+    dimensions: ["Vw_ValidatorDetails.verified"],
+    filters: [
+      {
+        dimension: "Vw_ValidatorDetails.chain",
+        operator: "notEquals",
+        values: ["altnet"]
+      }
+    ]
   },
   options: {
     props: {},
@@ -29,13 +36,18 @@ const drilldown = (
   title: `${opt.selected.category} validators`,
   query: {
     dimensions: [
-      "MainNetValidators.validation_public_key",
-      "MainNetValidators.unl",
-      "MainNetValidators.domain"
+      "Vw_ValidatorDetails.validation_public_key",
+      "Vw_ValidatorDetails.unl",
+      "Vw_ValidatorDetails.domain"
     ],
     filters: [
       {
-        dimension: "MainNetValidators.verified",
+        dimension: "Vw_ValidatorDetails.chain",
+        operator: "notEquals",
+        values: ["altnet"]
+      },
+      {
+        dimension: "Vw_ValidatorDetails.verified",
         operator: "equals",
         values: [opt.selected.category]
       }
@@ -44,7 +56,7 @@ const drilldown = (
   type: SupportedCharts.Table,
   options: {
     props: {
-      rowKey: "MainNetValidators.validation_public_key",
+      rowKey: "Vw_ValidatorDetails.validation_public_key",
       scroll: { x: 400 },
       columns: [
         ...insertIf(
@@ -52,14 +64,14 @@ const drilldown = (
           [
             {
               title: "Domain",
-              dataIndex: "MainNetValidators.domain",
+              dataIndex: "Vw_ValidatorDetails.domain",
               key: "1"
             }
           ],
           [
             {
               title: "Key",
-              dataIndex: "MainNetValidators.validation_public_key",
+              dataIndex: "Vw_ValidatorDetails.validation_public_key",
               key: "1"
             }
           ]
@@ -67,7 +79,7 @@ const drilldown = (
         ...insertIf(opt.selected.category === "Verified", [
           {
             title: "Default UNL?",
-            dataIndex: "MainNetValidators.unl",
+            dataIndex: "Vw_ValidatorDetails.unl",
             key: "2"
           }
         ])

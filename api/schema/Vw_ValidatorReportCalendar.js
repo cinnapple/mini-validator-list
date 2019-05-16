@@ -1,8 +1,8 @@
 cube(`Vw_ValidatorReportCalendar`, {
-  sql: `select * from validatorreportcalendar`,
+  sql: `select * from m_validatorreportcalendar`,
 
   refreshKey: {
-    sql: `SELECT MAX(last_updated) FROM validatorreportcalendar`
+    sql: `SELECT MAX(last_updated) FROM m_validatorreportcalendar`
   },
 
   dimensions: {

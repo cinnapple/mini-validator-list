@@ -70,7 +70,12 @@ class UpdateValidatorProfilesJob implements IJob {
       .then(x =>
         this._store.upsert("profiles", x, "profiles_pk", ["created", "domain"])
       )
-      .then(x => this._store.refreshMaterializedView(["m_validatordetails"]));
+      .then(x =>
+        this._store.refreshMaterializedView([
+          "m_validatordetails",
+          "m_domaindetails"
+        ])
+      );
   }
 }
 

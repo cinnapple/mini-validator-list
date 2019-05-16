@@ -1,8 +1,8 @@
 cube(`Vw_DomainDetails`, {
-  sql: `select * from domaindetails`,
+  sql: `select * from m_domaindetails`,
 
   refreshKey: {
-    sql: `SELECT MAX(last_updated) FROM domaindetails`
+    sql: `SELECT MAX(last_updated) FROM m_domaindetails`
   },
 
   dimensions: {
