@@ -38,15 +38,15 @@ const StackedBar: SFC<IChartPropBase<IStackBarChartOptions>> = ({
       >
         <Legend />
         <Axis
-          name={"UnlHistory.asOfDate"}
+          name={"Vw_UnlValidatorHistory.asOfDate"}
           label={{ formatter: val => dayjs(val).format("MMM 'YY") }}
         />
-        <Axis position="left" name={"UnlHistory.count"} />
+        <Axis position="left" name={"Vw_UnlValidatorHistory.count"} />
         <Tooltip showTitle={false} />
         <Geom
           type="intervalStack"
-          position={`UnlHistory.asOfDate*${countField}`}
-          color={`UnlHistory.domainCategory`}
+          position={`Vw_UnlValidatorHistory.asOfDate*${countField}`}
+          color={`Vw_UnlValidatorHistory.domainCategory`}
         />
       </Chart>
     </div>
