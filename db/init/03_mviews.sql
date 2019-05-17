@@ -38,8 +38,7 @@ GROUP BY dk.domain, g.city, g.continent_name, g.country_code, g.country_name, g.
 
 alter materialized view m_domaindetails owner to minivalist;
 
-create unique index m_domaindetails_idx
-	on m_domaindetails (domain);
+create unique index m_domaindetails_idx on m_domaindetails (domain);
 
 
 create materialized view m_validatordetails as
@@ -105,8 +104,7 @@ GROUP BY COALESCE(NULLIF((v.domain)::text, ''::text), (dk.domain)::text), v.vali
 
 alter materialized view m_validatordetails owner to minivalist;
 
-create unique index m_validatordetails_idx
-	on m_validatordetails (validation_public_key, domain);
+create unique index m_validatordetails_idx on m_validatordetails (validation_public_key, domain);
 
 
 create materialized view m_validatorreportcalendar as
@@ -131,6 +129,5 @@ FROM (((calendar c
 
 alter materialized view m_validatorreportcalendar owner to minivalist;
 
-create unique index m_validatorreportcalendar_idx
-	on m_validatorreportcalendar (date, validation_public_key);
+create unique index m_validatorreportcalendar_idx on m_validatorreportcalendar (date, validation_public_key);
 

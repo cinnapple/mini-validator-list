@@ -12,11 +12,14 @@ const defaultUnlDominanceMovementQuery: IQueryItem<IStackBarChartOptions> = {
   title: "Default UNL Dominance Movement",
   type: SupportedCharts.StackedBar,
   query: {
-    measures: ["UnlHistory.count"],
-    dimensions: ["UnlHistory.domainCategory", "UnlHistory.originalAsOfDate"],
+    measures: ["Vw_UnlValidatorHistory.count"],
+    dimensions: [
+      "Vw_UnlValidatorHistory.domainCategory",
+      "Vw_UnlValidatorHistory.originalAsOfDate"
+    ],
     timeDimensions: [
       {
-        dimension: "UnlHistory.asOfDate",
+        dimension: "Vw_UnlValidatorHistory.asOfDate",
         granularity: "month"
       }
     ]
@@ -29,32 +32,32 @@ const drilldown = (
   opt: ISelectedValue
 ): IQueryItem<ITableChartOptions<any>> => ({
   title: `Default UNL as of ${dayjs(
-    opt.selected["UnlHistory.originalAsOfDate"]
+    opt.selected["Vw_UnlValidatorHistory.originalAsOfDate"]
   ).format(`MMMM DD, YYYY`)}`,
   type: SupportedCharts.Table,
   query: {
-    measures: ["UnlHistory.count"],
-    dimensions: ["UnlHistory.domain"],
+    measures: ["Vw_UnlValidatorHistory.count"],
+    dimensions: ["Vw_UnlValidatorHistory.domain"],
     filters: [
       {
-        dimension: "UnlHistory.originalAsOfDate",
+        dimension: "Vw_UnlValidatorHistory.originalAsOfDate",
         operator: "equals",
-        values: [opt.selected["UnlHistory.originalAsOfDate"]]
+        values: [opt.selected["Vw_UnlValidatorHistory.originalAsOfDate"]]
       }
     ]
   },
   options: {
     props: {
-      rowKey: "UnlHistory.domain",
+      rowKey: "Vw_UnlValidatorHistory.domain",
       columns: [
         {
           title: "Domain",
-          dataIndex: "UnlHistory.domain",
+          dataIndex: "Vw_UnlValidatorHistory.domain",
           key: "1"
         },
         {
           title: "Count",
-          dataIndex: "UnlHistory.count",
+          dataIndex: "Vw_UnlValidatorHistory.count",
           key: "2"
         }
       ]
@@ -64,8 +67,8 @@ const drilldown = (
       let nonRippleCount = 0;
       let total = 0;
       data.forEach(c => {
-        const count = parseInt(c["UnlHistory.count"]);
-        if (c["UnlHistory.domain"] === "ripple.com") {
+        const count = parseInt(c["Vw_UnlValidatorHistory.count"]);
+        if (c["Vw_UnlValidatorHistory.domain"] === "ripple.com") {
           rippleCount += count;
         } else {
           nonRippleCount += count;

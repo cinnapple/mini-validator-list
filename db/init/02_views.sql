@@ -1,5 +1,5 @@
 ------------------------------------------------------
--- validatorreportcalendar
+-- validator report calendar
 ------------------------------------------------------
 
 create or replace view validatorreportcalendar(date, month_of_year, day_of_week_num, validation_public_key, chain,
@@ -27,7 +27,7 @@ alter table validatorreportcalendar
     owner to minivalist;
 
 ------------------------------------------------------
--- domaindetails
+-- domain details
 ------------------------------------------------------
 
 create or replace view domaindetails(domain, city, continent_name, country_code, country_name, latitude, longitude,
@@ -72,3 +72,25 @@ GROUP BY dk.domain, g.city, g.continent_name, g.country_code, g.country_name, g.
 
 alter table domaindetails
     owner to minivalist;
+
+------------------------------------------------------
+-- unl validator history
+------------------------------------------------------
+
+create view unlvalidatorhistory(domain, validator_public_key, host, as_of_date, last_updated, created) as
+SELECT DISTINCT dk.domain,
+                unl.validator_public_key,
+                unl.host,
+                unl.as_of_date,
+                unl.last_updated,
+                unl.created
+FROM (SELECT max(unl_1.as_of_date) OVER (PARTITION BY (date_trunc('month'::text,
+                                                                  timezone('UTC'::text, (unl_1.as_of_date)::timestamp with time zone)))) AS as_of_date
+      FROM unlhistory unl_1) dates,
+     (unlhistory unl
+         LEFT JOIN domainkeymap dk ON (((dk.validation_public_key)::text = (unl.validator_public_key)::text)))
+WHERE (unl.as_of_date = dates.as_of_date);
+
+alter table unlvalidatorhistory
+    owner to minivalist;
+
