@@ -97,7 +97,9 @@ export interface IScoreboardProps extends IValidatorScoreProps {
 }
 
 // chart options
-export interface IChartOptionsBase {}
+export interface IChartOptionsBase {
+  selected?: string;
+}
 
 export interface IDonutChartOptions extends IChartOptionsBase {
   props: IExtendedChartProps;
@@ -180,7 +182,7 @@ export interface IQueryItem<T extends IChartOptionsBase> {
   query: ICubeQuery;
   bordered?: boolean;
   options: T;
-  drilldown?: (opt: ISelectedValue) => QueryList<IChartOptionsBase>;
+  drilldown?: (opt: ISelectedValue) => QueryList<IChartOptionsBase>[];
 }
 
 export type QueryList<T extends IChartOptionsBase> = IQueryItem<T>[];

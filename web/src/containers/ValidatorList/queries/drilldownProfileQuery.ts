@@ -9,7 +9,6 @@ const drilldownProfileQuery = (
 ): IQueryItem<IProfileChartOptions> => ({
   title: `Operator`,
   type: SupportedCharts.DomainProfile,
-  bordered: false,
   query: {
     dimensions: [
       "Vw_DomainDetails.domain",

@@ -5,7 +5,6 @@ const drilldownDomainMapOperatorQuery = (
 ): IQueryItem<IWorldMapOptions> => ({
   title: "Operator Location",
   type: SupportedCharts.Map,
-  bordered: false,
   query: {
     dimensions: [
       "Vw_DomainDetails.domain",

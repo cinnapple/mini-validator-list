@@ -30,7 +30,7 @@ const areaBreakdownQuery: IQueryItem<IHorizontalStackBarChartOptions> = {
     }
   },
   options: { props: {} },
-  drilldown: opt => [drilldown(opt)]
+  drilldown: opt => [[drilldown(opt)]]
 };
 
 const drilldown = (
