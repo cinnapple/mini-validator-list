@@ -24,7 +24,9 @@ const LayoutComponent: React.SFC<LayoutProps> = ({ children, size }) => {
         <div
           style={{
             margin: "18px 24px 16px 0",
-            float: "left"
+            width: "100%",
+            display: "flex",
+            justifyContent: "space-between"
           }}
         >
           <Title
@@ -33,6 +35,18 @@ const LayoutComponent: React.SFC<LayoutProps> = ({ children, size }) => {
           >
             Mini Validator List
           </Title>
+          {size !== Sizes.Mobile && (
+            <div>
+              <XRPTipBotButton
+                amount="0.5"
+                to="CinnappleFun"
+                network="twitter"
+                labelpt="Thanks!"
+                size="190"
+                stylesheet="https://minivalist.cinn.app/xrptipbutton.css"
+              />
+            </div>
+          )}
         </div>
       </Header>
       <Content style={{ padding: "0 10px" }}>
