@@ -27,7 +27,7 @@ const verifiedValidatorQuery: IQueryItem<IDonutChartOptions> = {
     titleField: "Verified",
     supportText: ["verified", "validators"]
   },
-  drilldown: opt => [drilldown(opt)]
+  drilldown: opt => [[drilldown(opt)]]
 };
 
 const drilldown = (

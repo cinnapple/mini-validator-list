@@ -11,7 +11,6 @@ import { nullIf } from "../../../helpers/util";
 const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
   title: "Main Net Validators",
   type: SupportedCharts.Table,
-  bordered: false,
   query: {
     dimensions: [
       "Vw_ValidatorDetails.domain",
@@ -127,11 +126,17 @@ const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
     }
   },
   drilldown: opt => [
-    drilldownValidatorScoreQuery(
-      opt.selected["Vw_ValidatorDetails.validation_public_key"]
-    ),
-    drilldownProfileQuery(opt.selected["Vw_ValidatorDetails.domain"]),
-    drilldownDomainMapOperatorQuery(opt.selected["Vw_ValidatorDetails.domain"])
+    [
+      drilldownValidatorScoreQuery(
+        opt.selected["Vw_ValidatorDetails.validation_public_key"]
+      )
+    ],
+    [drilldownProfileQuery(opt.selected["Vw_ValidatorDetails.domain"])],
+    [
+      drilldownDomainMapOperatorQuery(
+        opt.selected["Vw_ValidatorDetails.domain"]
+      )
+    ]
   ]
 };
 

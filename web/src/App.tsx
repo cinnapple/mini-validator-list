@@ -19,19 +19,13 @@ const App = () => {
           />
           <Route
             exact
-            path="/validators"
+            path="/validators/:pubkey?"
             component={React.lazy(() => import("./containers/ValidatorList"))}
           />
           <Route
             exact
             path="/unl-scoreboard"
             component={React.lazy(() => import("./containers/UNLScoreboard"))}
-          />
-          <Route
-            path={`/validators/:id`}
-            component={React.lazy(() =>
-              import("./containers/ValidatorDetails")
-            )}
           />
           <Redirect to="/" />
         </Switch>

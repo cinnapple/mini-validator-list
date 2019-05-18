@@ -25,7 +25,7 @@ const defaultUnlDominanceMovementQuery: IQueryItem<IStackBarChartOptions> = {
     ]
   },
   options: { props: {} },
-  drilldown: opt => [drilldown(opt)]
+  drilldown: opt => [[drilldown(opt)]]
 };
 
 const drilldown = (

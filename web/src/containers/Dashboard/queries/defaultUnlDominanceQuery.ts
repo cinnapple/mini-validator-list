@@ -31,7 +31,7 @@ const defaultUnlDominanceQuery: IQueryItem<IDonutChartOptions> = {
     titleField: "Non-Ripple",
     supportText: ["non-ripple", "validators"]
   },
-  drilldown: opt => [drilldown(opt)]
+  drilldown: opt => [[drilldown(opt)]]
 };
 
 const drilldown = (

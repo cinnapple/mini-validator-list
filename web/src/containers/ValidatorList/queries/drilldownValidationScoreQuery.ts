@@ -17,7 +17,6 @@ const drilldownValidatorScoreQuery = (
 ): IQueryItem<IValidatorScoreOptions> => ({
   title: `Validation Score`,
   type: SupportedCharts.ValidationScore,
-  bordered: false,
   pivotType: "table",
   query: {
     dimensions: [
