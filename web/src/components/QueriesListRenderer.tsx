@@ -1,15 +1,14 @@
 import * as React from "react";
 import { Card, Col, Row } from "antd";
 import Chart from "../cubejsAdapter";
-import { QueryList, Sizes, IChartOptionsBase } from "../types";
-import withSize from "../hoc/withSize";
+import { Sizes, IChartOptionsBase, IQueryItem, DataRow } from "../types";
+import withSize, { SizeProps } from "../hoc/withSize";
 
-interface Props {
-  size: Sizes;
-  queriesList: QueryList<IChartOptionsBase>[];
+interface Props extends SizeProps {
+  queriesList: IQueryItem<IChartOptionsBase>[][];
   onDrilldown?: (
-    drilldownQuery: QueryList<IChartOptionsBase>[],
-    selected: string
+    selected: DataRow,
+    queryItem: IQueryItem<IChartOptionsBase>
   ) => void;
 }
 
@@ -33,14 +32,18 @@ const QueriesListRenderer: React.SFC<Props> = ({
                 marginBottom: size === Sizes.Mobile ? getMargin(size) : 0
               }}
             >
-              <Card title={queryItem.title} bordered={!!queryItem.bordered}>
+              <Card
+                title={queryItem.title}
+                headStyle={{
+                  border: size === Sizes.Mobile ? "none" : undefined
+                }}
+                bordered={!!false}
+                bodyStyle={{ padding: size === Sizes.Mobile ? 0 : 24 }}
+              >
                 <Chart
                   queryItem={queryItem}
-                  onDrilldown={(selected: any) =>
-                    onDrilldown!(
-                      queryItem.drilldown!(selected),
-                      selected.selected
-                    )
+                  onDrilldown={(selected: DataRow) =>
+                    onDrilldown!(selected, queryItem)
                   }
                 />
               </Card>

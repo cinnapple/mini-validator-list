@@ -15,17 +15,23 @@ const App = () => {
           <Route
             exact
             path="/"
-            component={React.lazy(() => import("./containers/Dashboard"))}
+            component={React.lazy(() =>
+              import("./containers/Dashboard/DashboardContainer")
+            )}
           />
           <Route
             exact
             path="/validators/:pubkey?"
-            component={React.lazy(() => import("./containers/ValidatorList"))}
+            component={React.lazy(() =>
+              import("./containers/ValidatorList/ValidatorListContainer")
+            )}
           />
           <Route
             exact
             path="/unl-scoreboard"
-            component={React.lazy(() => import("./containers/UNLScoreboard"))}
+            component={React.lazy(() =>
+              import("./containers/UNLScoreboard/UNLScoreboardContainer")
+            )}
           />
           <Redirect to="/" />
         </Switch>

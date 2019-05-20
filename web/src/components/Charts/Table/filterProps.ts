@@ -3,7 +3,7 @@ import {
   sortBy,
   uniq,
   flat,
-  nullIf,
+  valOrDefault,
   parseUnlHost
 } from "../../../helpers/util";
 
@@ -13,14 +13,14 @@ const unlsFilterProps = (
   filteredInfo: { [key: string]: string }
 ) => {
   const filters = sortBy(
-    uniq(flat(dataSet.map((a: any) => nullIf(a[c.key!], "").split(";"))))
+    uniq(flat(dataSet.map((a: any) => valOrDefault(a[c.key!], "").split(";"))))
   ).map(a => ({
     text: parseUnlHost(a),
     value: a
   }));
   const filteredValue = filteredInfo[c.key!] || (null as any);
   const onFilter = (value: string, record: any) => {
-    return nullIf(record[c.key!], "").includes(value);
+    return valOrDefault(record[c.key!], "").includes(value);
   };
   return {
     filters,

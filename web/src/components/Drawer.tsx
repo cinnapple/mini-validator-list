@@ -1,17 +1,17 @@
 import * as React from "react";
-import { Drawer as _Drawer } from "antd";
+import { Drawer as AntdDrawer } from "antd";
 import { Sizes } from "../types";
-import withSize from "../hoc/withSize";
+import withSize, { SizeProps } from "../hoc/withSize";
+import { withRouter, RouteComponentProps } from "react-router";
 
-interface Props {
+interface Props extends RouteComponentProps<{}>, SizeProps {
   open: boolean;
   onClose: () => void;
-  size: Sizes;
 }
 
 const Drawer: React.SFC<Props> = ({ children, open, onClose, size }) => {
   return (
-    <_Drawer
+    <AntdDrawer
       width={size === Sizes.Mobile ? "100%" : 640}
       placement="right"
       closable={true}
@@ -19,8 +19,8 @@ const Drawer: React.SFC<Props> = ({ children, open, onClose, size }) => {
       visible={open}
     >
       {children}
-    </_Drawer>
+    </AntdDrawer>
   );
 };
 
-export default withSize(Drawer);
+export default withRouter(withSize(Drawer));

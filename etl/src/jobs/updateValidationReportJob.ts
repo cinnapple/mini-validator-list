@@ -51,6 +51,12 @@ class UpdateValidationReportJob implements IJob {
             this._store.upsert("validationreport", x, "validationreport_pk", [
               "created"
             ])
+          )
+          .then(x =>
+            this._store.refreshMaterializedView([
+              "m_validatordetails",
+              "m_validatorreportcalendar"
+            ])
           );
       } catch (_) {
         _d(_);
@@ -69,13 +75,7 @@ class UpdateValidationReportJob implements IJob {
       .get<IDbValidatorSchema>(
         `select validation_public_key from validatorssnapshot`
       )
-      .then(x => this.fetchAndStoreReports(x, waitTime))
-      .then(x =>
-        this._store.refreshMaterializedView([
-          "m_validatordetails",
-          "m_m_validatorreportcalendar"
-        ])
-      );
+      .then(x => this.fetchAndStoreReports(x, waitTime));
   }
 }
 

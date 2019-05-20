@@ -1,31 +1,28 @@
 import * as React from "react";
-import cubejsApi from "./cubejs";
-import { QueryRenderer } from "@cubejs-client/react";
-import { Spin } from "antd";
-import { SupportedComponents } from "../components/Charts";
 import {
-  SupportedCharts,
-  IQueryItem,
   SupportedPivotTypes,
-  ICubePivotConfig
+  ICubeJsPivotConfig,
+  ICubeJsQuery,
+  IQueryItem
 } from "../types";
+import Loading from "../components/Loading";
+import ChartRenderer from "../components/ChartRenderer";
+import cubejsClient from "./cubejs";
 
 interface Props {
   queryItem: IQueryItem<any>;
-  onDrilldown?: (opt: any) => void;
+  onDrilldown: any;
 }
 
-const renderChart = (type: SupportedCharts, props: any) => {
-  const Component = SupportedComponents[type] as any;
-  return <Component {...props} />;
-};
-
-const Loading = () => <Spin />;
+interface State {
+  dataSet: any[] | undefined;
+  errors: any[] | undefined;
+}
 
 const pivot = (
   resultSet: any,
   type?: SupportedPivotTypes,
-  config?: ICubePivotConfig
+  config?: ICubeJsPivotConfig
 ) => {
   if (type === "chart") {
     return resultSet.chartPivot(config);
@@ -36,31 +33,52 @@ const pivot = (
   return resultSet.rawData();
 };
 
-const Chart: React.SFC<Props> = ({ queryItem, onDrilldown }) => (
-  <QueryRenderer
-    cubejsApi={cubejsApi}
-    query={queryItem.query}
-    render={({ resultSet, error }: any) => {
-      if (resultSet) {
-        const dataSet = pivot(
-          resultSet,
-          queryItem.pivotType,
-          queryItem.pivotConfig
-        );
-        return renderChart(queryItem.type, {
-          dataSet,
-          onDrilldown,
-          queryItem
-        });
-      }
+const Chart: React.SFC<Props> = ({ queryItem, onDrilldown }) => {
+  const [state, setState] = React.useState<State>({
+    dataSet: undefined,
+    errors: undefined
+  });
+  const { type, pivotType, pivotConfig } = queryItem;
 
-      if (error) {
-        console.log(error);
-      }
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const results = await Promise.all(
+        queryItem.queries.map((query: ICubeJsQuery) => cubejsClient.load(query))
+      );
 
-      return <Loading />;
-    }}
-  />
-);
+      const dataSet = results.map((resultSet: any, i: number) =>
+        pivot(resultSet, pivotType, pivotConfig)
+      );
+
+      setState({
+        ...state,
+        dataSet: dataSet.length === 1 ? dataSet[0] : dataSet,
+        errors: undefined
+      });
+    };
+    fetchData();
+  }, []);
+
+  const { dataSet, errors } = state;
+
+  if (!dataSet) {
+    return <Loading />;
+  }
+
+  if (errors) {
+    return <div>{errors}</div>;
+  }
+
+  return (
+    <ChartRenderer
+      type={type}
+      chartProps={{
+        dataSet,
+        queryItem,
+        onDrilldown
+      }}
+    />
+  );
+};
 
 export default Chart;

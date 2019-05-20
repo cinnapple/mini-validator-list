@@ -1,6 +1,7 @@
 import * as React from "react";
-import { Avatar, Tag, Row, Col, Card } from "antd";
+import { Avatar, Row, Col, Card } from "antd";
 import { IChartPropBase, IProfileChartOptions } from "../../types";
+import withSize from "../../hoc/withSize";
 
 const { Meta } = Card;
 
@@ -52,4 +53,4 @@ const DomainProfile: React.SFC<IChartPropBase<IProfileChartOptions>> = ({
   );
 };
 
-export default DomainProfile;
+export default withSize(DomainProfile);

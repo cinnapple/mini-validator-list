@@ -2,50 +2,59 @@ import {
   IQueryItem,
   IStackBarChartOptions,
   SupportedCharts,
-  ISelectedValue,
-  ITableChartOptions
+  ITableChartOptions,
+  DataRow
 } from "../../../types";
 
 import dayjs from "dayjs";
 
 const defaultUnlDominanceMovementQuery: IQueryItem<IStackBarChartOptions> = {
+  id: `default-unl-dominance-movement`,
   title: "Default UNL Dominance Movement",
   type: SupportedCharts.StackedBar,
-  query: {
-    measures: ["Vw_UnlValidatorHistory.count"],
-    dimensions: [
-      "Vw_UnlValidatorHistory.domainCategory",
-      "Vw_UnlValidatorHistory.originalAsOfDate"
-    ],
-    timeDimensions: [
-      {
-        dimension: "Vw_UnlValidatorHistory.asOfDate",
-        granularity: "month"
-      }
-    ]
+  queries: [
+    {
+      measures: ["Vw_UnlValidatorHistory.count"],
+      dimensions: [
+        "Vw_UnlValidatorHistory.domainCategory",
+        "Vw_UnlValidatorHistory.originalAsOfDate"
+      ],
+      timeDimensions: [
+        {
+          dimension: "Vw_UnlValidatorHistory.asOfDate",
+          granularity: "month"
+        }
+      ]
+    }
+  ],
+  options: {
+    props: {},
+    xField: "Vw_UnlValidatorHistory.asOfDate",
+    yField: "Vw_UnlValidatorHistory.count",
+    colorField: "Vw_UnlValidatorHistory.domainCategory"
   },
-  options: { props: {} },
   drilldown: opt => [[drilldown(opt)]]
 };
 
-const drilldown = (
-  opt: ISelectedValue
-): IQueryItem<ITableChartOptions<any>> => ({
+const drilldown = (selected: DataRow): IQueryItem<ITableChartOptions<any>> => ({
+  id: `${selected}`,
   title: `Default UNL as of ${dayjs(
-    opt.selected["Vw_UnlValidatorHistory.originalAsOfDate"]
+    selected["Vw_UnlValidatorHistory.originalAsOfDate"]
   ).format(`MMMM DD, YYYY`)}`,
   type: SupportedCharts.Table,
-  query: {
-    measures: ["Vw_UnlValidatorHistory.count"],
-    dimensions: ["Vw_UnlValidatorHistory.domain"],
-    filters: [
-      {
-        dimension: "Vw_UnlValidatorHistory.originalAsOfDate",
-        operator: "equals",
-        values: [opt.selected["Vw_UnlValidatorHistory.originalAsOfDate"]]
-      }
-    ]
-  },
+  queries: [
+    {
+      measures: ["Vw_UnlValidatorHistory.count"],
+      dimensions: ["Vw_UnlValidatorHistory.domain"],
+      filters: [
+        {
+          dimension: "Vw_UnlValidatorHistory.originalAsOfDate",
+          operator: "equals",
+          values: [`${selected["Vw_UnlValidatorHistory.originalAsOfDate"]}`]
+        }
+      ]
+    }
+  ],
   options: {
     props: {
       rowKey: "Vw_UnlValidatorHistory.domain",

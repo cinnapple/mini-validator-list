@@ -10,12 +10,11 @@ const StackedBar: SFC<IChartPropBase<IStackBarChartOptions>> = ({
   onDrilldown,
   queryItem
 }) => {
-  const { options, query } = queryItem;
-  const { props } = options;
-  const countField = (query.measures && query.measures[0]) as string;
+  const { options } = queryItem;
+  const { props, xField, yField, colorField } = options;
   const data = dataSet.map((a: any) => ({
     ...a,
-    [countField]: parseInt(a[countField])
+    [yField]: parseInt(a[yField])
   }));
   return (
     <div
@@ -32,21 +31,21 @@ const StackedBar: SFC<IChartPropBase<IStackBarChartOptions>> = ({
         forceFit={size !== Sizes.Mobile}
         onPlotClick={ev => {
           if (ev.data && onDrilldown) {
-            onDrilldown({ selected: ev.data._origin });
+            onDrilldown(ev.data._origin);
           }
         }}
       >
         <Legend />
         <Axis
-          name={"Vw_UnlValidatorHistory.asOfDate"}
+          name={xField}
           label={{ formatter: val => dayjs(val).format("MMM 'YY") }}
         />
-        <Axis position="left" name={"Vw_UnlValidatorHistory.count"} />
+        <Axis position="left" name={yField} />
         <Tooltip showTitle={false} />
         <Geom
           type="intervalStack"
-          position={`Vw_UnlValidatorHistory.asOfDate*${countField}`}
-          color={`Vw_UnlValidatorHistory.domainCategory`}
+          position={`${xField}*${yField}`}
+          color={colorField}
         />
       </Chart>
     </div>

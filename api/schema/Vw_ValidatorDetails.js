@@ -121,6 +121,16 @@ cube(`Vw_ValidatorDetails`, {
       type: `string`
     },
 
+    latitude: {
+      sql: `coalesce(latitude, 0)`,
+      type: `number`
+    },
+
+    longitude: {
+      sql: `coalesce(longitude, 0)`,
+      type: `number`
+    },
+
     city: {
       sql: `city`,
       type: `string`

@@ -1,7 +1,7 @@
 import React, { SFC } from "react";
 import { uniq } from "../../helpers/util";
 import { Col, Row, Card, Tooltip, Avatar } from "antd";
-import ValidationScore from "./ValidationScore";
+import ValidationScore from "../Charts/ValidationScore";
 import { IChartPropBase, IScoreboardOptions } from "../../types";
 import withSize from "../../hoc/withSize";
 
@@ -32,28 +32,31 @@ const getTitleElement = (domain: string, pubkey: string, icon: string) => {
   );
 };
 
-const Scoreboard: SFC<IChartPropBase<IScoreboardOptions>> = ({
+const ScoreboardContainer: SFC<IChartPropBase<IScoreboardOptions>> = ({
   dataSet,
   size,
   queryItem
 }) => {
   const { options } = queryItem;
   const { props } = options;
+  const [scores, validators] = dataSet;
   const publicKeys = uniq(
-    dataSet.scores.map((a: any) => a[props.validationPublicKeyField])
+    scores.map((a: any) => a[props.validationPublicKeyField])
   );
   return (
     <Row gutter={0}>
       {publicKeys.map((p: string, i: number) => {
-        const relatedData = dataSet.scores.filter(
+        const relatedData = scores.filter(
           (d: any) => d[props.validationPublicKeyField] === p
         );
-        const relatedValidator = dataSet.validators.filter(
+        const relatedValidator = validators.filter(
           (d: any) => d["Vw_ValidatorDetails.validation_public_key"] === p
         );
         const domain = relatedData[0][props.domainField];
         const pubkey = relatedData[0][props.validationPublicKeyField];
-        const icon = relatedValidator[0]["Vw_ValidatorDetails.icon"];
+        const icon = relatedValidator[0]
+          ? relatedValidator[0]["Vw_ValidatorDetails.icon"]
+          : "";
         return (
           <Col xs={24} md={12} lg={6} key={i}>
             <Card
@@ -73,4 +76,4 @@ const Scoreboard: SFC<IChartPropBase<IScoreboardOptions>> = ({
   );
 };
 
-export default withSize(Scoreboard);
+export default withSize(ScoreboardContainer);

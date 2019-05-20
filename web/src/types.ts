@@ -2,7 +2,7 @@ import { TableProps, ColumnProps } from "antd/lib/table";
 import { ChartProps } from "bizcharts";
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-type HashTable<T> = { [key: string]: T };
+export type HashTable<T> = { [key: string]: T };
 
 export enum SupportedCharts {
   Donut = "Donut",
@@ -12,16 +12,20 @@ export enum SupportedCharts {
   Map = "Map",
   DomainProfile = "ValidatorProfile",
   ValidationScore = "ValidationScore",
-  Scoreboard = "Scoreboard"
+  Scoreboard = "Scoreboard",
+  ValidatorProfile = "ValidatorProfile"
 }
 
 export type SupportedPivotTypes = "chart" | "table";
 
-export interface ICubePivotConfig {
+export interface ICubeJsPivotConfig {
   x?: string[];
   y?: string[];
   fillMissingDates?: boolean;
 }
+
+export type DataRow = HashTable<string | number>;
+export type DataTable = DataRow[];
 
 export enum Sizes {
   Default = "Default",
@@ -31,23 +35,23 @@ export enum Sizes {
 }
 
 // cube.js
-export interface ICubeQuery {
+export interface ICubeJsQuery {
   measures?: string[];
   dimensions?: string[];
-  timeDimensions?: ICubeTimeDimension[];
-  filters?: ICubeFilter[];
+  timeDimensions?: ICubeJsTimeDimension[];
+  filters?: ICubeJsFilter[];
   limit?: number;
   order?: HashTable<"asc" | "desc">;
   timezone?: string;
 }
 
-export interface ICubeTimeDimension {
+export interface ICubeJsTimeDimension {
   dimension: string;
   dateRange?: string[];
   granularity?: string;
 }
 
-export interface ICubeFilter {
+export interface ICubeJsFilter {
   dimension: string;
   operator:
     | "equals"
@@ -109,6 +113,9 @@ export interface IDonutChartOptions extends IChartOptionsBase {
 
 export interface IStackBarChartOptions extends IChartOptionsBase {
   props: IExtendedChartProps;
+  xField: string;
+  yField: string;
+  colorField: string;
 }
 
 export interface IHorizontalStackBarChartOptions extends IChartOptionsBase {
@@ -163,26 +170,26 @@ export interface IStatsOptions extends IChartOptionsBase {
   suffix?: string;
 }
 
-export interface IChartPropBase<T extends IChartOptionsBase> {
-  dataSet: any;
-  size: Sizes;
-  onDrilldown?: (opt: any) => void;
-  queryItem: IQueryItem<T>;
+export interface IChartOptions {
+  type: SupportedCharts;
+  pivotType?: SupportedPivotTypes;
+  pivotConfig?: ICubeJsPivotConfig;
 }
 
-export interface ISelectedValue {
-  selected: any;
+export interface IChartPropBase<T extends IChartOptionsBase> {
+  dataSet: any;
+  queryItem: IQueryItem<T>;
+  onDrilldown?: (selected: DataRow) => void;
+  size: Sizes;
 }
 
 export interface IQueryItem<T extends IChartOptionsBase> {
+  id: string;
   title: string;
+  queries: ICubeJsQuery[];
   type: SupportedCharts;
   pivotType?: SupportedPivotTypes;
-  pivotConfig?: ICubePivotConfig;
-  query: ICubeQuery;
-  bordered?: boolean;
+  pivotConfig?: ICubeJsPivotConfig;
   options: T;
-  drilldown?: (opt: ISelectedValue) => QueryList<IChartOptionsBase>[];
+  drilldown?: (selected: DataRow) => IQueryItem<IChartOptionsBase>[][];
 }
-
-export type QueryList<T extends IChartOptionsBase> = IQueryItem<T>[];

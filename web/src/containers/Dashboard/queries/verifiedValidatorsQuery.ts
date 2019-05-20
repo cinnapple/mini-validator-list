@@ -2,26 +2,29 @@ import {
   IQueryItem,
   IDonutChartOptions,
   SupportedCharts,
-  ISelectedValue,
-  ITableChartOptions
+  ITableChartOptions,
+  DataRow
 } from "../../../types";
 import { insertIf } from "../../../helpers/util";
 
 const verifiedValidatorQuery: IQueryItem<IDonutChartOptions> = {
+  id: `verified-validators`,
   title: "Verified Validators",
   type: SupportedCharts.Donut,
   pivotType: "chart",
-  query: {
-    measures: ["Vw_ValidatorDetails.count"],
-    dimensions: ["Vw_ValidatorDetails.verified"],
-    filters: [
-      {
-        dimension: "Vw_ValidatorDetails.chain",
-        operator: "notEquals",
-        values: ["altnet"]
-      }
-    ]
-  },
+  queries: [
+    {
+      measures: ["Vw_ValidatorDetails.count"],
+      dimensions: ["Vw_ValidatorDetails.verified"],
+      filters: [
+        {
+          dimension: "Vw_ValidatorDetails.chain",
+          operator: "notEquals",
+          values: ["altnet"]
+        }
+      ]
+    }
+  ],
   options: {
     props: {},
     titleField: "Verified",
@@ -30,29 +33,30 @@ const verifiedValidatorQuery: IQueryItem<IDonutChartOptions> = {
   drilldown: opt => [[drilldown(opt)]]
 };
 
-const drilldown = (
-  opt: ISelectedValue
-): IQueryItem<ITableChartOptions<any>> => ({
-  title: `${opt.selected.category} validators`,
-  query: {
-    dimensions: [
-      "Vw_ValidatorDetails.validation_public_key",
-      "Vw_ValidatorDetails.unl",
-      "Vw_ValidatorDetails.domain"
-    ],
-    filters: [
-      {
-        dimension: "Vw_ValidatorDetails.chain",
-        operator: "notEquals",
-        values: ["altnet"]
-      },
-      {
-        dimension: "Vw_ValidatorDetails.verified",
-        operator: "equals",
-        values: [opt.selected.category]
-      }
-    ]
-  },
+const drilldown = (selected: DataRow): IQueryItem<ITableChartOptions<any>> => ({
+  id: `${verifiedValidatorQuery.id}/${selected["category"]}`,
+  title: `${selected.category} validators`,
+  queries: [
+    {
+      dimensions: [
+        "Vw_ValidatorDetails.validation_public_key",
+        "Vw_ValidatorDetails.unl",
+        "Vw_ValidatorDetails.domain"
+      ],
+      filters: [
+        {
+          dimension: "Vw_ValidatorDetails.chain",
+          operator: "notEquals",
+          values: ["altnet"]
+        },
+        {
+          dimension: "Vw_ValidatorDetails.verified",
+          operator: "equals",
+          values: [selected.category as string]
+        }
+      ]
+    }
+  ],
   type: SupportedCharts.Table,
   options: {
     props: {
@@ -60,7 +64,7 @@ const drilldown = (
       scroll: { x: 400 },
       columns: [
         ...insertIf(
-          opt.selected.category === "Verified",
+          selected.category === "Verified",
           [
             {
               title: "Domain",
@@ -76,7 +80,7 @@ const drilldown = (
             }
           ]
         ),
-        ...insertIf(opt.selected.category === "Verified", [
+        ...insertIf(selected.category === "Verified", [
           {
             title: "Default UNL?",
             dataIndex: "Vw_ValidatorDetails.unl",
@@ -88,9 +92,11 @@ const drilldown = (
     buildStats: (data: any[]) => {
       return [
         {
-          title: `${opt.selected.category} validators`,
+          title: `${selected.category} validators`,
           value: data.length,
-          suffix: `(${(opt.selected.percent * 100).toFixed(0)}%)`
+          suffix: `(${(parseFloat(selected.percent as string) * 100).toFixed(
+            0
+          )}%)`
         }
       ];
     }

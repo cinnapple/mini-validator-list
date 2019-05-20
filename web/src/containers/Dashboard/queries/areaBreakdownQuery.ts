@@ -2,64 +2,68 @@ import {
   SupportedCharts,
   IQueryItem,
   IHorizontalStackBarChartOptions,
-  ISelectedValue,
-  ITableChartOptions
+  ITableChartOptions,
+  DataRow
 } from "../../../types";
 
 const areaBreakdownQuery: IQueryItem<IHorizontalStackBarChartOptions> = {
+  id: `area-breakdown`,
   title: "Breakdown by Country",
   type: SupportedCharts.HorizontalStackedBar,
-  query: {
-    measures: [
-      "Vw_ValidatorDetails.count",
-      "Vw_ValidatorDetails.unlSum",
-      "Vw_ValidatorDetails.notUnlButVerifiedSum"
-    ],
-    dimensions: ["Vw_ValidatorDetails.countryName"],
-    filters: [
-      {
-        // exclude test net
-        dimension: "Vw_ValidatorDetails.chain",
-        operator: "notEquals",
-        values: ["altnet"]
+  queries: [
+    {
+      measures: [
+        "Vw_ValidatorDetails.count",
+        "Vw_ValidatorDetails.unlSum",
+        "Vw_ValidatorDetails.notUnlButVerifiedSum"
+      ],
+      dimensions: ["Vw_ValidatorDetails.countryName"],
+      filters: [
+        {
+          // exclude test net
+          dimension: "Vw_ValidatorDetails.chain",
+          operator: "notEquals",
+          values: ["altnet"]
+        }
+      ],
+      order: {
+        "Vw_ValidatorDetails.count": "desc",
+        "Vw_ValidatorDetails.countryName": "asc"
       }
-    ],
-    order: {
-      "Vw_ValidatorDetails.count": "desc",
-      "Vw_ValidatorDetails.countryName": "asc"
     }
-  },
+  ],
   options: { props: {} },
   drilldown: opt => [[drilldown(opt)]]
 };
 
-const drilldown = (
-  opt: ISelectedValue
-): IQueryItem<ITableChartOptions<any>> => ({
-  title: `Validators in ${opt.selected["Vw_ValidatorDetails.countryName"]}`,
+const drilldown = (selected: DataRow): IQueryItem<ITableChartOptions<any>> => ({
+  id: `${selected}`,
+  title: `Validators in ${selected["Vw_ValidatorDetails.countryName"]}`,
   type: SupportedCharts.Table,
-  query: {
-    dimensions: [
-      "Vw_ValidatorDetails.domain",
-      "Vw_ValidatorDetails.validation_public_key",
-      "Vw_ValidatorDetails.unl",
-      "Vw_ValidatorDetails.ripple",
-      "Vw_ValidatorDetails.hosts"
-    ],
-    filters: [
-      {
-        dimension: "Vw_ValidatorDetails.countryName",
-        operator: "equals",
-        values: [opt.selected["Vw_ValidatorDetails.countryName"]]
-      },
-      {
-        // exclude test net
-        dimension: "Vw_ValidatorDetails.chain",
-        operator: "notEquals",
-        values: ["altnet"]
-      }
-    ]
-  },
+  queries: [
+    {
+      dimensions: [
+        "Vw_ValidatorDetails.domain",
+        "Vw_ValidatorDetails.validation_public_key",
+        "Vw_ValidatorDetails.unl",
+        "Vw_ValidatorDetails.ripple",
+        "Vw_ValidatorDetails.hosts"
+      ],
+      filters: [
+        {
+          dimension: "Vw_ValidatorDetails.countryName",
+          operator: "equals",
+          values: [`${selected["Vw_ValidatorDetails.countryName"]}`]
+        },
+        {
+          // exclude test net
+          dimension: "Vw_ValidatorDetails.chain",
+          operator: "notEquals",
+          values: ["altnet"]
+        }
+      ]
+    }
+  ],
   options: {
     props: {
       rowKey: "Vw_ValidatorDetails.validation_public_key",

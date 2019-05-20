@@ -44,7 +44,7 @@ const HorizontalStackedBar: SFC<
         padding={[20, 20, 90, 25]}
         onPlotClick={ev => {
           if (ev.data && onDrilldown) {
-            onDrilldown({ selected: ev.data._origin });
+            onDrilldown(ev.data._origin);
           }
         }}
       >

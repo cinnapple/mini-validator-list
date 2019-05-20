@@ -7,7 +7,8 @@ import Table from "./Table/Table";
 import WorldMap from "./WorldMap";
 import DomainProfile from "./DomainProfile";
 import ValidationScore from "./ValidationScore";
-import Scoreboard from "./Scoreboard";
+import Scoreboard from "../ChartContainers/ScoreboardContainer";
+import ValidatorProfile from "../ChartContainers/ValidatorProfileContainer";
 
 export const SupportedComponents = {
   [SupportedCharts.Donut]: Donut,
@@ -17,5 +18,6 @@ export const SupportedComponents = {
   [SupportedCharts.Map]: WorldMap,
   [SupportedCharts.DomainProfile]: DomainProfile,
   [SupportedCharts.ValidationScore]: ValidationScore,
-  [SupportedCharts.Scoreboard]: Scoreboard
+  [SupportedCharts.Scoreboard]: Scoreboard,
+  [SupportedCharts.ValidatorProfile]: ValidatorProfile
 };

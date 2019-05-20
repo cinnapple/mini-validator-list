@@ -1,23 +1,24 @@
 import * as React from "react";
 import { Layout, Menu } from "antd";
 import { Sizes } from "../types";
-import { Link } from "react-router-dom";
+import { Link, withRouter, RouteComponentProps } from "react-router-dom";
 import { Typography } from "antd";
-import withSize from "../hoc/withSize";
+import withSize, { SizeProps } from "../hoc/withSize";
 import XRPTipBotButton from "./XRPTipBotButton";
 
 const { Title } = Typography;
 
 const { Header, Content, Footer } = Layout;
 
-interface LayoutProps {
+interface LayoutProps extends RouteComponentProps, SizeProps {
   size: Sizes;
 }
 
-const LayoutComponent: React.SFC<LayoutProps> = ({ children, size }) => {
-  const [state, setState] = React.useState({
-    current: window.location.pathname
-  });
+const LayoutComponent: React.SFC<LayoutProps> = ({
+  children,
+  size,
+  location
+}) => {
   return (
     <Layout className="App">
       <Header>
@@ -50,27 +51,15 @@ const LayoutComponent: React.SFC<LayoutProps> = ({ children, size }) => {
         </div>
       </Header>
       <Content style={{ padding: "0 10px" }}>
-        <Menu mode="horizontal" selectedKeys={[state.current]}>
+        <Menu mode="horizontal" selectedKeys={[location.pathname]}>
           <Menu.Item key="/">
-            <Link to="/" onClick={() => setState({ current: "/" })}>
-              Statistics
-            </Link>
+            <Link to="/">Statistics</Link>
           </Menu.Item>
           <Menu.Item key="/validators">
-            <Link
-              to="/validators"
-              onClick={() => setState({ current: "/validators" })}
-            >
-              Validators
-            </Link>
+            <Link to="/validators">Validators</Link>
           </Menu.Item>
           <Menu.Item key="/unl-scoreboard">
-            <Link
-              to="/unl-scoreboard"
-              onClick={() => setState({ current: "/unl-scoreboard" })}
-            >
-              UNL Scoreboard
-            </Link>
+            <Link to="/unl-scoreboard">UNL Scoreboard</Link>
           </Menu.Item>
         </Menu>
         <div
@@ -91,4 +80,4 @@ const LayoutComponent: React.SFC<LayoutProps> = ({ children, size }) => {
   );
 };
 
-export default withSize(LayoutComponent);
+export default withRouter(withSize(LayoutComponent));

@@ -3,33 +3,34 @@ import {
   ITableChartOptions,
   SupportedCharts
 } from "../../../types";
-import { drilldownProfileQuery } from "./drilldownProfileQuery";
-import { drilldownDomainMapOperatorQuery } from "./drilldownDomainMapQuery";
-import { drilldownValidatorScoreQuery } from "./drilldownValidationScoreQuery";
-import { nullIf } from "../../../helpers/util";
+import { valOrDefault } from "../../../helpers/util";
+import { validatorProfileQuery } from "./validatorProfileQuery";
 
-const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
+const validatorsListQuery: IQueryItem<ITableChartOptions<any>> = {
+  id: `validators`,
   title: "Main Net Validators",
   type: SupportedCharts.Table,
-  query: {
-    dimensions: [
-      "Vw_ValidatorDetails.domain",
-      "Vw_ValidatorDetails.chain",
-      "Vw_ValidatorDetails.ripple",
-      "Vw_ValidatorDetails.hosts",
-      "Vw_ValidatorDetails.validation_public_key",
-      "Vw_ValidatorDetails.agreement24hScore",
-      "Vw_ValidatorDetails.lastUpdatedInHours",
-      "Vw_ValidatorDetails.countryName"
-    ],
-    filters: [
-      {
-        dimension: "Vw_ValidatorDetails.chain",
-        operator: "notEquals",
-        values: ["altnet"]
-      }
-    ]
-  },
+  queries: [
+    {
+      dimensions: [
+        "Vw_ValidatorDetails.domain",
+        "Vw_ValidatorDetails.chain",
+        "Vw_ValidatorDetails.ripple",
+        "Vw_ValidatorDetails.hosts",
+        "Vw_ValidatorDetails.validation_public_key",
+        "Vw_ValidatorDetails.agreement24hScore",
+        "Vw_ValidatorDetails.lastUpdatedInHours",
+        "Vw_ValidatorDetails.countryName"
+      ],
+      filters: [
+        {
+          dimension: "Vw_ValidatorDetails.chain",
+          operator: "notEquals",
+          values: ["altnet"]
+        }
+      ]
+    }
+  ],
   options: {
     props: {
       rowKey: "Vw_ValidatorDetails.validation_public_key",
@@ -87,7 +88,7 @@ const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
       let ripple = 0;
       const countries: any = {};
       data.forEach(c => {
-        defaultUnl += nullIf(c["Vw_ValidatorDetails.hosts"], "").includes(
+        defaultUnl += valOrDefault(c["Vw_ValidatorDetails.hosts"], "").includes(
           "vl.ripple.com"
         )
           ? 1
@@ -125,19 +126,13 @@ const mainNetValidatorListQuery: IQueryItem<ITableChartOptions<any>> = {
       ];
     }
   },
-  drilldown: opt => [
+  drilldown: selected => [
     [
-      drilldownValidatorScoreQuery(
-        opt.selected["Vw_ValidatorDetails.validation_public_key"]
-      )
-    ],
-    [drilldownProfileQuery(opt.selected["Vw_ValidatorDetails.domain"])],
-    [
-      drilldownDomainMapOperatorQuery(
-        opt.selected["Vw_ValidatorDetails.domain"]
+      validatorProfileQuery(
+        `${selected["Vw_ValidatorDetails.validation_public_key"]}`
       )
     ]
   ]
 };
 
-export { mainNetValidatorListQuery };
+export { validatorsListQuery };

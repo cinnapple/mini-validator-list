@@ -16,9 +16,9 @@ const DonutChart: React.SFC<IChartPropBase<IDonutChartOptions>> = ({
   queryItem,
   onDrilldown
 }) => {
-  const { options, query } = queryItem;
+  const { options } = queryItem;
   const { props, titleField, supportText } = options;
-  const countMeasure = query.measures && query.measures[0];
+  const countMeasure = queryItem.queries[0].measures![0];
   const dv = new DataView();
   dv.source(dataSet).transform({
     type: "percent",
@@ -43,7 +43,7 @@ const DonutChart: React.SFC<IChartPropBase<IDonutChartOptions>> = ({
       forceFit
       onPlotClick={ev => {
         if (onDrilldown && ev.data && ev.data._origin) {
-          onDrilldown({ selected: ev.data._origin });
+          onDrilldown(ev.data._origin);
         }
       }}
     >

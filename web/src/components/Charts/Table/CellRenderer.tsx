@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Badge, Tag } from "antd";
-import { IExtendedColumnProps } from "../../../types";
+import { IExtendedColumnProps, DataRow } from "../../../types";
 import { parseUnlHost } from "../../../helpers/util";
 
 const unlTagColors: { [key: string]: string } = {
@@ -52,16 +52,12 @@ const unlsRenderer = () => (unls: string) => {
 
 const domainRenderer = (
   c: IExtendedColumnProps<any>,
-  onDrilldown: (opt: any) => void
+  onDrilldown: (selected: DataRow) => void
 ) => (domain: string, rec: any) => (
   <>
     {getStaus(rec[c.domainRenderOptions!.relativeHoursField])}
     {
-      <a
-        onClick={() =>
-          c.domainRenderOptions ? onDrilldown({ selected: rec }) : undefined
-        }
-      >
+      <a onClick={() => (c.domainRenderOptions ? onDrilldown(rec) : undefined)}>
         {domain ? (
           domain
         ) : c.domainRenderOptions ? (
@@ -82,7 +78,7 @@ const defaultRenderer = () => (value: any) => {
 
 const getCellRenderer = (
   c: IExtendedColumnProps<any>,
-  onDrilldown?: (opt: any) => void
+  onDrilldown?: (selected: DataRow) => void
 ) => {
   if (c.type === "key") {
     return keyRenderer();

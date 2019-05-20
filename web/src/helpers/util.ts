@@ -6,9 +6,9 @@ const flat = (arry: any[] = []) => {
   return arry.reduce((a, b) => a.concat(b), []);
 };
 
-const nullIf = <T>(val: any, or: T) => {
+const valOrDefault = <T>(val: any, defaultValue: T) => {
   if (val === undefined || val === null || val === "") {
-    return or;
+    return defaultValue;
   }
   return val;
 };
@@ -47,4 +47,13 @@ const parseUnlHost = (url: string) => {
   return url.match(unlRegex)![1];
 };
 
-export { uniq, flat, nullIf, sort, sortBy, isEmpty, insertIf, parseUnlHost };
+export {
+  uniq,
+  flat,
+  valOrDefault,
+  sort,
+  sortBy,
+  isEmpty,
+  insertIf,
+  parseUnlHost
+};
