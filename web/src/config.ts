@@ -6,7 +6,7 @@ const apiUrl =
 export default {
   cubejs: {
     token:
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1Ijp7ImlkIjo0Mn0sImlhdCI6MTU1NjU1MDc4NSwiZXhwIjoxNTU5MTQyNzg1fQ.CZ3WkpyKkg2VoqmbY00sQvJu74jIT3IVrDH7mElTRbk",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1Ijp7ImlkIjo0Mn0sImlhdCI6MTU1OTE1MDExNH0.yyimxB4_fZPmyT0eEXMyHdyZoJhL8qPKifBJvEhmSP0",
     apiUrl
   }
 };
