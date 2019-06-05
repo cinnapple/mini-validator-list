@@ -15,16 +15,16 @@ const HorizontalStackedBar: SFC<
   const { props } = options;
   const data = dataSet.map((a: any) => ({
     ["Vw_ValidatorDetails.countryName"]: a["Vw_ValidatorDetails.countryName"],
-    "Not in UNL but Verified": parseInt(
+    "Not in Default UNL": parseInt(
       a["Vw_ValidatorDetails.notUnlButVerifiedSum"]
     ),
-    "In UNL": parseInt(a["Vw_ValidatorDetails.unlSum"])
+    "In Default UNL": parseInt(a["Vw_ValidatorDetails.unlSum"])
   }));
   const ds = new DataSet();
   const dv = ds.createView().source(data);
   dv.transform({
     type: "fold",
-    fields: ["In UNL", "Not in UNL but Verified"],
+    fields: ["In Default UNL", "Not in Default UNL"],
     key: "Category",
     value: "Total",
     retains: ["Vw_ValidatorDetails.countryName"]
