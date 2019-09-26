@@ -4,8 +4,6 @@
 
 Please view [Issues](https://github.com/cinnapple/mini-validator-list/issues) for the list of enhancements/bug fixes to be implemented in the future.
 
-For a feature request, please open an issue or reach me on Twitter: [@CinnappleFun](https://twitter.com/CinnappleFun) 😊
-
 ### Language support contributors
 
 - Russian (ru) by [@Prosatan666](https://twitter.com/Prosatan666)
