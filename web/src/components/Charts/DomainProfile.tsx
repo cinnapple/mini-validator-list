@@ -16,9 +16,9 @@ const DomainProfile: React.SFC<IChartPropBase<IProfileChartOptions>> = ({
   }
   const data = dataSet[0];
   const name = data[props.nameField];
-  const domain = data[props.domainField];
-  const twitter = data[props.twitterField];
-  const description = data[props.descriptionField];
+  // const domain = data[props.domainField];
+  // const twitter = data[props.twitterField];
+  // const description = data[props.descriptionField];
   const icon = data[props.iconField];
   const marginTopStyle = { marginTop: 24 };
   return (

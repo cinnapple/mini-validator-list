@@ -13,7 +13,7 @@ interface Props extends RouteComponentProps<Params> {}
 
 const getDrilldownQuery = (params: Params) => {
   const drilldownQuery = validatorsListQuery.drilldown!({
-    ["Vw_ValidatorDetails.validation_public_key"]: params.pubkey
+    "Vw_ValidatorDetails.validation_public_key": params.pubkey
   });
 
   return drilldownQuery;
@@ -26,9 +26,7 @@ const ValidatorListContainer: React.SFC<Props> = ({ history, match }) => {
         queriesList={[[validatorsListQuery]]}
         onDrilldown={(selected: DataRow) =>
           history.push(
-            `/validators/${
-              selected["Vw_ValidatorDetails.validation_public_key"]
-            }`
+            `/validators/${selected["Vw_ValidatorDetails.validation_public_key"]}`
           )
         }
       />

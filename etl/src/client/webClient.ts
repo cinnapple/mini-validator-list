@@ -14,7 +14,7 @@ class WebClient implements IWebClient {
       },
       responseType: "json"
     };
-    this._axios = axios.create(requestConfig);
+    this._axios = axios.create(<any>requestConfig);
   }
 
   get<T>(url: string, config?: AxiosRequestConfig) {
