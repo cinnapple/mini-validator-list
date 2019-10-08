@@ -1,3 +1,5 @@
+const rippleRegex = "'w*\\.ripple.com|^ripple\\.com'";
+
 cube(`Vw_ValidatorDetails`, {
   sql: `select * from m_validatordetails`,
 
@@ -77,7 +79,7 @@ cube(`Vw_ValidatorDetails`, {
     },
 
     ripple: {
-      sql: `case when domain ~ 'ripple.com' then 'Ripple' else 'Non-Ripple' end`,
+      sql: `case when domain ~ ${rippleRegex} then 'Ripple' else 'Non-Ripple' end`,
       type: `string`
     },
 
