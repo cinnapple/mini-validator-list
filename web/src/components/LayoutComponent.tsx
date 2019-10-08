@@ -65,7 +65,7 @@ const LayoutComponent: React.SFC<LayoutProps> = ({
         <div
           style={{
             background: "#fff",
-            maringTop: "16px",
+            marginTop: "16px",
             padding: size === Sizes.Mobile ? 12 : 24,
             minHeight: 700
           }}

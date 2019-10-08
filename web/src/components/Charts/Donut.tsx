@@ -72,7 +72,7 @@ const DonutChart: React.SFC<IChartPropBase<IDonutChartOptions>> = ({
           position={["50%", "45%"]}
           content={innerTitle}
           style={{
-            lineHeight: "240px",
+            // lineHeight: "240px",
             fontSize: "36",
             fontWeight: "bold",
             textAlign: "center"
@@ -82,7 +82,7 @@ const DonutChart: React.SFC<IChartPropBase<IDonutChartOptions>> = ({
           position={["50%", "55%"]}
           content={supportText[0]}
           style={{
-            lineHeight: "240px",
+            // lineHeight: "240px",
             fontSize: "16",
             textAlign: "center"
           }}
@@ -91,7 +91,7 @@ const DonutChart: React.SFC<IChartPropBase<IDonutChartOptions>> = ({
           position={["50%", "60%"]}
           content={supportText[1]}
           style={{
-            lineHeight: "240px",
+            // lineHeight: "240px",
             fontSize: "16",
             textAlign: "center"
           }}

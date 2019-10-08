@@ -31,7 +31,7 @@ const WorldMap: React.SFC<IChartPropBase<IWorldMapOptions>> = ({
 }) => {
   const { options } = queryItem;
   const { props } = options;
-  const [state, setState] = React.useState<State>({
+  const [state] = React.useState<State>({
     center: [30, 0],
     zoom: 1
   });

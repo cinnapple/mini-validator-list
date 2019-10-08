@@ -14,7 +14,7 @@ const HorizontalStackedBar: SFC<
   const { options } = queryItem;
   const { props } = options;
   const data = dataSet.map((a: any) => ({
-    ["Vw_ValidatorDetails.countryName"]: a["Vw_ValidatorDetails.countryName"],
+    "Vw_ValidatorDetails.countryName": a["Vw_ValidatorDetails.countryName"],
     "Not in Default UNL": parseInt(
       a["Vw_ValidatorDetails.notUnlButVerifiedSum"]
     ),
