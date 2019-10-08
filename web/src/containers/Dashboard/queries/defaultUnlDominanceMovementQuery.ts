@@ -45,7 +45,10 @@ const drilldown = (selected: DataRow): IQueryItem<ITableChartOptions<any>> => ({
   queries: [
     {
       measures: ["Vw_UnlValidatorHistory.count"],
-      dimensions: ["Vw_UnlValidatorHistory.domain"],
+      dimensions: [
+        "Vw_UnlValidatorHistory.domain",
+        "Vw_UnlValidatorHistory.domainCategory"
+      ],
       filters: [
         {
           dimension: "Vw_UnlValidatorHistory.originalAsOfDate",
@@ -77,7 +80,7 @@ const drilldown = (selected: DataRow): IQueryItem<ITableChartOptions<any>> => ({
       let total = 0;
       data.forEach(c => {
         const count = parseInt(c["Vw_UnlValidatorHistory.count"]);
-        if (c["Vw_UnlValidatorHistory.domain"] === "ripple.com") {
+        if (c["Vw_UnlValidatorHistory.domainCategory"] === "Ripple") {
           rippleCount += count;
         } else {
           nonRippleCount += count;

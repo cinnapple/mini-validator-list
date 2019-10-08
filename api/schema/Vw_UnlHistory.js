@@ -1,3 +1,5 @@
+const rippleRegex = "'w*\\.ripple.com|^ripple\\.com'";
+
 cube(`Vw_UnlValidatorHistory`, {
   sql: `select * from unlvalidatorhistory`,
 
@@ -40,7 +42,7 @@ cube(`Vw_UnlValidatorHistory`, {
     },
 
     domainCategory: {
-      sql: `case when domain = 'ripple.com' then 'Ripple' else 'Non-Ripple' end`,
+      sql: `case when domain ~ ${rippleRegex} then 'Ripple' else 'Non-Ripple' end`,
       type: `string`
     },
 
